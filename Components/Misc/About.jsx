@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Link from './Link.jsx';
+import Link from '../Site/Link.jsx';
 
 class About extends React.Component {
     render() {

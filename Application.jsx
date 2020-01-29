@@ -6,32 +6,32 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import io from 'socket.io-client';
 
-import Login from './Login.jsx';
-import Logout from './Logout.jsx';
-import Register from './Register.jsx';
-import Lobby from './Lobby.jsx';
-import Decks from './Decks.jsx';
-import AddDeck from './AddDeck.jsx';
-import EditDeck from './EditDeck.jsx';
-import NotFound from './NotFound.jsx';
-import ErrorBoundary from './SiteComponents/ErrorBoundary.jsx';
-import NavBar from './NavBar.jsx';
-import GameLobby from './GameLobby.jsx';
-import GameBoard from './GameBoard.jsx';
-import HowToPlay from './HowToPlay.jsx';
-import About from './About.jsx';
-import Community from './Community.jsx';
-import ForgotPassword from './ForgotPassword.jsx';
-import ResetPassword from './ResetPassword.jsx';
-import Profile from './Profile.jsx';
-import NewsAdmin from './NewsAdmin.jsx';
-import Unauthorised from './Unauthorised.jsx';
-import UserAdmin from './UserAdmin.jsx';
-import BlockList from './BlockList.jsx';
+import Login from 'Components/Misc/Login.jsx';
+import Logout from 'Components/Misc/Logout.jsx';
+import Register from 'Components/Misc/Register.jsx';
+import Lobby from 'Components/Lobby/Lobby.jsx';
+import Decks from 'Components/Deck/Decks.jsx';
+import AddDeck from 'Components/Deck/AddDeck.jsx';
+import EditDeck from 'Components/Deck/EditDeck.jsx';
+import NotFound from 'Components/Misc/NotFound.jsx';
+import ErrorBoundary from 'Components/Site/ErrorBoundary.jsx';
+import NavBar from 'Components/Site/NavBar.jsx';
+import GameLobby from 'Components/Games/GameLobby.jsx';
+import GameBoard from 'Components/GameBoard/GameBoard.jsx';
+import HowToPlay from 'Components/Misc/HowToPlay.jsx';
+import About from 'Components/Misc/About.jsx';
+import Community from 'Components/Misc/Community.jsx';
+import ForgotPassword from 'Components/Misc/ForgotPassword.jsx';
+import ResetPassword from 'Components/Misc/ResetPassword.jsx';
+import Profile from 'Components/Profile/Profile.jsx';
+import NewsAdmin from 'Components/News/NewsAdmin.jsx';
+import Unauthorised from 'Components/Misc/Unauthorised.jsx';
+import UserAdmin from 'Components/Misc/UserAdmin.jsx';
+import BlockList from 'Components/Misc/BlockList.jsx';
 
 import { toastr } from 'react-redux-toastr';
 
-import version from '../version.js';
+import version from './version.js';
 
 import * as actions from './actions';
 

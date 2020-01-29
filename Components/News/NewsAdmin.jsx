@@ -4,10 +4,10 @@ import {connect} from 'react-redux';
 import _ from 'underscore';
 import moment from 'moment';
 
-import AlertPanel from './SiteComponents/AlertPanel.jsx';
-import TextArea from './FormComponents/TextArea.jsx';
+import AlertPanel from '../Site/AlertPanel.jsx';
+import TextArea from '../Form/TextArea.jsx';
 
-import * as actions from './actions';
+import * as actions from '../../actions';
 
 class InnerNewsAdmin extends React.Component {
     constructor(props) {

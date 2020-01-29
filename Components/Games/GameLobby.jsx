@@ -6,9 +6,9 @@ import NewGame from './NewGame.jsx';
 import GameList from './GameList.jsx';
 import PendingGame from './PendingGame.jsx';
 import PasswordGame from './PasswordGame.jsx';
-import AlertPanel from './SiteComponents/AlertPanel.jsx';
+import AlertPanel from '../Site/AlertPanel.jsx';
 
-import * as actions from './actions';
+import * as actions from '../../actions';
 
 class InnerGameLobby extends React.Component {
     constructor() {

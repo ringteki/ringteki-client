@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import AlertPanel from './SiteComponents/AlertPanel.jsx';
-import * as actions from './actions';
+import AlertPanel from '../Site/AlertPanel.jsx';
+import * as actions from '../../actions';
 
 class InnerPasswordGame extends React.Component {
     constructor() {

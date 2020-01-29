@@ -5,13 +5,13 @@ import { connect } from 'react-redux';
 import $ from 'jquery';
 import _ from 'underscore';
 
-import AlertPanel from './SiteComponents/AlertPanel.jsx';
-import DeckRow from './DeckRow.jsx';
-import Messages from './GameComponents/Messages.jsx';
-import Avatar from './Avatar.jsx';
-import DeckStatus from './DeckStatus.jsx';
+import AlertPanel from '../Site/AlertPanel.jsx';
+import DeckRow from '../Decks/DeckRow.jsx';
+import Messages from '../GameBoard/Messages.jsx';
+import Avatar from '../Site/Avatar.jsx';
+import DeckStatus from '../Decks/DeckStatus.jsx';
 
-import * as actions from './actions';
+import * as actions from '../../actions';
 
 class InnerPendingGame extends React.Component {
     constructor() {

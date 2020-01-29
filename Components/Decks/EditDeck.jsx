@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 
 import DeckSummary from './DeckSummary.jsx';
 import DeckEditor from './DeckEditor.jsx';
-import AlertPanel from './SiteComponents/AlertPanel.jsx';
+import AlertPanel from '../Site/AlertPanel.jsx';
 
-import * as actions from './actions';
+import * as actions from '../../actions';
 
 class InnerEditDeck extends React.Component {
     constructor() {

@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'underscore';
 
-import AlertPanel from './SiteComponents/AlertPanel.jsx';
-import Input from './FormComponents/Input.jsx';
+import AlertPanel from '../Site/AlertPanel.jsx';
+import Input from '../Form/Input.jsx';
 
-import * as actions from './actions';
+import * as actions from '../../actions';
 
 class InnerBlockList extends React.Component {
     constructor(props) {

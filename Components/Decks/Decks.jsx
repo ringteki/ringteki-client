@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import _ from 'underscore';
 import { connect } from 'react-redux';
 
-import AlertPanel from './SiteComponents/AlertPanel.jsx';
+import AlertPanel from '../Site/AlertPanel.jsx';
 import DeckSummary from './DeckSummary.jsx';
-import Link from './Link.jsx';
+import Link from '../Site/Link.jsx';
 import DeckRow from './DeckRow.jsx';
 
-import * as actions from './actions';
+import * as actions from '../../actions';
 
 class InnerDecks extends React.Component {
     constructor() {

@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
 import _ from 'underscore';
 
-import Avatar from './Avatar.jsx';
-import * as actions from './actions';
+import Avatar from '../Site/Avatar.jsx';
+import * as actions from '../../actions';
 
 class InnerGameList extends React.Component {
     constructor() {

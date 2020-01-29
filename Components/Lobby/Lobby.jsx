@@ -6,11 +6,11 @@ import $ from 'jquery';
 import EmojiConvertor from 'emoji-js';
 import moment from 'moment';
 
-import * as actions from './actions';
-import Avatar from './Avatar.jsx';
-import News from './SiteComponents/News.jsx';
-import AlertPanel from './SiteComponents/AlertPanel.jsx';
-import Typeahead from './FormComponents/Typeahead.jsx';
+import * as actions from '../../actions';
+import Avatar from '../Site/Avatar.jsx';
+import News from '../Site/News.jsx';
+import AlertPanel from '../Site/AlertPanel.jsx';
+import Typeahead from '../Form/Typeahead.jsx';
 
 class InnerLobby extends React.Component {
     constructor() {

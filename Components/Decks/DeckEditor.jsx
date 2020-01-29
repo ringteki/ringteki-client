@@ -5,12 +5,12 @@ import $ from 'jquery';
 import { connect } from 'react-redux';
 import { findDOMNode } from 'react-dom';
 
-import Input from './FormComponents/Input.jsx';
-import Select from './FormComponents/Select.jsx';
-import Typeahead from './FormComponents/Typeahead.jsx';
-import TextArea from './FormComponents/TextArea.jsx';
+import Input from '../Form/Input.jsx';
+import Select from '../Form/Select.jsx';
+import Typeahead from '../Form/Typeahead.jsx';
+import TextArea from '../Form/TextArea.jsx';
 
-import * as actions from './actions';
+import * as actions from '../../actions';
 
 class InnerDeckEditor extends React.Component {
     constructor(props) {

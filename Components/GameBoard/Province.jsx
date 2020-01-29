@@ -4,7 +4,7 @@ import _ from 'underscore';
 import $ from 'jquery';
 
 import Card from './Card.jsx';
-import {tryParseJSON} from '../util.js';
+import {tryParseJSON} from '../../util.js';
 
 class Province extends React.Component {
     constructor() {

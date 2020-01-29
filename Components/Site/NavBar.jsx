@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import Link from './Link.jsx';
 import Avatar from './Avatar.jsx';
 
-import * as actions from './actions';
+import * as actions from '../../actions';
 
 class InnerNavBar extends React.Component {
     constructor(props) {

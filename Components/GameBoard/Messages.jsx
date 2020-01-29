@@ -5,8 +5,8 @@ import _ from 'underscore';
 import EmojiConvertor from 'emoji-js';
 import uuid from 'uuid';
 
-import Avatar from '../Avatar.jsx';
-import * as actions from '../actions';
+import Avatar from '../Site/Avatar.jsx';
+import * as actions from '../../actions';
 
 class InnerMessages extends React.Component {
     constructor() {

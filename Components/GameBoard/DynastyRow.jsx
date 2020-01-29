@@ -7,7 +7,7 @@ import AdditionalCardPile from './AdditionalCardPile.jsx';
 import Card from './Card.jsx';
 import CardPile from './CardPile.jsx';
 import Province from './Province.jsx';
-import {tryParseJSON} from '../util.js';
+import {tryParseJSON} from '../../util.js';
 
 class DynastyRow extends React.Component {
     constructor() {

@@ -5,9 +5,9 @@ import $ from 'jquery';
 import {connect} from 'react-redux';
 import ReCAPTCHA from 'react-google-recaptcha';
 
-import AlertPanel from './SiteComponents/AlertPanel.jsx';
+import AlertPanel from '../Site/AlertPanel.jsx';
 
-import * as actions from './actions';
+import * as actions from '../../actions';
 
 class InnerForgotPassword extends React.Component {
     constructor() {

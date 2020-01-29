@@ -4,9 +4,9 @@ import _ from 'underscore';
 import $ from 'jquery';
 
 import {connect} from 'react-redux';
-import AlertPanel from './SiteComponents/AlertPanel.jsx';
+import AlertPanel from '../Site/AlertPanel.jsx';
 
-import * as actions from './actions';
+import * as actions from '../../actions';
 
 class InnerResetPassword extends React.Component {
     constructor() {

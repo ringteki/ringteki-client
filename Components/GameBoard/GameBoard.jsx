@@ -8,24 +8,24 @@ import { toastr } from 'react-redux-toastr';
 import { bindActionCreators } from 'redux';
 import Draggable from 'react-draggable';
 
-import PlayerStatsBox from './GameComponents/PlayerStatsBox.jsx';
-import PlayerStatsRow from './GameComponents/PlayerStatsRow.jsx';
-import PlayerHand from './GameComponents/PlayerHand.jsx';
-import DynastyRow from './GameComponents/DynastyRow.jsx';
-import StrongholdRow from './GameComponents/StrongholdRow.jsx';
-import Ring from './GameComponents/Ring.jsx';
-import HonorFan from './GameComponents/HonorFan.jsx';
-import ActivePlayerPrompt from './GameComponents/ActivePlayerPrompt.jsx';
-import Avatar from './Avatar.jsx';
-import CardZoom from './GameComponents/CardZoom.jsx';
-import Card from './GameComponents/Card.jsx';
-import Chat from './GameComponents/Chat.jsx';
-import Controls from './GameComponents/Controls.jsx';
-import CardPile from './GameComponents/CardPile.jsx';
-import GameConfiguration from './GameComponents/GameConfiguration.jsx';
-import { tryParseJSON } from './util.js';
+import PlayerStatsBox from './PlayerStatsBox.jsx';
+import PlayerStatsRow from './PlayerStatsRow.jsx';
+import PlayerHand from './PlayerHand.jsx';
+import DynastyRow from './DynastyRow.jsx';
+import StrongholdRow from './StrongholdRow.jsx';
+import Ring from './Ring.jsx';
+import HonorFan from './HonorFan.jsx';
+import ActivePlayerPrompt from './ActivePlayerPrompt.jsx';
+import Avatar from '../Site/Avatar.jsx';
+import CardZoom from './CardZoom.jsx';
+import Card from './Card.jsx';
+import Chat from './Chat.jsx';
+import Controls from './Controls.jsx';
+import CardPile from './CardPile.jsx';
+import GameConfiguration from './GameConfiguration.jsx';
+import { tryParseJSON } from '../../util.js';
 
-import * as actions from './actions';
+import * as actions from '../../actions';
 
 export class InnerGameBoard extends React.Component {
     constructor() {

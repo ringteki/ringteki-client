@@ -4,12 +4,12 @@ import _ from 'underscore';
 import $ from 'jquery';
 import { connect } from 'react-redux';
 
-import AlertPanel from './SiteComponents/AlertPanel.jsx';
-import Input from './FormComponents/Input.jsx';
-import Checkbox from './FormComponents/Checkbox.jsx';
+import AlertPanel from '../Site/AlertPanel.jsx';
+import Input from '../Form/Input.jsx';
+import Checkbox from '../Form/Checkbox.jsx';
 import Slider from 'react-bootstrap-slider';
 
-import * as actions from './actions';
+import * as actions from '../../actions';
 
 class InnerProfile extends React.Component {
     constructor(props) {

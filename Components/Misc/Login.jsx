@@ -4,10 +4,10 @@ import _ from 'underscore';
 import $ from 'jquery';
 import {connect} from 'react-redux';
 
-import Link from './Link.jsx';
-import AlertPanel from './SiteComponents/AlertPanel.jsx';
+import Link from '../Site/Link.jsx';
+import AlertPanel from '../Site/AlertPanel.jsx';
 
-import * as actions from './actions';
+import * as actions from '../../actions';
 
 class InnerLogin extends React.Component {
     constructor() {

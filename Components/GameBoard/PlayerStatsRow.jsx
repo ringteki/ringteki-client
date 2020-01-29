@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Avatar from '../Avatar.jsx';
+import Avatar from '../Site/Avatar.jsx';
 import Clock from './Clock.jsx';
 
 export class PlayerStatsRow extends React.Component {

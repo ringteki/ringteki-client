@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'underscore';
 
-import Checkbox from '../FormComponents/Checkbox.jsx';
+import Checkbox from '../Form/Checkbox.jsx';
 
 class GameConfiguration extends React.Component {
     constructor(props) {
