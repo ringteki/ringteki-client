@@ -4,7 +4,7 @@ import $ from 'jquery';
 import _ from 'underscore';
 import {connect} from 'react-redux';
 
-import AlertPanel from '../../Site/AlertPanel.jsx';
+import AlertPanel from '../Site/AlertPanel.jsx';
 import * as actions from '../../actions';
 
 export class InnerRegister extends React.Component {

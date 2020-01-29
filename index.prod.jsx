@@ -1,16 +1,17 @@
-/*global user, authToken */
 import React from 'react';
 import { render } from 'react-dom';
-import Application from './Application.jsx';
+import Application from './Application';
 import { Provider } from 'react-redux';
 import configureStore from './configureStore';
-import { navigate, login } from './actions';
+import { navigate } from './actions';
 import 'bootstrap/dist/js/bootstrap';
 import ReduxToastr from 'react-redux-toastr';
 import Raven from 'raven-js';
+import { DragDropContext } from 'react-dnd';
+import { default as TouchBackend } from 'react-dnd-touch-backend';
 
-import version from '../version.js';
-import ErrorBoundary from './SiteComponents/ErrorBoundary.jsx';
+import version from './version';
+import ErrorBoundary from './Components/Site/ErrorBoundary';
 
 const ravenOptions = {
     ignoreErrors: [
@@ -51,12 +52,13 @@ const ravenOptions = {
         // Other plugins
         /127\.0\.0\.1:4001\/isrunning/i, // Cacaoweb
         /webappstoolbarba\.texthelp\.com\//i,
-        /metrics\.itunes\.apple\.com\.edgesuite\.net\//i
+        /metrics\.itunes\.apple\.com\.edgesuite\.net\//i,
+        /YoukuAntiAds\.eval/i
     ],
-    release: version
+    release: version.build
 };
 
-Raven.config('https://6338b02af9114903bb47e5b4dee79d0e@sentry.io/169735', ravenOptions)
+Raven.config('https://9b2732938dd340e9a535a034e37ff923@sentry.io/2042731', ravenOptions)
     .install();
 
 const store = configureStore();
@@ -67,9 +69,7 @@ window.onpopstate = function(e) {
     store.dispatch(navigate(e.target.location.pathname));
 };
 
-if(typeof user !== 'undefined') {
-    store.dispatch(login(user, authToken, user.admin));
-}
+const DnDContainer = DragDropContext(TouchBackend({ enableMouseEvents: true }))(Application);
 
 render(
     <Provider store={ store }>
@@ -82,7 +82,7 @@ render(
                 transitionIn='fadeIn'
                 transitionOut='fadeOut' />
             <ErrorBoundary message={ 'We\'re sorry, a critical error has occured in the client and we\'re unable to show you anything.  Please try refreshing your browser after filling out a report.' }>
-                <Application />
+                <DnDContainer />
             </ErrorBoundary>
         </div>
     </Provider>, document.getElementById('component'));
