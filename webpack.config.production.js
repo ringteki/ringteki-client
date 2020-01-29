@@ -2,15 +2,15 @@ require('es6-promise').polyfill();
 var webpack = require('webpack');
 var path = require('path');
 
-var BUILD_DIR = path.resolve(__dirname, 'public');
-var APP_DIR = path.resolve(__dirname, 'client');
+var BUILD_DIR = path.resolve(__dirname, 'assets');
+var APP_DIR = path.resolve(__dirname, '.');
 var LESS_DIR = path.resolve(__dirname, 'less');
 
 var config = {
     devtool: 'source-map',
     entry: [
         'babel-polyfill',
-        path.join(__dirname, 'client/index.jsx'),
+        path.join(__dirname, './index.jsx'),
         LESS_DIR + '/site.less'
     ],
     output: {

@@ -3,8 +3,8 @@ var path = require('path');
 var precss = require('precss');
 var autoprefixer = require('autoprefixer');
 
-var BUILD_DIR = path.resolve(__dirname, 'public');
-var APP_DIR = path.resolve(__dirname, 'client');
+var BUILD_DIR = path.resolve(__dirname, 'assets');
+var APP_DIR = path.resolve(__dirname, '.');
 var LESS_DIR = path.resolve(__dirname, 'less');
 
 var config = {
@@ -12,9 +12,9 @@ var config = {
     entry: [
         'babel-polyfill',
         'react-hot-loader/patch',
-        'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=2000',
+        'webpack-hot-middleware/.?path=/__webpack_hmr&timeout=2000',
         'webpack/hot/only-dev-server',
-        path.join(__dirname, 'client/index.jsx'),
+        path.join(__dirname, './index.jsx'),
         LESS_DIR + '/site.less'
     ],
     output: {
