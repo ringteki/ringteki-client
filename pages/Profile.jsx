@@ -1,23 +1,28 @@
+  
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'underscore';
-import $ from 'jquery';
 import { connect } from 'react-redux';
-
-import AlertPanel from '../Site/AlertPanel.jsx';
-import Input from '../Form/Input.jsx';
-import Checkbox from '../Form/Checkbox.jsx';
 import Slider from 'react-bootstrap-slider';
 
-import * as actions from '../../actions';
+import AlertPanel from '../Components/Site/AlertPanel';
+import ApiStatus from '../Components/Site/ApiStatus';
+import Panel from '../Components/Site/Panel';
+import Form from '../Components/Form/Form';
+import Checkbox from '../Components/Form/Checkbox';
+import CardSizeOption from '../Components/Profile/CardSizeOption';
+import GameBackgroundOption from '../Components/Profile/GameBackgroundOption';
+import * as actions from '../actions';
+import Avatar from '../Components/Site/Avatar';
 
-class InnerProfile extends React.Component {
+class Profile extends React.Component {
     constructor(props) {
         super(props);
 
-        if(!this.props.user) {
-            return;
-        }
+        this.handleSelectBackground = this.handleSelectBackground.bind(this);
+        this.handleSelectCardSize = this.handleSelectCardSize.bind(this);
+        this.onUpdateAvatarClick = this.onUpdateAvatarClick.bind(this);
+        this.onSaveClick = this.onSaveClick.bind(this);
+        this.onUnlinkClick = this.onUnlinkClick.bind(this);
 
         this.state = {
             disableGravatar: this.props.user.settings.disableGravatar,
@@ -25,6 +30,7 @@ class InnerProfile extends React.Component {
             loading: false,
             newPassword: '',
             newPasswordAgain: '',
+            successMessage: '',
             promptedActionWindows: this.props.user.promptedActionWindows,
             validation: {},
             windowTimer: this.props.user.settings.windowTimer,
@@ -34,6 +40,26 @@ class InnerProfile extends React.Component {
             selectedCardSize: this.props.user.settings.cardSize
         };
 
+        this.backgrounds = [
+            { name: 'none', label: 'None', imageUrl: 'img/blank.png' },
+            { name: 'CRAB', label: 'Crab', imageUrl: 'img/bgs/crab.png' },
+            { name: 'CRANE', label: 'Crane', imageUrl: 'img/bgs/crane.png' },
+            { name: 'DRAGON', label: 'Dragon', imageUrl: 'img/bgs/dragon.png' },
+            { name: 'LION', label: 'Lion', imageUrl: 'img/bgs/lion.png' },
+            { name: 'MANTIS', label: 'Mantis', imageUrl: 'img/bgs/mantis.png' },
+            { name: 'PHOENIX', label: 'Phoenix', imageUrl: 'img/bgs/phoenix.png' },
+            { name: 'SCORPION', label: 'Scorpion', imageUrl: 'img/bgs/scorpion.png' },
+            { name: 'SPIDER', label: 'Spider', imageUrl: 'img/bgs/spider.png' },
+            { name: 'UNICORN', label: 'Unicorn', imageUrl: 'img/bgs/unicorn.png' }
+        ];
+
+        this.cardSizes = [
+            { name: 'small', label: 'Small' },
+            { name: 'normal', label: 'Normal' },
+            { name: 'large', label: 'Large' },
+            { name: 'x-large', label: 'Extra-Large' }
+        ];
+
         this.windows = [
             { name: 'dynasty', label: 'Dynasty phase', style: 'col-sm-4' },
             { name: 'draw', label: 'Draw phase', style: 'col-sm-4' },
@@ -41,6 +67,14 @@ class InnerProfile extends React.Component {
             { name: 'conflict', label: 'During conflict', style: 'col-sm-4' },
             { name: 'fate', label: 'Fate phase', style: 'col-sm-4' }
         ];
+
+        if(!this.props.user) {
+            return;
+        }
+    }
+
+    componentDidMount() {
+        this.updateProfile(this.props);
     }
 
     componentWillReceiveProps(props) {
@@ -48,10 +82,38 @@ class InnerProfile extends React.Component {
             return;
         }
 
+        // If we haven't previously got any user details, then the api probably just returned now, so set the initial user details
+        if(!this.state.promptedActionWindows) {
+            this.updateProfile(props);
+        }
+
+        if(props.profileSaved) {
+            this.setState({
+                successMessage: 'Profile saved successfully.  Please note settings changed here may only apply at the start of your next game.'
+            });
+
+            this.updateProfile(props);
+
+            setTimeout(() => {
+                this.setState({ successMessage: undefined });
+            }, 5000);
+        }
+    }
+
+    updateProfile(props) {
+        if(!props.user) {
+            return;
+        }
+
         this.setState({
             email: props.user.email,
             disableGravatar: props.user.settings.disableGravatar,
-            promptedActionWindows: props.user.promptedActionWindows
+            promptedActionWindows: props.user.promptedActionWindows,
+            windowTimer: props.user.settings.windowTimer,
+            timerSettings: props.user.settings.timerSettings,
+            optionSettings: props.user.settings.optionSettings,
+            selectedBackground: props.user.settings.background,
+            selectedCardSize: props.user.settings.cardSize
         });
     }
 
@@ -86,97 +148,30 @@ class InnerProfile extends React.Component {
         this.setState(newState);
     }
 
-    onSaveClick(event) {
-        event.preventDefault();
+    onSaveClick() {
+        this.setState({ successMessage: undefined });
 
-        this.setState({ errorMessage: undefined, successMessage: undefined });
+        document.getElementsByClassName('wrapper')[0].scrollTop = 0;
 
-        this.verifyEmail();
-        this.verifyPassword(true);
-
-        if(_.any(this.state.validation, function(message) {
-            return message && message !== '';
-        })) {
-            this.setState({ errorMessage: 'There was an error in one or more fields, please see below, correct the error and try again' });
-            return;
-        }
-
-        this.setState({ loading: true });
-
-        $.ajax('/api/account/' + this.props.user.username,
-            {
-                method: 'PUT',
-                data: {
-                    data: JSON.stringify({
-                        email: this.state.email,
-                        password: this.state.newPassword,
-                        promptedActionWindows: this.state.promptedActionWindows,
-                        settings: {
-                            disableGravatar: this.state.disableGravatar,
-                            windowTimer: this.state.windowTimer,
-                            optionSettings: this.state.optionSettings,
-                            timerSettings: this.state.timerSettings,
-                            background: this.state.selectedBackground,
-                            cardSize: this.state.selectedCardSize
-                        }
-                    })
-                }
-            })
-            .done((data) => {
-                if(data.success) {
-                    this.setState({ successMessage: 'Profile saved successfully.  Please note settings changed here will only apply at the start of your next game' });
-
-                    this.props.socket.emit('authenticate', data.token);
-                    this.props.refreshUser(data.user, data.token);
-                } else {
-                    this.setState({ errorMessage: data.message });
-                }
-            })
-            .always(() => {
-                this.setState({ loading: false });
-            });
-    }
-
-    verifyPassword(isSubmitting) {
-        var validation = this.state.validation;
-
-        delete validation['password'];
-
-        if(!this.state.newPassword && !this.state.newPasswordAgain) {
-            return;
-        }
-
-        if(this.state.newPassword.length < 6) {
-            validation['password'] = 'The password you specify must be at least 6 characters long';
-        }
-
-        if(isSubmitting && !this.state.newPasswordAgain) {
-            validation['password'] = 'Please enter your password again';
-        }
-
-        if(this.state.newPassword && this.state.newPasswordAgain && this.state.newPassword !== this.state.newPasswordAgain) {
-            validation['password'] = 'The passwords you have specified do not match';
-        }
-
-        this.setState({ validation: validation });
-    }
-
-    verifyEmail() {
-        var validation = this.state.validation;
-
-        delete validation['email'];
-
-        if(!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(this.state.email)) {
-            validation['email'] = 'Please enter a valid email address';
-        }
-
-        this.setState({ validation: validation });
+        this.props.saveProfile(this.props.user.username, {
+            email: this.state.email,
+            password: this.state.newPassword,
+            promptedActionWindows: this.state.promptedActionWindows,
+            enableGravatar: this.state.disableGravatar,
+            settings: {
+                windowTimer: this.state.windowTimer,
+                timerSettings: this.state.timerSettings,
+                optionSettings: this.state.optionSettings,
+                background: this.state.selectedBackground,
+                cardSize: this.state.selectedCardSize
+            }
+        });
     }
 
     onSlideStop(event) {
         let value = parseInt(event.target.value);
 
-        if(_.isNaN(value)) {
+        if(isNaN(value)) {
             return;
         }
 
@@ -191,20 +186,34 @@ class InnerProfile extends React.Component {
         this.setState({ windowTimer: value });
     }
 
-    onBackgroundClick(background) {
+    handleSelectBackground(background) {
         this.setState({ selectedBackground: background });
     }
 
-    onCardClick(size) {
+    handleSelectCardSize(size) {
         this.setState({ selectedCardSize: size });
     }
 
+    onUpdateAvatarClick(event) {
+        event.preventDefault();
+
+        this.props.updateAvatar(this.props.user.username);
+    }
+
+    onUnlinkClick() {
+        this.props.unlinkPatreon();
+    }
+
+    isPatreonLinked() {
+        return ['linked', 'pledged'].includes(this.props.user.patreon);
+    }
+
     render() {
-        if(!this.props.user) {
+        if(!this.props.user || !this.state.promptedActionWindows) {
             return <AlertPanel type='error' message='You must be logged in to update your profile' />;
         }
 
-        let windows = _.map(this.windows, window => {
+        let windows = this.windows.map(window => {
             return (<Checkbox key={ window.name }
                 noGroup
                 name={ 'promptedActionWindows.' + window.name }
@@ -215,11 +224,21 @@ class InnerProfile extends React.Component {
                 checked={ this.state.promptedActionWindows[window.name] } />);
         });
 
+        if(this.props.profileSaved) {
+            setTimeout(() => {
+                this.props.clearProfileStatus();
+            }, 5000);
+        }
+
+        let initialValues = { email: this.props.user.email };
+        let callbackUrl = process.env.NODE_ENV === 'production' ? 'https://jigoku.online/patreon' : 'http://localhost:8080/patreon';
+
+        //TODO Update profile for ringteki
         return (
             <div className='col-sm-8 col-sm-offset-2 profile full-height'>
                 <div className='about-container'>
-                    { this.state.errorMessage ? <AlertPanel type='error' message={ this.state.errorMessage } /> : null }
-                    { this.state.successMessage ? <AlertPanel type='success' message={ this.state.successMessage } /> : null }
+                    <ApiStatus apiState={ this.props.apiState } successMessage={ this.state.successMessage } />
+
                     <form className='form form-horizontal'>
                         <div className='panel-title'>
                             Profile

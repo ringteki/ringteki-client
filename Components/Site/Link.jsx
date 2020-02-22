@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
+
 import * as actions from '../../actions';
 
 const mapStateToProps = (state, ownProps) => {
@@ -9,7 +10,7 @@ const mapStateToProps = (state, ownProps) => {
     };
 };
 
-class InnerLink extends React.Component {
+class Link extends React.Component {
     constructor() {
         super();
 
@@ -26,14 +27,12 @@ class InnerLink extends React.Component {
     }
 }
 
-InnerLink.displayName = 'Link';
-InnerLink.propTypes = {
+Link.displayName = 'Link';
+Link.propTypes = {
     children: PropTypes.string,
     className: PropTypes.string,
     href: PropTypes.string,
     navigate: PropTypes.func
 };
 
-const Link = connect(mapStateToProps, actions)(InnerLink);
-
-export default Link;
+export default connect(mapStateToProps, actions)(Link);

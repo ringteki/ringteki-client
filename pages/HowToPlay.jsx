@@ -1,16 +1,14 @@
 import React from 'react';
 
-import Link from '../Site/Link.jsx';
+import Link from '../Components/Site/Link';
+import Panel from '../Components/Site/Panel';
 
 class HowToPlay extends React.Component {
     render() {
         return (
             <div className='col-xs-12 full-height'>
-                <div className='panel-title text-center'>
-                    How To Play on Jigoku Online
-                </div>
-                <div className='panel about-container'>
-                    <a className='btn btn-danger btn-lg pull-right' target='_blank' href='https://github.com/gryffon/ringteki/issues'>Report Problems</a>
+                <Panel title='How To Play on Jigoku Online'>
+                    <a className='btn btn-danger btn-lg pull-right' target='_blank' href='https://github.com/ringteki/ringteki/issues'>Report Problems</a>
 
                     <p>This guide is aimed at players familiar with the Legend of the Five Rings: The Card Game who want to start playing online using the Jigoku Online platform. If you are new to this cardgame in general, there is a <a href='https://www.youtube.com/watch?v=wTtjYzq4T54' target='_blank'>helpful tutorial video</a>, a <a href='https://images-cdn.fantasyflightgames.com/filer_public/74/46/7446c964-613e-4c01-8902-199257c5d4af/l5c01_learntoplay_web.pdf' target='_blank'>Learn To Play guide</a>, and a <a href='https://fiveringsdb.com/rules/reference' target='_blank'>Rules Reference Guide</a> to help you out.</p>
 
@@ -97,7 +95,7 @@ class HowToPlay extends React.Component {
 
                     <h3 id='conceding'>About Stats, Conceding, and Leaving Games</h3>
                     <p>Jigoku Online does not rank and/or match players by skill level in any way. There are three categories (beginner, casual and competitive) to be chosen when creating a game which gives an indication of what to expect, but it doesn't enforce anything. Even though personal stats are not being tracked, most players still very much appreciate a formal concede by clicking the ‘Concede’ button and typing ‘gg’ before leaving a game. The reality of quick and anonymous online games dictates this won’t always happen though, as evidenced by regular complaining in the main lobby about people leaving without conceding. Our advice is to just move on to the next game since in the end, conceding or not doesn’t really impact anything. Happy gaming!</p>
-                </div>
+                </Panel>
             </div>
         );
     }

@@ -1,24 +1,36 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import _ from 'underscore';
 
-import AlertPanel from '../Site/AlertPanel.jsx';
-import Input from '../Form/Input.jsx';
+import AlertPanel from '../Components/Site/AlertPanel';
+import Panel from '../Components/Site/Panel';
+import Input from '../Components/Form/Input';
+import * as actions from '../actions';
 
-import * as actions from '../../actions';
-
-class InnerBlockList extends React.Component {
+class BlockList extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            username: ''
+            username: '',
+            detailsLoaded: false
         };
     }
 
-    componentDidMount() {
-        this.props.loadBlockList(this.props.user);
+    componentWillMount() {
+        if(this.props.user) {
+            this.props.loadBlockList(this.props.user);
+
+            this.setState({ detailsLoaded: true });
+        }
+    }
+
+    componentWillReceiveProps(props) {
+        if(!this.state.detailsLoaded && props.user) {
+            this.props.loadBlockList(props.user);
+
+            this.setState({ detailsLoaded: true });
+        }
     }
 
     onUsernameChange(event) {
@@ -47,6 +59,7 @@ class InnerBlockList extends React.Component {
             successPanel = (
                 <AlertPanel message='Block list entry added successfully' type={ 'success' } />
             );
+            this.props.socket.emit('authenticate', this.props.token);
         }
 
         if(this.props.blockListDeleted) {
@@ -56,11 +69,11 @@ class InnerBlockList extends React.Component {
             successPanel = (
                 <AlertPanel message='Block list entry removed successfully' type={ 'success' } />
             );
-
+            this.props.socket.emit('authenticate', this.props.token);
         }
 
         let content;
-        let blockList = _.map(this.props.blockList, user => {
+        let blockList = this.props.blockList.map(user => {
             return (
                 <tr key={ user }>
                     <td>{ user }</td>
@@ -83,24 +96,20 @@ class InnerBlockList extends React.Component {
             </table>
         );
 
-        if(this.props.loading) {
+        let errorBar = this.props.apiRequestSuccess === false ? <AlertPanel type='error' message={ 'An error occurred loading the block list.  Please try again later.' } /> : null;
+        errorBar = errorBar || (this.props.apiSuccess === false ? <AlertPanel type='error' message={ this.props.apiMessage } /> : null);
+
+        if(this.props.apiLoading) {
             content = <div>Loading block list from the server...</div>;
-        } else if(this.props.apiError) {
-            content = <AlertPanel type='error' message={ this.props.apiError } />;
         } else {
             content = (
                 <div className='col-sm-8 col-sm-offset-2 full-height'>
                     <div className='about-container'>
                         { successPanel }
-
-                        { this.state.errorMessage ? <AlertPanel type='error' message={ this.state.errorMessage } /> : null }
-                        { this.state.successMessage ? <AlertPanel type='success' message={ this.state.successMessage } /> : null }
+                        { errorBar }
 
                         <form className='form form-horizontal'>
-                            <div className='panel-title text-center'>
-                            Block list
-                            </div>
-                            <div className='panel'>
+                            <Panel title='Block list'>
                                 <p>It can sometimes become necessary to prevent someone joining your games, or stop seeing their messages, or both.
                                 Users on this list will not be able to join your games, and you will not see their chat messages or their games.
                                 </p>
@@ -113,7 +122,7 @@ class InnerBlockList extends React.Component {
 
                                 <h3>Users Blocked</h3>
                                 { table }
-                            </div>
+                            </Panel>
                         </form>
                     </div>
                 </div>);
@@ -123,10 +132,13 @@ class InnerBlockList extends React.Component {
     }
 }
 
-InnerBlockList.displayName = 'BlockList';
-InnerBlockList.propTypes = {
+BlockList.displayName = 'BlockList';
+BlockList.propTypes = {
     addBlockListEntry: PropTypes.func,
-    apiError: PropTypes.string,
+    apiLoading: PropTypes.bool,
+    apiMessage: PropTypes.string,
+    apiRequestSuccess: PropTypes.bool,
+    apiSuccess: PropTypes.bool,
     blockList: PropTypes.array,
     blockListAdded: PropTypes.bool,
     blockListDeleted: PropTypes.bool,
@@ -134,20 +146,24 @@ InnerBlockList.propTypes = {
     loadBlockList: PropTypes.func,
     loading: PropTypes.bool,
     removeBlockListEntry: PropTypes.func,
+    socket: PropTypes.object,
+    token: PropTypes.string,
     user: PropTypes.object
 };
 
 function mapStateToProps(state) {
     return {
-        apiError: state.api.message,
+        apiLoading: state.api.REQUEST_BLOCKLIST ? state.api.REQUEST_BLOCKLIST.loading : undefined,
+        apiMessage: state.api.ADD_BLOCKLIST ? state.api.ADD_BLOCKLIST.message : undefined,
+        apiSuccess: state.api.ADD_BLOCKLIST ? state.api.ADD_BLOCKLIST.success : undefined,
+        apiRequestSuccess: state.api.REQUEST_BLOCKLIST ? state.api.REQUEST_BLOCKLIST.success : undefined,
         blockList: state.user.blockList,
         blockListAdded: state.user.blockListAdded,
         blockListDeleted: state.user.blockListDeleted,
-        loading: state.api.loading,
-        user: state.auth.user
+        socket: state.lobby.socket,
+        token: state.account.token,
+        user: state.account.user
     };
 }
 
-const BlockList = connect(mapStateToProps, actions)(InnerBlockList);
-
-export default BlockList;
+export default connect(mapStateToProps, actions)(BlockList);

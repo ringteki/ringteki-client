@@ -6,7 +6,8 @@ export function loadCards() {
         shouldCallAPI: (state) => {
             return !state.cards.cards;
         },
-        callAPI: () => $.ajax('/api/cards', { cache: false })
+        APIParams: { url: '/api/cards', cache: false },
+        skipAuth: true
     };
 }
 
@@ -16,7 +17,8 @@ export function loadPacks() {
         shouldCallAPI: (state) => {
             return !state.cards.packs;
         },
-        callAPI: () => $.ajax('/api/packs', { cache: false })
+        APIParams: { url: '/api/packs', cache: false },
+        skipAuth: true
     };
 }
 
@@ -26,6 +28,40 @@ export function loadFactions() {
         shouldCallAPI: (state) => {
             return !state.cards.factions;
         },
-        callAPI: () => $.ajax('/api/factions', { cache: false })
+        APIParams: { url: '/api/factions', cache: false },
+        skipAuth: true
+    };
+}
+
+export function loadRestrictedList() {
+    return {
+        types: ['REQUEST_RESTRICTED_LIST', 'RECEIVE_RESTRICTED_LIST'],
+        shouldCallAPI: (state) => {
+            return !state.cards.restrictedList;
+        },
+        APIParams: { url: '/api/restricted-list', cache: false },
+        skipAuth: true
+    };
+}
+
+export function loadBannedList() {
+    return {
+        types: ['REQUEST_RESTRICTED_LIST', 'RECEIVE_RESTRICTED_LIST'],
+        shouldCallAPI: (state) => {
+            return !state.cards.bannedList;
+        },
+        APIParams: { url: '/api/banned-list', cache: false },
+        skipAuth: true
+    };
+}
+
+export function loadStandaloneDecks() {
+    return {
+        types: ['REQUEST_STANDALONE_DECKS', 'RECEIVE_STANDALONE_DECKS'],
+        shouldCallAPI: (state) => {
+            return !state.cards.standaloneDecks;
+        },
+        APIParams: { url: '/api/standalone-decks', cache: false },
+        skipAuth: true
     };
 }
