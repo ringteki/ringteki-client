@@ -1,54 +1,93 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
-import _ from 'underscore';
+import { connect } from 'react-redux';
+import moment from 'moment';
 
-import AlertPanel from '../Site/AlertPanel.jsx';
-import Input from '../Form/Input.jsx';
-import Checkbox from '../Form/Checkbox.jsx';
+import Form from '../Components/Form/Form';
+import Checkbox from '../Components/Form/Checkbox';
+import Panel from '../Components/Site/Panel';
+import ApiStatus from '../Components/Site/ApiStatus';
 
-import * as actions from '../../actions';
+import * as actions from '../actions';
 
-class InnerUserAdmin extends React.Component {
+class UserAdmin extends React.Component {
     constructor(props) {
         super(props);
 
         this.defaultPermissions = {
             canEditNews: false,
-            canManageUsers: false
+            canManageUsers: false,
+            canManagePermissions: false,
+            canManageGames: false,
+            canManageNodes: false,
+            canModerateChat: false,
+            canManageMotd: false,
+            isAdmin: false,
+            isContributor: false,
+            isSupporter: false
         };
 
         this.state = {
             permissions: this.props.currentUser ? (this.props.currentUser.permissions || this.defaultPermissions) : this.defaultPermissions,
+            disabled: this.props.currentUser ? this.props.currentUser.disabled : false,
+            verified: this.props.currentUser ? this.props.currentUser.verified : false,
             username: ''
         };
 
         this.permissions = [
             { name: 'canEditNews', label: 'News Editor' },
-            { name: 'canManageUsers', label: 'User Manager' }
+            { name: 'canManageUsers', label: 'User Manager' },
+            { name: 'canManagePermissions', label: 'Permissions Manager' },
+            { name: 'canManageGames', label: 'Games Manager' },
+            { name: 'canManageNodes', label: 'Node Manager' },
+            { name: 'canModerateChat', label: 'Chat Moderator' },
+            { name: 'canManageMotd', label: 'Motd Manager' },
+            { name: 'canManageBanlist', label: 'Banlist Manager' },
+            { name: 'isAdmin', label: 'Site Admin' },
+            { name: 'isContributor', label: 'Contributor' },
+            { name: 'isSupporter', label: 'Supporter' }
         ];
+
+        this.onDisabledChanged = this.onDisabledChanged.bind(this);
+        this.onVerifiedChanged = this.onVerifiedChanged.bind(this);
+        this.onFindClick = this.onFindClick.bind(this);
     }
 
     componentWillReceiveProps(props) {
-        this.setState({ permissions: props.currentUser ? (props.currentUser.permissions || this.defaultPermissions) : this.defaultPermissions });
+        this.setState({
+            permissions: props.currentUser ? (props.currentUser.permissions || this.defaultPermissions) : this.defaultPermissions,
+            disabled: props.currentUser ? props.currentUser.disabled : false,
+            verified: props.currentUser ? props.currentUser.verified : false
+        });
+
+        if(props.userSaved) {
+            setTimeout(() => {
+                props.clearUserStatus();
+            }, 5000);
+            this.setState({ successMessage: 'User saved successfully.' });
+        } else {
+            this.setState({ successMessage: undefined });
+        }
     }
 
-    onUsernameChange(event) {
-        this.setState({ username: event.target.value });
-    }
-
-    onFindClick(event) {
-        event.preventDefault();
-
-        this.props.findUser(this.state.username);
+    onFindClick(state) {
+        this.props.findUser(state.username);
     }
 
     onSaveClick(event) {
         event.preventDefault();
 
         this.props.currentUser.permissions = this.state.permissions;
+        this.props.currentUser.disabled = this.state.disabled;
+        this.props.currentUser.verified = this.state.verified;
 
         this.props.saveUser(this.props.currentUser);
+    }
+
+    onClearClick(event) {
+        event.preventDefault();
+
+        this.props.clearUserSessions(this.props.currentUser.username);
     }
 
     onPermissionToggle(field, event) {
@@ -59,93 +98,123 @@ class InnerUserAdmin extends React.Component {
         this.setState(newState);
     }
 
+    onDisabledChanged(event) {
+        this.setState({ disabled: event.target.checked });
+    }
+
+    onVerifiedChanged(event) {
+        this.setState({ verified: event.target.checked });
+    }
+
+    onLinkedUserClick(name) {
+        this.setState({ username: name });
+
+        this.props.findUser(name);
+    }
+
     render() {
-        let content = null;
-        let successPanel = null;
-
-        if(this.props.userSaved) {
-            setTimeout(() => {
-                this.props.clearUserStatus();
-            }, 5000);
-            successPanel = (
-                <AlertPanel message='User saved successfully' type={ 'success' } />
-            );
-        }
-
-        let notFoundMessage = this.props.apiStatus === 404 ? <AlertPanel type='warning' message='No users found' /> : null;
-
         let renderedUser = null;
 
         if(this.props.currentUser) {
-            let permissions = _.map(this.permissions, (permission) => {
-                return (<Checkbox key={ permission.name } name={ 'permissions.' + permission.name } label={ permission.label } fieldClass='col-sm-offset-3 col-sm-4'
+            let permissions = this.permissions.map(permission => {
+                return (<Checkbox key={ permission.name } name={ 'permissions.' + permission.name } label={ permission.label } fieldClass='col-xs-4'
                     type='checkbox' onChange={ this.onPermissionToggle.bind(this, permission.name) } checked={ this.state.permissions[permission.name] } />);
             });
 
             renderedUser = (
                 <div>
-                    <h3>User details</h3>
-
                     <form className='form'>
-                        <dl>
-                            <dt>Username:</dt><dd>{ this.props.currentUser.username }</dd>
-                            <dt>Email:</dt><dd>{ this.props.currentUser.email }</dd>
-                            <dt>Registered:</dt><dd>{ this.props.currentUser.registered }</dd>
-                        </dl>
+                        <Panel title={ `${this.props.currentUser.username} - User details` }>
+                            <dl className='dl-horizontal'>
+                                <dt>Username:</dt><dd>{ this.props.currentUser.username }</dd>
+                                <dt>Email:</dt><dd>{ this.props.currentUser.email }</dd>
+                                <dt>Registered:</dt><dd>{ moment(this.props.currentUser.registered).format('YYYY-MM-DD HH:MM') }</dd>
+                            </dl>
 
-                        <h4>Permissions</h4>
-                        { permissions }
-                        <button type='button' className='btn btn-primary' onClick={ this.onSaveClick.bind(this) }>Save</button>
+                            <Checkbox name={ 'disabled' } label='Disabled' fieldClass='col-xs-4' type='checkbox'
+                                onChange={ this.onDisabledChanged } checked={ this.state.disabled } />
+                            <Checkbox name={ 'verified' } label='Verified' fieldClass='col-xs-4' type='checkbox'
+                                onChange={ this.onVerifiedChanged } checked={ this.state.verified } />
+                        </Panel>
+                        { this.props.currentUser && this.props.currentUser.linkedAccounts &&
+                            <Panel title='Possibly linked accounts'>
+                                <ul className='list'>
+                                    { this.props.currentUser.linkedAccounts.map(name => {
+                                        return <li key={ name }><a href='javascript:void(0)' onClick={ () => this.onLinkedUserClick(name) }>{ name }</a></li>;
+                                    }) }
+                                </ul>
+                            </Panel>
+                        }
+                        { this.props.currentUser && this.props.currentUser.tokens &&
+                            <Panel title='Sessions'>
+                                <table className='table table-striped'>
+                                    <thead>
+                                        <tr>
+                                            <th>IP Address</th>
+                                            <th>Last Used</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        { this.props.currentUser.tokens.map(token => {
+                                            return (<tr>
+                                                <td>{ token.ip }</td>
+                                                <td>{ moment(token.lastUsed).format('YYYY-MM-DD HH:MM') }</td>
+                                            </tr>);
+                                        }) }
+                                    </tbody>
+                                </table>
+                            </Panel> }
+                        { this.props.user && this.props.user.permissions.canManagePermissions ?
+                            <Panel title='Permissions'>
+                                <div>
+                                    { permissions }
+                                </div>
+                            </Panel> : null }
+                        <button type='button' className='btn btn-primary col-xs-3' onClick={ this.onClearClick.bind(this) }>Clear sessions</button>
+                        <button type='button' className='btn btn-primary col-xs-3' onClick={ this.onSaveClick.bind(this) }>Save { this.props.apiSaveState && this.props.apiSaveState.loading && <span className='spinner button-spinner' /> }</button>
                     </form>
                 </div>
             );
         }
 
-        if(this.props.loading) {
-            content = <div>Searching for user...</div>;
-        } else if(this.props.apiError && this.props.apiStatus !== 404) {
-            content = <AlertPanel type='error' message={ this.props.apiError } />;
-        } else {
-            content = (
-                <div>
-                    { notFoundMessage }
-                    { successPanel }
-                    <form className='form'>
-                        <Input name='username' label={ 'Search for a user' } value={ this.state.username } onChange={ this.onUsernameChange.bind(this) } placeholder={ 'Enter username' } />
-                        <button type='submit' className='btn btn-primary' onClick={ this.onFindClick.bind(this) }>Find</button>
-                    </form>
-
-                    { renderedUser }
-                </div>);
+        if(this.props.apiState && this.props.apiState.status === 404) {
+            this.props.apiState.message = 'User was not found.';
         }
 
-        return content;
+        return (<div className='col-sm-offset-2 col-sm-8'>
+            <ApiStatus apiState={ this.props.apiState } successMessage={ this.state.successMessage } />
+            <Panel title='User administration'>
+                <Form name='userAdmin' apiLoading={ this.props.apiState && this.props.apiState.loading } buttonClass='col-sm-offset-4 col-sm-3' buttonText='Search' onSubmit={ this.onFindClick } />
+            </Panel>
+            { renderedUser }
+        </div>);
     }
 }
 
-InnerUserAdmin.displayName = 'UserAdmin';
-InnerUserAdmin.propTypes = {
-    apiError: PropTypes.string,
-    apiStatus: PropTypes.number,
+UserAdmin.displayName = 'UserAdmin';
+UserAdmin.propTypes = {
+    apiSaveState: PropTypes.object,
+    apiState: PropTypes.object,
+    clearUserSessions: PropTypes.func,
     clearUserStatus: PropTypes.func,
     currentUser: PropTypes.object,
     findUser: PropTypes.func,
     loading: PropTypes.bool,
     saveUser: PropTypes.func,
+    user: PropTypes.object,
     userSaved: PropTypes.bool
 };
 
 function mapStateToProps(state) {
     return {
-        apiError: state.api.message,
-        apiStatus: state.api.status,
+        apiSaveState: state.api.SAVE_USER,
+        apiState: state.api.REQUEST_FINDUSER,
         currentUser: state.admin.currentUser,
         loading: state.api.loading,
+        user: state.account.user,
         userSaved: state.admin.userSaved
     };
 }
 
-const UserAdmin = connect(mapStateToProps, actions)(InnerUserAdmin);
-
-export default UserAdmin;
+export default connect(mapStateToProps, actions)(UserAdmin);
 

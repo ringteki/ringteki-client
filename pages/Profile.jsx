@@ -453,8 +453,8 @@ class Profile extends React.Component {
     }
 }
 
-InnerProfile.displayName = 'Profile';
-InnerProfile.propTypes = {
+Profile.displayName = 'Profile';
+Profile.propTypes = {
     refreshUser: PropTypes.func,
     socket: PropTypes.object,
     user: PropTypes.object
@@ -467,6 +467,4 @@ function mapStateToProps(state) {
     };
 }
 
-const Profile = connect(mapStateToProps, actions)(InnerProfile);
-
-export default Profile;
+export default connect(mapStateToProps, actions)(Profile);
