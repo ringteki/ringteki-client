@@ -1,12 +1,12 @@
 import React from 'react';
 
+import Panel from '../Components/Site/Panel';
+
 class Community extends React.Component {
     render() {
         return (
             <div className='col-xs-12 full-height'>
-                <div className='panel-title text-center'>
-                    Jigoku Online - Community Information
-                </div>
+                <Panel title='Community Information'>
                 <div className='panel about-container'>
                     <h3>What is this page?</h3>
                     <p>This page is a shoutout to other works/resources in the L5R community.</p>

@@ -12,6 +12,7 @@ const enhancer = compose(
             let ret = Object.assign({}, state);
             delete ret.auth;
 
+            //TODO Revalutate for ringteki
             delete ret.cards.agendas;
             delete ret.cards.banners;
             delete ret.cards.cards;

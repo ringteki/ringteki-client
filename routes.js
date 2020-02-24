@@ -31,6 +31,7 @@ const routes = [
     { path: '/about', action: () => <About key='about' /> },
     { path: '/activation', action: context => <Activation key='activation' id={ context.params.id } token={ context.params.token } /> },
     { path: '/blocklist', action: () => <BlockList key='blocklist' /> },
+    { path: '/community', action: () => <Community key='community' /> },
     { path: '/decks', action: () => <Decks key='decks' /> },
     { path: '/decks/add', action: () => <AddDeck key='adddecks' /> },
     { path: '/decks/edit/:id([a-f\\d]{24})', action: context => <EditDeck key='editdeck' deckId={ context.params.id } /> },
