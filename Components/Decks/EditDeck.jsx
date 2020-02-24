@@ -8,6 +8,7 @@ import AlertPanel from '../Site/AlertPanel.jsx';
 
 import * as actions from '../../actions';
 
+//TODO Update from throneteki
 class InnerEditDeck extends React.Component {
     constructor() {
         super();

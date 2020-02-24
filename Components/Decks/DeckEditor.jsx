@@ -12,6 +12,7 @@ import TextArea from '../Form/TextArea.jsx';
 
 import * as actions from '../../actions';
 
+//TODO Update from throneteki
 class InnerDeckEditor extends React.Component {
     constructor(props) {
         super(props);

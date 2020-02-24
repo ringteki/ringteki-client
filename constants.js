@@ -17,3 +17,8 @@ export const ThronesIcons = [
     'targaryen',
     'greyjoy'
 ];
+
+export const RingsIcons = [
+    'military',
+    'power'
+];

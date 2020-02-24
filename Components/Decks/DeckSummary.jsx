@@ -4,6 +4,7 @@ import _ from 'underscore';
 
 import DeckStatus from './DeckStatus.jsx';
 
+//TODO Update from throneteki
 class DeckSummary extends React.Component {
     constructor() {
         super();
