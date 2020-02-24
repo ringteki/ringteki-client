@@ -2,22 +2,24 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import DeckSummary from './DeckSummary.jsx';
-import DeckEditor from './DeckEditor.jsx';
-import AlertPanel from '../Site/AlertPanel.jsx';
-
+import DeckSummary from './DeckSummary';
+import DeckEditor from './DeckEditor';
+import AlertPanel from '../Site/AlertPanel';
+import Panel from '../Site/Panel';
 import * as actions from '../../actions';
 
-export class InnerAddDeck extends React.Component {
+export class AddDeck extends React.Component {
     constructor() {
         super();
 
         this.state = {
             error: '',
-            faction: {}
+            faction: {},
+            deck: undefined
         };
 
         this.onAddDeck = this.onAddDeck.bind(this);
+        this.onDeckUpdated = this.onDeckUpdated.bind(this);
     }
 
     componentWillMount() {
@@ -36,6 +38,10 @@ export class InnerAddDeck extends React.Component {
         this.props.saveDeck(deck);
     }
 
+    onDeckUpdated(deck) {
+        this.setState({ deck: deck });
+    }
+
     render() {
         let content;
 
@@ -47,20 +53,14 @@ export class InnerAddDeck extends React.Component {
             content = (
                 <div>
                     <div className='col-sm-6'>
-                        <div className='panel-title text-center'>
-                            Deck Editor
-                        </div>
-                        <div className='panel'>
-                            <DeckEditor mode='Add' onDeckSave={ this.onAddDeck } />
-                        </div>
+                        <Panel title='Deck Editor'>
+                            <DeckEditor onDeckSave={ this.onAddDeck } onDeckUpdated={ this.onDeckUpdated } deck={ this.state.deck } />
+                        </Panel>
                     </div>
                     <div className='col-sm-6'>
-                        <div className='panel-title text-center col-xs-12'>
-                            { this.props.deck ? this.props.deck.name : 'New Deck' }
-                        </div>
-                        <div className='panel col-xs-12'>
-                            <DeckSummary cards={ this.props.cards } deck={ this.props.deck } />
-                        </div>
+                        <Panel title={ this.state.deck ? this.state.deck.name : 'New Deck' }>
+                            <DeckSummary cards={ this.props.cards } deck={ this.state.deck } />
+                        </Panel>
                     </div>
                 </div>);
         }
@@ -69,13 +69,11 @@ export class InnerAddDeck extends React.Component {
     }
 }
 
-InnerAddDeck.displayName = 'InnerAddDeck';
-InnerAddDeck.propTypes = {
+AddDeck.displayName = 'AddDeck';
+AddDeck.propTypes = {
     addDeck: PropTypes.func,
-    agendas: PropTypes.object,
     apiError: PropTypes.string,
     cards: PropTypes.object,
-    deck: PropTypes.object,
     deckSaved: PropTypes.bool,
     factions: PropTypes.object,
     loading: PropTypes.bool,
@@ -85,10 +83,8 @@ InnerAddDeck.propTypes = {
 
 function mapStateToProps(state) {
     return {
-        agendas: state.cards.factions,
         apiError: state.api.message,
         cards: state.cards.cards,
-        deck: state.cards.selectedDeck,
         deckSaved: state.cards.deckSaved,
         factions: state.cards.factions,
         loading: state.api.loading,
@@ -96,6 +92,4 @@ function mapStateToProps(state) {
     };
 }
 
-const AddDeck = connect(mapStateToProps, actions)(InnerAddDeck);
-
-export default AddDeck;
+export default connect(mapStateToProps, actions)(AddDeck);

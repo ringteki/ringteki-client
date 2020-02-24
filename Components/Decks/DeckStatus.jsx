@@ -1,33 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import {deckStatusLabel} from './DeckHelper';
 
-import DeckStatusSummary from './DeckStatusSummary.jsx';
-import StatusPopOver from './StatusPopOver.jsx';
+import DeckStatusSummary from './DeckStatusSummary';
+import StatusPopOver from './StatusPopOver';
 
 class DeckStatus extends React.Component {
     render() {
         let { status } = this.props;
+        const restrictionsFollowed = status.noUnreleasedCards;
         let statusName;
-        let className = 'deck-status';
-
-        if(this.props.className) {
-            className += ' ' + this.props.className;
-        }
-
-        if(!status.basicRules) {
-            statusName = 'Invalid';
-            className += ' invalid';
-        } else if(!status.officialRole || !status.noUnreleasedCards || !status.faqRestrictedList) {
-            statusName = 'Casual play only';
-            className += ' casual-play';
-        } else {
-            statusName = 'Valid';
-            className += ' valid';
-        }
+        let className = classNames('deck-status', this.props.className, {
+            'invalid': !status.basicRules || !status.noBannedCards && !restrictionsFollowed,
+            'casual-play': status.basicRules && (status.noBannedCards && !restrictionsFollowed || !status.noBannedCards && restrictionsFollowed),
+            'valid': status.basicRules && status.noBannedCards && restrictionsFollowed
+        });
 
         return (
             <span className={ className }>
-                <StatusPopOver status={ statusName } show>
+                <StatusPopOver status={ deckStatusLabel(status) } show>
                     <div>
                         <DeckStatusSummary status={ status } />
                         { status.extendedStatus && status.extendedStatus.length !== 0 &&
