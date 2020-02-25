@@ -11,6 +11,7 @@ const defaultTime = {
     byoyomi: '0'
 };
 
+//Update from throneteki
 class InnerNewGame extends React.Component {
     constructor() {
         super();

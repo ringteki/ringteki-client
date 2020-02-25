@@ -7,6 +7,7 @@ import _ from 'underscore';
 import Avatar from '../Site/Avatar.jsx';
 import * as actions from '../../actions';
 
+//TODO Update from throneteki
 class InnerGameList extends React.Component {
     constructor() {
         super();
