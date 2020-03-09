@@ -25,32 +25,24 @@ class Profile extends React.Component {
         this.onUnlinkClick = this.onUnlinkClick.bind(this);
 
         this.state = {
-            disableGravatar: this.props.user.settings.disableGravatar,
-            email: this.props.user.email,
-            loading: false,
             newPassword: '',
             newPasswordAgain: '',
             successMessage: '',
-            promptedActionWindows: this.props.user.promptedActionWindows,
-            validation: {},
-            windowTimer: this.props.user.settings.windowTimer,
-            optionSettings: this.props.user.settings.optionSettings,
-            timerSettings: this.props.user.settings.timerSettings,
-            selectedBackground: this.props.user.settings.background,
-            selectedCardSize: this.props.user.settings.cardSize
+            timerSettings: {},
+            keywordSettings: {},
         };
 
         this.backgrounds = [
-            { name: 'none', label: 'None', imageUrl: 'img/blank.png' },
-            { name: 'CRAB', label: 'Crab', imageUrl: 'img/bgs/crab.png' },
-            { name: 'CRANE', label: 'Crane', imageUrl: 'img/bgs/crane.png' },
-            { name: 'DRAGON', label: 'Dragon', imageUrl: 'img/bgs/dragon.png' },
-            { name: 'LION', label: 'Lion', imageUrl: 'img/bgs/lion.png' },
-            { name: 'MANTIS', label: 'Mantis', imageUrl: 'img/bgs/mantis.png' },
-            { name: 'PHOENIX', label: 'Phoenix', imageUrl: 'img/bgs/phoenix.png' },
-            { name: 'SCORPION', label: 'Scorpion', imageUrl: 'img/bgs/scorpion.png' },
-            { name: 'SPIDER', label: 'Spider', imageUrl: 'img/bgs/spider.png' },
-            { name: 'UNICORN', label: 'Unicorn', imageUrl: 'img/bgs/unicorn.png' }
+            { name: 'none', label: 'None', imageUrl: 'img/blank.jpg' },
+            { name: 'CRAB', label: 'Crab', imageUrl: 'img/bgs/crab.jpg' },
+            { name: 'CRANE', label: 'Crane', imageUrl: 'img/bgs/crane.jpg' },
+            { name: 'DRAGON', label: 'Dragon', imageUrl: 'img/bgs/dragon.jpg' },
+            { name: 'LION', label: 'Lion', imageUrl: 'img/bgs/lion.jpg' },
+            { name: 'MANTIS', label: 'Mantis', imageUrl: 'img/bgs/mantis.jpg' },
+            { name: 'PHOENIX', label: 'Phoenix', imageUrl: 'img/bgs/phoenix.jpg' },
+            { name: 'SCORPION', label: 'Scorpion', imageUrl: 'img/bgs/scorpion.jpg' },
+            { name: 'SPIDER', label: 'Spider', imageUrl: 'img/bgs/spider.jpg' },
+            { name: 'UNICORN', label: 'Unicorn', imageUrl: 'img/bgs/unicorn.jpg' }
         ];
 
         this.cardSizes = [
@@ -107,11 +99,11 @@ class Profile extends React.Component {
 
         this.setState({
             email: props.user.email,
-            disableGravatar: props.user.settings.disableGravatar,
+            enableGravatar: props.user.enableGravatar,
             promptedActionWindows: props.user.promptedActionWindows,
             windowTimer: props.user.settings.windowTimer,
             timerSettings: props.user.settings.timerSettings,
-            optionSettings: props.user.settings.optionSettings,
+            keywordSettings: props.user.settings.keywordSettings,
             selectedBackground: props.user.settings.background,
             selectedCardSize: props.user.settings.cardSize
         });
@@ -121,6 +113,13 @@ class Profile extends React.Component {
         var newState = {};
 
         newState[field] = event.target.value;
+        this.setState(newState);
+    }
+
+    onToggle(field, event) {
+        var newState = {};
+
+        newState[field] = event.target.checked;
         this.setState(newState);
     }
 
@@ -140,11 +139,11 @@ class Profile extends React.Component {
         this.setState(newState);
     }
 
-    onOptionSettingToggle(field, event) {
+    onKeywordSettingToggle(field, event) {
         var newState = {};
-        newState.optionSettings = this.state.optionSettings;
+        newState.keywordSettings = this.state.keywordSettings;
 
-        newState.optionSettings[field] = event.target.checked;
+        newState.keywordSettings[field] = event.target.checked;
         this.setState(newState);
     }
 
@@ -157,11 +156,11 @@ class Profile extends React.Component {
             email: this.state.email,
             password: this.state.newPassword,
             promptedActionWindows: this.state.promptedActionWindows,
-            enableGravatar: this.state.disableGravatar,
+            enableGravatar: this.state.enableGravatar,
             settings: {
                 windowTimer: this.state.windowTimer,
+                keywordSettings: this.state.keywordSettings,
                 timerSettings: this.state.timerSettings,
-                optionSettings: this.state.optionSettings,
                 background: this.state.selectedBackground,
                 cardSize: this.state.selectedCardSize
             }
@@ -233,221 +232,106 @@ class Profile extends React.Component {
         let initialValues = { email: this.props.user.email };
         let callbackUrl = process.env.NODE_ENV === 'production' ? 'https://jigoku.online/patreon' : 'http://localhost:8080/patreon';
 
-        //TODO Update profile for ringteki
         return (
             <div className='col-sm-8 col-sm-offset-2 profile full-height'>
                 <div className='about-container'>
                     <ApiStatus apiState={ this.props.apiState } successMessage={ this.state.successMessage } />
 
-                    <form className='form form-horizontal'>
-                        <div className='panel-title'>
-                            Profile
-                        </div>
-                        <div className='panel'>
-                            <Input name='email' label='Email Address' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter email address'
-                                type='text' onChange={ this.onChange.bind(this, 'email') } value={ this.state.email }
-                                onBlur={ this.verifyEmail.bind(this) } validationMessage={ this.state.validation['email'] } />
-                            <Input name='newPassword' label='New Password' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter new password'
-                                type='password' onChange={ this.onChange.bind(this, 'newPassword') } value={ this.state.newPassword }
-                                onBlur={ this.verifyPassword.bind(this, false) } validationMessage={ this.state.validation['password'] } />
-                            <Input name='newPasswordAgain' label='New Password (again)' labelClass='col-sm-4' fieldClass='col-sm-8' placeholder='Enter new password (again)'
-                                type='password' onChange={ this.onChange.bind(this, 'newPasswordAgain') } value={ this.state.newPasswordAgain }
-                                onBlur={ this.verifyPassword.bind(this, false) } validationMessage={ this.state.validation['password1'] } />
-                            <Checkbox name='disableGravatar' label='Disable Gravatar integration' fieldClass='col-sm-offset-4 col-sm-8'
-                                onChange={ e => this.setState({ disableGravatar: e.target.checked }) } checked={ this.state.disableGravatar } />
-                        </div>
-                        <div>
-                            <div className='panel-title'>
-                                Action window defaults
-                            </div>
-                            <div className='panel'>
+                    <Form panelTitle='Profile' name='profile' initialValues={ initialValues } apiLoading={ this.props.apiState && this.props.apiState.loading } buttonClass='col-sm-offset-10 col-sm-2' buttonText='Save' onSubmit={ this.onSaveClick }>
+                        <span className='col-sm-3 text-center'><Avatar username={ this.props.user.username } /></span>
+                        <Checkbox name='enableGravatar' label='Enable Gravatar integration' fieldClass='col-sm-offset-1 col-sm-7'
+                            onChange={ e => this.setState({ enableGravatar: e.target.checked }) } checked={ this.state.enableGravatar } />
+                        <div className='col-sm-3 text-center'>Current profile picture</div>
+                        <button type='button' className='btn btn-default col-sm-offset-1 col-sm-3' onClick={ this.onUpdateAvatarClick }>Update avatar</button>
+                        { !this.isPatreonLinked() && <a className='btn btn-default col-sm-offset-1 col-sm-3' href={ `https://www.patreon.com/oauth2/authorize?response_type=code&client_id=317bxGpXD7sAOlyFKp6D-LOBRX731lLK-2YYQSFfBmJCrVSiJI77eUgRoLoN2KoI&redirect_uri=${callbackUrl}` }><img src='/img/Patreon_Mark_Coral.jpg' style={ {height:'21px'} } />&nbsp;Link Patreon account</a> }
+                        { this.isPatreonLinked() && <button type='button' className='btn btn-default col-sm-offset-1 col-sm-3' onClick={ this.onUnlinkClick }>Unlink Patreon account</button> }
+                        
+                        <div className='col-sm-12 profile-inner'>
+                            <Panel title='Action window defaults'>
                                 <p className='help-block small'>If an option is selected here, you will always be prompted if you want to take an action in that window.  If an option is not selected, you will receive no prompts for that window.  For some windows (e.g. dominance) this could mean the whole window is skipped.</p>
                                 <div className='form-group'>
                                     { windows }
                                 </div>
-                            </div>
-                            <div className='panel-title'>
-                                Timed Bluff Window
-                            </div>
-                            <div className='panel'>
-                                <p className='help-block small'>Sometimes, it is useful to have the game prompt you to play an event, even when you can't play one, as it makes it more difficult for your opponent to deduce what you have in your hand. This 'bluff' window has a timer will count down.
-                                At the end of that timer, the window will automatically pass. This option controls the duration of the timer.  The timer will only show when you *don't* have an ability which can be used. The timer can be configure to show when events are played by your opponent, or
-                                to show when there's a window to play an event which you don't currently have in your hand.</p>
+                            </Panel>
+                            
+                            <Panel title='Timed Interrupt Window'>
+                                <p className='help-block small'>Every time a game event occurs that you could possibly interrupt to cancel it, a timer will count down.  At the end of that timer, the window will automatically pass.
+                                This option controls the duration of the timer.  The timer can be configure to show when events are played (useful if you play cards like The Hand's Judgement) and to show when card abilities are triggered (useful if you play a lot of Treachery).</p>
                                 <div className='form-group'>
-                                    <label className='col-sm-3 control-label'>Window timeout</label>
-                                    <div className='col-sm-5'>
+                                    <label className='col-xs-3 control-label'>Window timeout</label>
+                                    <div className='col-xs-5 control-label'>
                                         <Slider value={ this.state.windowTimer }
                                             slideStop={ this.onSlideStop.bind(this) }
                                             step={ 1 }
                                             max={ 10 }
                                             min={ 0 } />
                                     </div>
-                                    <div className='col-sm-2'>
+                                    <div className='col-xs-2'>
                                         <input className='form-control text-center' name='timer' value={ this.state.windowTimer } onChange={ this.onSlideStop.bind(this) } />
                                     </div>
-                                    <label className='col-sm-1 control-label'>seconds</label>
-
-                                    <Checkbox name='timerSettings.events' noGroup label={ 'Show timer for opponent\'s events' } fieldClass='col-sm-6'
-                                        onChange={ this.onTimerSettingToggle.bind(this, 'events') } checked={ this.state.timerSettings.events } />
-                                    <Checkbox name='timerSettings.abilities' noGroup label={ 'Show timer for events in my deck' } fieldClass='col-sm-6'
-                                        onChange={ this.onTimerSettingToggle.bind(this, 'eventsInDeck') } checked={ this.state.timerSettings.eventsInDeck } />
+                                    <label className='col-xs-2 control-label text-left no-padding'>seconds</label>
                                 </div>
-                            </div>
-                            <div className='panel-title'>
-                                Options
-                            </div>
-                            <div className='panel'>
                                 <div className='form-group'>
-                                    <Checkbox
-                                        name='optionSettings.markCardsUnselectable'
-                                        noGroup
-                                        label={ 'Grey out cards with no relevant abilities during interrupt/reaction windows' }
-                                        fieldClass='col-sm-6'
-                                        onChange={ this.onOptionSettingToggle.bind(this, 'markCardsUnselectable') }
-                                        checked={ this.state.optionSettings.markCardsUnselectable }
-                                    />
-                                    <Checkbox
-                                        name='optionSettings.cancelOwnAbilities'
-                                        noGroup
-                                        label={ 'Prompt to cancel/react to initiation of my own abilities' }
-                                        fieldClass='col-sm-6'
-                                        onChange={ this.onOptionSettingToggle.bind(this, 'cancelOwnAbilities') }
-                                        checked={ this.state.optionSettings.cancelOwnAbilities } />
-                                    <Checkbox
-                                        name='optionSettings.orderForcedAbilities'
-                                        noGroup
-                                        label={ 'Prompt to order forced triggered/simultaneous abilities' }
-                                        fieldClass='col-sm-6'
-                                        onChange={ this.onOptionSettingToggle.bind(this, 'orderForcedAbilities') }
-                                        checked={ this.state.optionSettings.orderForcedAbilities }
-                                    />
-                                    <Checkbox
-                                        name='optionSettings.confirmOneClick'
-                                        noGroup
-                                        label={ 'Show a confirmation prompt when initating 1-click abilities' }
-                                        fieldClass='col-sm-6'
-                                        onChange={ this.onOptionSettingToggle.bind(this, 'confirmOneClick') }
-                                        checked={ this.state.optionSettings.confirmOneClick }
-                                    />
-                                    <Checkbox
-                                        name='optionSettings.disableCardStats'
-                                        noGroup
-                                        label={ 'Disable card hover statistics popup' }
-                                        fieldClass='col-sm-6'
-                                        onChange={ this.onOptionSettingToggle.bind(this, 'disableCardStats') }
-                                        checked={ this.state.optionSettings.disableCardStats }
-                                    />
+                                    <Checkbox name='timerSettings.events' noGroup label={ 'Show timer for events' } fieldClass='col-sm-6'
+                                        onChange={ this.onTimerSettingToggle.bind(this, 'events') } checked={ this.state.timerSettings.events } />
+                                    <Checkbox name='timerSettings.abilities' noGroup label={ 'Show timer for card abilities' } fieldClass='col-sm-6'
+                                        onChange={ this.onTimerSettingToggle.bind(this, 'abilities') } checked={ this.state.timerSettings.abilities } />
                                 </div>
-                            </div>
+                            </Panel>
+                            
+                            <Panel title='Game Settings'>
+                                <div className='form-group'>
+                                    <Checkbox name='keywordSettings.markCardsUnselectable' noGroup label={ 'Grey out cards with no relevant abilities during interrupt/reaction windows' } fieldClass='col-sm-6'
+                                        onChange={ this.onKeywordSettingToggle.bind(this, 'markCardsUnselectable') } checked={ this.state.keywordSettings.markCardsUnselectable } />
+                                    <Checkbox name='keywordSettings.cancelOwnAbilities' noGroup label={ 'Prompt to cancel/react to initiation of my own abilities' } fieldClass='col-sm-6'
+                                        onChange={ this.onKeywordSettingToggle.bind(this, 'cancelOwnAbilities') } checked={ this.state.keywordSettings.cancelOwnAbilities } />
+                                    <Checkbox name='keywordSettings.orderForcedAbilities' noGroup label={ 'Prompt to order forced triggered/simultaneous abilities' } fieldClass='col-sm-6'
+                                        onChange={ this.onKeywordSettingToggle.bind(this, 'orderForcedAbilities') } checked={ this.state.keywordSettings.orderForcedAbilities } />
+                                    <Checkbox name='keywordSettings.confirmOneClick' noGroup label={ 'Show a confirmation prompt when initating 1-click abilities' } fieldClass='col-sm-6'
+                                        onChange={ this.onKeywordSettingToggle.bind(this, 'confirmOneClick') } checked={ this.state.keywordSettings.confirmOneClick } />
+                                    <Checkbox name='keywordSettings.disableCardStats' noGroup label={ 'Disable card hover statistics popup' } fieldClass='col-sm-6'
+                                        onChange={ this.onKeywordSettingToggle.bind(this, 'disableCardStats') } checked={ this.state.keywordSettings.disableCardStats } />
+                                </div>
+                            </Panel>
                         </div>
-                        <div>
-                            <div className='panel-title'>
-                                Game Board Background
-                            </div>
-                            <div className='panel'>
+
+                        <div className='col-sm-12'>
+                            <Panel title='Game Board Background'>
                                 <div className='row'>
-                                    <div className='col-sm-4' onClick={ () => this.onBackgroundClick('none') }>
-                                        <img className={ 'img-responsive' + (this.state.selectedBackground === 'none' ? ' selected' : '') }
-                                            src='img/blank.png' />
-                                        <span className='bg-label'>None</span>
-                                    </div>
-                                    <div className='col-sm-4' onClick={ () => this.onBackgroundClick('CRAB') }>
-                                        <img className={ 'img-responsive' + (this.state.selectedBackground === 'CRAB' ? ' selected' : '') }
-                                            src='/img/bgs/crab.jpg' />
-                                        <span className='bg-label'>Crab</span>
-                                    </div>
-                                    <div className='col-sm-4' onClick={ () => this.onBackgroundClick('CRANE') }>
-                                        <img className={ 'img-responsive' + (this.state.selectedBackground === 'CRANE' ? ' selected' : '') }
-                                            src='/img/bgs/crane.jpg' />
-                                        <span className='bg-label'>Crane</span>
-                                    </div>
+                                    {
+                                        this.backgrounds.map(background => (
+                                            <GameBackgroundOption
+                                                imageUrl={ background.imageUrl }
+                                                key={ background.name }
+                                                label={ background.label }
+                                                name={ background.name }
+                                                onSelect={ this.handleSelectBackground }
+                                                selected={ this.state.selectedBackground === background.name } />
+                                        ))
+                                    }
                                 </div>
-                                <div className='row'>
-                                    <div className='col-sm-4' onClick={ () => this.onBackgroundClick('DRAGON') }>
-                                        <img className={ 'img-responsive' + (this.state.selectedBackground === 'DRAGON' ? ' selected' : '') }
-                                            src='/img/bgs/dragon.jpg' />
-                                        <span className='bg-label'>Dragon</span>
-                                    </div>
-                                    <div className='col-sm-4' onClick={ () => this.onBackgroundClick('LION') }>
-                                        <img className={ 'img-responsive' + (this.state.selectedBackground === 'LION' ? ' selected' : '') }
-                                            src='/img/bgs/lion.jpg' />
-                                        <span className='bg-label'>Lion</span>
-                                    </div>
-                                    <div className='col-sm-4' onClick={ () => this.onBackgroundClick('MANTIS') }>
-                                        <img className={ 'img-responsive' + (this.state.selectedBackground === 'MANTIS' ? ' selected' : '') }
-                                            src='/img/bgs/mantis.jpg' />
-                                        <span className='bg-label'>Mantis</span>
-                                    </div>
-                                </div>
-                                <div className='row'>
-                                    <div className='col-sm-4' onClick={ () => this.onBackgroundClick('PHOENIX') }>
-                                        <img className={ 'img-responsive' + (this.state.selectedBackground === 'PHOENIX' ? ' selected' : '') }
-                                            src='/img/bgs/phoenix.jpg' />
-                                        <span className='bg-label'>Phoenix</span>
-                                    </div>
-                                    <div className='col-sm-4' onClick={ () => this.onBackgroundClick('SCORPION') }>
-                                        <img className={ 'img-responsive' + (this.state.selectedBackground === 'SCORPION' ? ' selected' : '') }
-                                            src='/img/bgs/scorpion.jpg' />
-                                        <span className='bg-label'>Scorpion</span>
-                                    </div>
-                                    <div className='col-sm-4' onClick={ () => this.onBackgroundClick('SPIDER') }>
-                                        <img className={ 'img-responsive' + (this.state.selectedBackground === 'SPIDER' ? ' selected' : '') }
-                                            src='/img/bgs/spider.jpg' />
-                                        <span className='bg-label'>Spider</span>
-                                    </div>
-                                </div>
-                                <div className='row'>
-                                    <div className='col-sm-4' onClick={ () => this.onBackgroundClick('UNICORN') }>
-                                        <img className={ 'img-responsive' + (this.state.selectedBackground === 'UNICORN' ? ' selected' : '') }
-                                            src='/img/bgs/unicorn.jpg' />
-                                        <span className='bg-label'>Unicorn</span>
-                                    </div>
-                                </div>
-                            </div>
+                            </Panel>
                         </div>
-                        <div>
-                            <div className='panel-title'>
-                                Card Image Size
-                            </div>
-                            <div className='panel'>
+
+                        <div className='col-sm-12'>
+                            <Panel title='Card Image Size'>
                                 <div className='row'>
                                     <div className='col-xs-12'>
-                                        <div className='card-settings' onClick={ () => this.onCardClick('small') }>
-                                            <div className={ 'card small vertical' + (this.state.selectedCardSize === 'small' ? ' selected' : '') }>
-                                                <img className='card small vertical'
-                                                    src='img/cards/dynastycardback.jpg' />
-                                            </div>
-                                            <span className='bg-label'>Small</span>
-                                        </div>
-                                        <div className='card-settings' onClick={ () => this.onCardClick('normal') }>
-                                            <div className={ 'card vertical' + (this.state.selectedCardSize === 'normal' ? ' selected' : '') }>
-                                                <img className='card vertical'
-                                                    src='img/cards/dynastycardback.jpg' />
-                                            </div>
-                                            <span className='bg-label'>Normal</span>
-                                        </div>
-                                        <div className='card-settings' onClick={ () => this.onCardClick('large') }>
-                                            <div className={ 'card vertical large' + (this.state.selectedCardSize === 'large' ? ' selected' : '') } >
-                                                <img className='card-image large vertical'
-                                                    src='/img/cards/dynastycardback.jpg' />
-                                            </div>
-                                            <span className='bg-label'>Large</span>
-                                        </div>
-                                        <div className='card-settings' onClick={ () => this.onCardClick('x-large') }>
-                                            <div className={ 'card vertical x-large' + (this.state.selectedCardSize === 'x-large' ? ' selected' : '') }>
-                                                <img className='card-image x-large vertical'
-                                                    src='img/cards/dynastycardback.jpg' />
-                                            </div>
-                                            <span className='bg-label'>Extra-Large</span>
-                                        </div>
+                                        {
+                                            this.cardSizes.map(cardSize => (
+                                                <CardSizeOption
+                                                    key={ cardSize.name }
+                                                    label={ cardSize.label }
+                                                    name={ cardSize.name }
+                                                    onSelect={ this.handleSelectCardSize }
+                                                    selected={ this.state.selectedCardSize === cardSize.name } />
+                                            ))
+                                        }
                                     </div>
                                 </div>
-                            </div>
+                            </Panel>
                         </div>
-                        <div className='col-sm-offset-10 col-sm-2'>
-                            <button className='btn btn-primary' type='button' disabled={ this.state.loading } onClick={ this.onSaveClick.bind(this) }>Save</button>
-                        </div>
-                    </form>
+                    </Form>
                 </div>
             </div>);
     }
@@ -455,15 +339,22 @@ class Profile extends React.Component {
 
 Profile.displayName = 'Profile';
 Profile.propTypes = {
+    apiState: PropTypes.object,
+    clearProfileStatus: PropTypes.func,
+    profileSaved: PropTypes.bool,
     refreshUser: PropTypes.func,
+    saveProfile: PropTypes.func,
     socket: PropTypes.object,
+    updateAvatar: PropTypes.func,
     user: PropTypes.object
 };
 
 function mapStateToProps(state) {
     return {
-        socket: state.socket.socket,
-        user: state.auth.user
+        apiState: state.api.SAVE_PROFILE,
+        profileSaved: state.user.profileSaved,
+        socket: state.lobby.socket,
+        user: state.account.user
     };
 }
 

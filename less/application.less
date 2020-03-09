@@ -36,59 +36,11 @@
   }
 }
 
-@media (max-width: 1366px) {
-  .navbar {
-    min-height: 25px;
-
-    li {
-      a {
-        padding: 2px 10px;
-
-        .gravatar {
-          height: 16px;
-          width: 16px;
-        }
-      }
-    }
-  }
-
-  .navbar-nav {
-    > li {
-      > span {
-        padding: 2px 10px;
-      }
-    }
-  }
-
-  .navbar-header {
-    padding: 0 10px;
-    .navbar-brand {
-      padding: 2px 0;
-      height: 25px;
-    }
-  }
-}
-
 .spectators-popup {
   position: absolute;
   width: 115px;
   padding-left: 15px;
   list-style-type: none;
-}
-
-.panel-title {
-  background-color: @header-background;
-  color: white;
-  font-weight: bold;
-  margin: 5px;
-  margin-bottom: 0;
-  padding: 5px 0;
-  border: 1px solid @header-border;
-  border-radius: 4px 4px 0 0;
-  border-bottom: none;
-  text-align: center;
-  text-transform: uppercase;
-  position: relative;
 }
 
 .main-header {
@@ -128,7 +80,7 @@
 .sidebar {
   position: absolute;
   left: 0;
-  top: 50px;
+  top: @navbar-height;
   bottom: 0;
   background-color: fade(@navbar-inverse-bg, 80%);
 
@@ -199,6 +151,28 @@ ul.htp-sub-list {
   margin-left: 20px;
 }
 
+.htp-topic, .htp-subtopic {
+  margin: 15px 0;
+}
+
+.htp-title, .htp-intro {
+  padding-bottom: 10px;
+  border-bottom: 1px solid lightgrey;
+}
+
+.htp-subtitle {
+  font-weight: bold;
+  font-style: italic;
+  margin-left: 5px;
+  padding-left: 8px;
+  border-left: 3px solid lightgrey;
+}
+
+.htp-intro {
+  margin: 0 0 10px 0;
+  padding-bottom: 10px;
+}
+
 .no-x-padding {
   padding-left: 0;
   padding-right: 0;
@@ -208,10 +182,10 @@ ul.htp-sub-list {
   td {
     vertical-align: middle !important;
   }
+}
 
-  a {
-    color: @brand-danger;
-  }
+.glyphicon-remove {
+  color: @brand-danger;
 }
 
 .card-settings {
@@ -219,6 +193,58 @@ ul.htp-sub-list {
 
   margin-left: 5px;
   margin-right: 5px;
+}
+
+.announcement {
+  padding-top: 15px;
+  padding-bottom: 0px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.user-search {
+  width: 200px;
+}
+
+.sidebar-enter.collapsed {
+  width: 200px;
+}
+
+.sidebar-enter.expanded {
+  width: 40px;
+}
+
+.sidebar-enter.sidebar-enter-active.collapsed {
+  width: 40px;
+  transition: width 500ms ease-in-out;
+}
+
+.sidebar-enter.sidebar-enter-active.expanded {
+  width: 200px;
+  transition: width 500ms ease-in-out;
+}
+
+.sidebar-leave.collapsed {
+  width: 40px;
+}
+
+.sidebar-leave.expanded {
+  width: 200px;
+}
+
+.sidebar-leave.sidebar-leave-active.collapsed {
+  width: 40px;
+  transition: width 500ms ease-in-out;
+}
+
+.sidebar-leave.sidebar-leave-active.expanded {
+  width: 40px;
+  transition: width 500ms ease-in-out;
+}
+
+.motd-button {
+  margin-left: 15px;
+  margin-top: 15px;
 }
 
 /* Fix input boxes */

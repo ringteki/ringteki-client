@@ -25,6 +25,7 @@ import MotdAdmin from './pages/MotdAdmin';
 import Privacy from './pages/Privacy';
 import Patreon from './pages/Patreon';
 import BanlistAdmin from './pages/BanlistAdmin';
+import Community from './pages/Community';
 
 const routes = [
     { path: '/', action: () => <Lobby key='lobby' /> },

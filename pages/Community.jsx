@@ -31,6 +31,7 @@ class Community extends React.Component {
                     <p>Link: <a href='https://discord.gg/tMzhyND' target='_blank'>Ringteki Discord</a></p>
                     <p>If you're interested in helping develop Ringteki, or you have a bug to report, feel free to contact us here.</p>
                 </div>
+                </Panel>
             </div>
         );
     }

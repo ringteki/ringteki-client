@@ -14,6 +14,18 @@
   color: white;
 }
 
+.admin-role {
+  color: #e74c3b;
+}
+
+.contributor-role {
+  color: #20667c;
+}
+
+.supporter-role {
+  color: #2ecc71;
+}
+
 .gravatar {
   margin-right: 5px;
   vertical-align: middle;
@@ -22,6 +34,10 @@
 .deck-popup {
   color: #1E1E1E;
   background-color: #999999;
+}
+
+.deck-list-header {
+  margin: 0.5em 0;
 }
 
 .row-flex-box {
@@ -37,18 +53,16 @@
 }
 
 .panel {
-  position: relative;
   background-color: rgba(0, 0, 0, 0.65);
-  margin: 5px;
-  padding: 10px;
-  border: 1px solid rgba(71, 58, 56, 0.65);
-  overflow: visible;
-  border-radius: 0 0 5px 5px;
-  top: -5px;
 }
 
 .panel-darker {
   background-color: rgba(0, 0, 0, 0.75);
+}
+
+.panel-heading {
+  text-align: center;
+  font-weight: bold;
 }
 
 .absolute-panel {
@@ -85,16 +99,26 @@
   z-index: @layer-card-menu;
 }
 
-.menu > div {
+.menu-item {
   border: 1px solid @brand-primary;
   padding: 3px 6px;
   border-radius: 4px;
   margin-bottom: 4px;
   cursor: pointer;
-}
 
-.menu > div:hover {
-  border-color: @brand-info;
+  &:hover {
+    border-color: @brand-info;
+  }
+
+  &.disabled {
+    background-color: fadeout(#222, 20%);
+    color: #666;
+    cursor: not-allowed;
+
+    &:hover {
+      border-color: @brand-primary;
+    }
+  }
 }
 
 .bootstrap-typeahead-input-main {
@@ -118,11 +142,33 @@
   cursor: hand;
 }
 
-.no-highlight {
-  -webkit-user-select: none;
-  -webkit-touch-callout: none; /* Disable iOS/Android callouts on touch event */
-  -moz-user-select: none;
-  -ms-user-select: none;
-  -khtml-user-select: none; /* KHTML browsers (e.g. Konqueror) */
-  user-select: none;
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinner:before {
+  content: '';
+  box-sizing: border-box;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin-top: -10px;
+  margin-left: -10px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  border-top-color: #333;
+  animation: spinner .6s linear infinite;
+}
+
+.button-spinner {
+  position: relative;
+  padding-left: 30px;
+}
+
+.text-shadow {
+  text-shadow: 1px 1px 1px black;
 }

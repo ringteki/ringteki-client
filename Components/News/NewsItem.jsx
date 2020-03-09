@@ -14,6 +14,7 @@ class NewsItem extends React.Component {
                 <span className={ `ringsicon ringsicon-${this.props.icon}` } />
                 &nbsp;{ moment(this.props.date).format('YYYY-MM-DD') + ' - ' }{ parts }
             </div>);
+    }
 }
 
 NewsItem.displayName = 'NewsItem';
