@@ -2,9 +2,9 @@ export function deckStatusLabel(status) {
     if(!status.basicRules) {
         return 'Invalid';
     }
-    const category = status.noBannedCards ? 'Tournament' : 'Premium';
+    const category = 'Valid';
 
-    if(!status.faqJoustRules || !status.noUnreleasedCards) {
+    if(!status.faqRestrictedList || !status.noUnreleasedCards || !status.noBannedCards) {
         return `${category} (Casual)`;
     }
 

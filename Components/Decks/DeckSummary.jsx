@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
+
 import _ from 'underscore';
 
 import DeckStatus from './DeckStatus.jsx';
@@ -17,9 +19,13 @@ class DeckSummary extends React.Component {
         };
     }
 
-    onCardMouseOver(event, id) {
-        var cardToDisplay = _.filter(this.props.cards, card => {
-            return id === card.id;
+    hasTrait(card, trait) {
+        return card.traits.some(t => t.toLowerCase() === trait.toLowerCase());
+    }
+
+    onCardMouseOver(event) {
+        let cardToDisplay = Object.values(this.props.cards).filter(card => {
+            return event.target.innerText === card.label;
         });
 
         this.setState({ cardToShow: cardToDisplay[0] });
@@ -32,51 +38,66 @@ class DeckSummary extends React.Component {
     getCardsToRender() {
         let cardsToRender = [];
         let groupedCards = {};
-
         let combinedCards = _.union(this.props.deck.stronghold, this.props.deck.role, this.props.deck.provinceCards, this.props.deck.dynastyCards, this.props.deck.conflictCards);
 
-        _.each(combinedCards, (card) => {
-            let type = card.card.type;
+        for(const card of combinedCards) {
+            let typeCode = card.card.type;
+            let side = '';
 
-            if(type === 'character') {
-                type = card.card.side + ' character';
+            if(!typeCode) {
+                continue;
             }
+
+
+            let type = typeCode[0].toUpperCase() + typeCode.slice(1);
+            
+            if( typeof card.card.side !== 'undefined') {
+                let sideCode = card.card.side;
+                side =  sideCode[0].toUpperCase() + sideCode.slice(1);
+            }
+
+            if(type === 'Character' || type === "Event") {
+                type = side + ' ' + type;
+            }
+
             if(!groupedCards[type]) {
                 groupedCards[type] = [card];
             } else {
                 groupedCards[type].push(card);
             }
-        });
+        }
 
-        _.each(groupedCards, (cardList, key) => {
+        for(const [key, cardList] of Object.entries(groupedCards)) {
             let cards = [];
             let count = 0;
+            let index = 0;
 
-            _.each(cardList, card => {
-                cards.push(<div key={ card.card.id }><span>{ card.count + 'x ' }</span><span className='card-link' onMouseOver={ event => this.onCardMouseOver(event, card.card.id) } onMouseOut={ this.onCardMouseOut }>{ card.card.name }</span></div>);
+            for(const card of cardList) {
+                cards.push(<div key={ `${card.card.code}${index++}` }><span>{ card.count + 'x ' }</span><span className='card-link' onMouseOver={ this.onCardMouseOver } onMouseOut={ this.onCardMouseOut }>{ card.card.name }</span></div>);
                 count += parseInt(card.count);
-            });
+            }
 
             cardsToRender.push(
-                <div className='cards-no-break'>
+                <div className='cards-no-break' key={ key }>
                     <div className='card-group-title'>{ key + ' (' + count.toString() + ')' }</div>
                     <div key={ key } className='card-group'>{ cards }</div>
                 </div>);
-        });
+        }
 
         return cardsToRender;
     }
 
     render() {
-        if(!this.props.deck) {
+        if(!this.props.deck || !this.props.cards) {
             return <div>Waiting for selected deck...</div>;
         }
 
-        var cardsToRender = this.getCardsToRender();
+        let cardsToRender = this.getCardsToRender();
 
         return (
             <div className='deck-summary col-xs-12'>
                 { this.state.cardToShow ? <img className='hover-image' src={ '/img/cards/' + this.state.cardToShow.id + '.jpg' } /> : null }
+                
                 <div className='decklist'>
                     <div className='col-xs-2 col-sm-3 no-x-padding'>{ this.props.deck.faction ? <img className='deck-mon img-responsive' src={ '/img/mons/' + this.props.deck.faction.value + '.png' } /> : null }</div>
                     <div className='col-xs-8 col-sm-6'>
