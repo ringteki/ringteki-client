@@ -1,100 +1,133 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'underscore';
-import $ from 'jquery';
 import { connect } from 'react-redux';
-import { findDOMNode } from 'react-dom';
+import { validateDeck } from 'ringteki-deck-helper';
 
 import Input from '../Form/Input.jsx';
 import Select from '../Form/Select.jsx';
 import Typeahead from '../Form/Typeahead.jsx';
 import TextArea from '../Form/TextArea.jsx';
-
 import * as actions from '../../actions';
 
-//TODO Update from throneteki
-class InnerDeckEditor extends React.Component {
+//Old imports
+import _ from 'underscore';
+import $ from 'jquery';
+import { findDOMNode } from 'react-dom';
+
+class DeckEditor extends React.Component {
     constructor(props) {
         super(props);
 
-        this.onImportDeckClick = this.onImportDeckClick.bind(this);
-
         this.state = {
             cardList: '',
-            deck: this.copyDeck(props.deck),
+            conflictCards: [],
+            deckName: 'New Deck',
+            dynastyCards: [],
+            faction: props.factions && props.factions['crab'],
+            alliance: { name: '', value: '' },
             numberToAdd: 1,
+            provinceCards: [],
+            role: [],
+            stronghold: [],
             validation: {
                 deckname: '',
                 cardToAdd: ''
             }
         };
-    }
 
-    componentWillMount() {
-        if(!this.props.deck.faction && this.props.factions) {
-            let deck = this.copyDeck(this.state.deck);
+        if(props.deck) {
+            this.state.deckId = props.deck._id;
+            this.state.deckName = props.deck.name;
+            this.state.stronghold = props.deck.stronghold;
+            this.state.role = props.deck.role;
+            this.state.provinceCards = props.deck.provinceCards;
+            this.state.conflictCards = props.deck.conflictCards;
+            this.state.dynastyCards = props.deck.dynastyCards;
+            this.state.faction = props.deck.faction;
+            this.state.alliance = props.deck.alliance;
+            this.state.status = props.deck.status;
 
-            deck.faction = this.props.factions['crab'];
-            deck.alliance = { name: '', value: '' };
+            let cardList = '';
+            for(const card of props.deck.stronghold) {
+                cardList += this.formatCardListItem(card) + '\n';
+            }
 
-            this.setState({ deck: deck });
-            this.props.updateDeck(deck);
-        }
-        let cardList = '';
+            for(const card of props.deck.role) {
+                cardList += this.formatCardListItem(card) + '\n';
+            }
 
-        if(this.props.deck && (this.props.deck.stronghold || this.props.deck.role || this.props.deck.provinceCards ||
-                this.props.deck.conflictCards || this.props.deck.dynastyCards)) {
-            _.each(this.props.deck.stronghold, card => {
-                cardList += this.getCardListEntry(card.count, card.card);
-            });
+            for(const card of props.deck.conflictCards) {
+                cardList += this.formatCardListItem(card) + '\n';
+            }
 
-            _.each(this.props.deck.role, card => {
-                cardList += this.getCardListEntry(card.count, card.card);
-            });
+            for(const card of props.deck.dynastyCards) {
+                cardList += this.formatCardListItem(card) + '\n';
+            }
 
-            _.each(this.props.deck.conflictCards, card => {
-                cardList += this.getCardListEntry(card.count, card.card);
-            });
+            for(const plot of props.deck.provinceCards) {
+                cardList += this.formatCardListItem(plot) + '\n';
+            }
 
-            _.each(this.props.deck.dynastyCards, card => {
-                cardList += this.getCardListEntry(card.count, card.card);
-            });
-
-            _.each(this.props.deck.provinceCards, card => {
-                cardList += this.getCardListEntry(card.count, card.card);
-            });
-
-            this.setState({ cardList: cardList });
+            this.state.cardList = cardList;
         }
     }
 
-    // XXX One could argue this is a bit hacky, because we're updating the innards of the deck object, react doesn't update components that use it unless we change the reference itself
-    copyDeck(deck) {
-        if(!deck) {
-            return { name: 'New Deck'};
-        }
+    componentDidMount() {
+        this.triggerDeckUpdated();
+    }
 
-        return {
-            _id: deck._id,
-            name: deck.name,
-            stronghold: deck.stronghold,
-            role: deck.role,
-            provinceCards: deck.provinceCards,
-            conflictCards: deck.conflictCards,
-            dynastyCards: deck.dynastyCards,
-            faction: deck.faction,
-            alliance: deck.alliance,
-            status: deck.status
+    componentWillReceiveProps(props) {
+        if(props.factions && !this.state.faction) {
+            this.setState({ faction: props.factions['crab'] }, this.triggerDeckUpdated);
+        }
+    }
+
+    getDeckFromState() {
+        let deck = {
+            _id: this.state.deckId,
+            name: this.state.deckName,
+            stronghold: this.state.stronghold,
+            role: this.state.role,
+            provinceCards: this.state.provinceCards,
+            conflictCards: this.state.conflictCards,
+            dynastyCards: this.state.dynastyCards,
+            faction: this.state.faction,
+            alliance: this.state.alliance
         };
+
+        if(!this.props.restrictedList) {
+            deck.status = {};
+        } else {
+            deck.status = validateDeck(deck, { packs: this.props.packs, restrictedList: this.props.restrictedList });
+        }
+
+        return deck;
+    }
+
+    triggerDeckUpdated() {
+        const deck = this.getDeckFromState();
+
+        if(this.props.onDeckUpdated) {
+            this.props.onDeckUpdated(deck);
+        }
+    }
+
+    formatCardListItem(card) {
+        if(card.card.custom) {
+            let typeCode = card.card.type;
+            let typeName = typeCode[0].toUpperCase() + typeCode.slice(1);
+            return card.count + ' Custom ' + typeName + ' - ' + card.card.name;
+        }
+
+        return card.count + ' ' + card.card.name;
     }
 
     onChange(field, event) {
-        let deck = this.copyDeck(this.state.deck);
+        let state = this.state;
 
-        deck[field] = event.target.value;
+        state[field] = event.target.value;
 
-        this.setState({ deck: deck });
-        this.props.updateDeck(deck);
+        this.setState({ state }, this.triggerDeckUpdated);
     }
 
     onNumberToAddChange(event) {
@@ -102,25 +135,15 @@ class InnerDeckEditor extends React.Component {
     }
 
     onFactionChange(selectedFaction) {
-        let deck = this.copyDeck(this.state.deck);
-
-        deck.faction = selectedFaction;
-
-        this.setState({ deck: deck });
-        this.props.updateDeck(deck);
+        this.setState({ faction: selectedFaction }, this.triggerDeckUpdated);
     }
 
     onAllianceChange(selectedAlliance) {
-        let deck = this.copyDeck(this.state.deck);
+        let toUpdate = {
+            alliance: selectedAlliance
+        };
 
-        if(!selectedAlliance) {
-            deck.alliance = { name: '', value: '' };
-        } else {
-            deck.alliance = selectedAlliance;
-        }
-
-        this.setState({ deck: deck, showAlliance: deck.alliance }); // Alliance
-        this.props.updateDeck(deck);
+        this.setState(toUpdate, this.triggerDeckUpdated);                
     }
 
     addCardChange(selectedCards) {
@@ -135,93 +158,105 @@ class InnerDeckEditor extends React.Component {
         }
 
         let cardList = this.state.cardList;
-        cardList += this.getCardListEntry(this.state.numberToAdd, this.state.cardToAdd);
+        cardList += `${this.state.numberToAdd}  ${this.state.cardToAdd.name}\n`;
 
-        this.addCard(this.state.cardToAdd, parseInt(this.state.numberToAdd));
-        this.setState({ cardList: cardList });
-        let deck = this.state.deck;
-
-        deck = this.copyDeck(deck);
-
-        this.props.updateDeck(deck);
+        if(this.state.cardToAdd.type === 'province') {
+            let provinces = this.state.provinceCards;
+            this.addCard(provinces, this.state.cardToAdd, parseInt(this.state.numberToAdd));
+            this.setState({ cardList: cardList, provinceCards: provinces }, this.triggerDeckUpdated);
+        } else if(this.state.cardToAdd.side === 'dynasty') {
+            let dynasty = this.state.dynastyCards;
+            this.addCard(dynasty, this.state.cardToAdd, parseInt(this.state.numberToAdd));
+            this.setState({ cardList: cardList, dynastyCards: dynasty }, this.triggerDeckUpdated);
+        } else if(this.state.cardToAdd.side === 'conflict') {
+            let conflict = this.state.conflictCards;
+            this.addCard(conflict, this.state.cardToAdd, parseInt(this.state.numberToAdd));
+            this.setState({ cardList: cardList, conflictCards: conflict }, this.triggerDeckUpdated);
+        } else if(this.state.cardToAdd.type === 'stronghold') {
+            let stronghold = this.state.stronghold;
+            this.addCard(stronghold, this.state.cardToAdd, parseInt(this.state.numberToAdd));
+            this.setState({ cardList: cardList, stronghold: stronghold }, this.triggerDeckUpdated);
+        } else {
+            let role = this.state.role;
+            this.addCard(role, this.state.cardToAdd, parseInt(this.state.numberToAdd));
+            this.setState({ cardList: cardList, role: role }, this.triggerDeckUpdated);
+        }
     }
 
     onCardListChange(event) {
-        let deck = this.state.deck;
         let split = event.target.value.split('\n');
+        let { deckName, faction, stronghold, role, provinceCards, conflictCards, dynastyCards } = this.state;
 
-        deck.stronghold = [];
-        deck.role = [];
-        deck.provinceCards = [];
-        deck.conflictCards = [];
-        deck.dynastyCards = [];
+        stronghold = [];
+        role = [];
+        provinceCards = [];
+        conflictCards = [];
+        dynastyCards = [];
 
-        _.each(split, line => {
-            line = line.trim();
+        for(const line of split) {
+            let trimmedLine = line.trim();
             let index = 2;
 
-            if(!$.isNumeric(line[0])) {
-                return;
+            let num = parseInt(trimmedLine[0]);
+            if(isNaN(num)) {
+                continue;
             }
 
-            let num = parseInt(line[0]);
             if(line[1] === 'x') {
                 index++;
             }
 
-            let packOffset = line.indexOf('(');
-            let cardName = line.substr(index, packOffset === -1 ? line.length : packOffset - index - 1);
-            let packName = packOffset > -1 ? line.substr(packOffset + 1, line.length - packOffset - 2) : '';
-
-            let pack = _.find(this.props.packs, function(pack) {
-                return pack.id.toLowerCase() === packName.toLowerCase() || pack.name.toLowerCase() === packName.toLowerCase();
-            });
-
-            let card = _.find(this.props.cards, function(card) {
-                if(pack && card.pack_cards.length) {
-                    if(card.name.toLowerCase() === cardName.toLowerCase()) {
-                        return _.find(card.pack_cards, function(packCard) {
-                            return packCard.pack.id === pack.id;
-                        });
-                    }
-                    return false;
-                }
-                return card.name.toLowerCase() === cardName.toLowerCase();
-            });
-
+            let card = this.lookupCard(trimmedLine, index);
             if(card) {
-                this.addCard(card, num);
+                if(card.type === 'province') {
+                    this.addCard(provinceCards, card, num);
+                } else if(card.side === 'dynasty') {
+                    this.addCard(dynastyCards, card, num);
+                } else if(card.side === 'conflict') {
+                    this.addCard(conflictCards, card, num);
+                } else if(card.type === 'stronghold') {
+                    this.addCard(stronghold, card, num);
+                } else if(card.type === 'role') {
+                    this.addCard(role, card, num);
+                }
             }
-        });
-
-        deck = this.copyDeck(deck);
-
-        this.setState({ cardList: event.target.value, deck: deck }); // Alliance
-        this.props.updateDeck(deck);
-    }
-
-    addCard(card, number) {
-        let deck = this.copyDeck(this.state.deck);
-        let provinces = deck.provinceCards;
-        let stronghold = deck.stronghold;
-        let role = deck.role;
-        let conflict = deck.conflictCards;
-        let dynasty = deck.dynastyCards;
-
-        let list;
-
-        if(card.type === 'province') {
-            list = provinces;
-        } else if(card.side === 'dynasty') {
-            list = dynasty;
-        } else if(card.side === 'conflict') {
-            list = conflict;
-        } else if(card.type === 'stronghold') {
-            list = stronghold;
-        } else {
-            list = role;
         }
 
+        this.setState({
+            cardList: event.target.value,
+            deckName: deckName,
+            faction: faction,
+            stronghold: stronghold,
+            role: role,
+            provinceCards: provinceCards,
+            conflictCards: conflictCards,
+            dynastyCards: dynastyCards
+        }, this.triggerDeckUpdated);
+    }
+
+    lookupCard(line, index) {
+        let packOffset = line.indexOf('(');
+        let cardName = line.substr(index, packOffset === -1 ? line.length : packOffset - index - 1).trim();
+        let packName = line.substr(packOffset + 1, line.length - packOffset - 2);
+
+        if(cardName.startsWith('Custom ')) {
+            return this.createCustomCard(cardName);
+        }
+
+        let pack = this.props.packs.find(pack => {
+            return pack.name.toLowerCase() === packName.toLowerCase();
+        });
+
+        return Object.values(this.props.cards).find(card => {
+            if(pack) {
+                return card.name.toLowerCase() === cardName.toLowerCase() || card.name.toLowerCase() === (cardName + ' (' + pack.code + ')').toLowerCase();
+            }
+
+            return card.name.toLowerCase() === cardName.toLowerCase();
+        });
+    }
+
+    addCard(list, card, number) {
         if(list[card.id]) {
             list[card.id].count += number;
         } else {
@@ -233,8 +268,12 @@ class InnerDeckEditor extends React.Component {
         event.preventDefault();
 
         if(this.props.onDeckSave) {
-            this.props.onDeckSave(this.props.deck);
+            this.props.onDeckSave(this.getDeckFromState());
         }
+    }
+
+    onCancelClick() {
+        this.props.navigate('/decks');
     }
 
     onImportDeckClick() {
@@ -243,12 +282,14 @@ class InnerDeckEditor extends React.Component {
 
     getCardListEntry(count, card) {
         let packName = '';
+        let packId = '';
         if(card.pack_cards.length) {
             let packData = card.pack_cards[0];
             this.setState({ test: packData.pack.id });
             let pack = _.find(this.props.packs, p => p.id === packData.pack.id);
             if(pack && pack.name) {
                 packName = ' (' + pack.name + ')';
+                packId = ' (' + pack.id + ')';
             }
         }
         return count + ' ' + card.name + packName + '\n';
@@ -285,10 +326,17 @@ class InnerDeckEditor extends React.Component {
         });
 
         let deckClan = '';
+        let deckFaction = '';
         let deckAlliance = '';
         let deckName = '';
         let deckList = '';
         let cardList = '';
+
+        let stronghold = [];
+        let role = [];
+        let provinceCards = [];
+        let conflictCards = [];
+        let dynastyCards = [];
 
 
         if(deckResponse.success) {
@@ -305,95 +353,34 @@ class InnerDeckEditor extends React.Component {
                 deckList = deckRecord.head.cards;
             }
 
-            let deck = this.copyDeck(this.state.deck);
-
-            deck.name = deckName;
             if(deckClan) {
-                deck.faction = this.props.factions[deckClan];
+                deckFaction = this.props.factions[deckClan];
             } else {
-                deck.faction = this.props.factions['crab'];
+                deckFaction = this.props.factions['crab'];
             }
 
             if(deckAlliance) {
-                deck.alliance = this.props.factions[deckAlliance];
+                deckAlliance = this.props.factions[deckAlliance];
             } else {
-                deck.alliance = this.props.factions['crab'];
+                deckAlliance = this.props.factions['crab'];
             }
 
             _.each(deckList, (count, id) => {
                 cardList += this.getCardListEntry(count, this.props.cards[id]);
             });
 
-            //Duplicate onCardListChange to get this working correctly
-            let split = cardList.split('\n');
-            _.each(split, line => {
-                line = line.trim();
-                let index = 2;
-
-                if(!$.isNumeric(line[0])) {
-                    return;
-                }
-
-                let num = parseInt(line[0]);
-                if(line[1] === 'x') {
-                    index++;
-                }
-
-                let packOffset = line.indexOf('(');
-                let cardName = line.substr(index, packOffset === -1 ? line.length : packOffset - index - 1);
-                let packName = packOffset > -1 ? line.substr(packOffset + 1, line.length - packOffset - 2) : '';
-
-                let pack = _.find(this.props.packs, function(pack) {
-                    return pack.id.toLowerCase() === packName.toLowerCase() || pack.name.toLowerCase() === packName.toLowerCase();
-                });
-
-                let card = _.find(this.props.cards, function(card) {
-                    if(pack && card.pack_cards.length) {
-                        return card.name.toLowerCase() === cardName.toLowerCase() && _.any(card.pack_cards, data => data.pack.id === pack.id);
-                    }
-                    return card.name.toLowerCase() === cardName.toLowerCase();
-                });
-
-                if(card) {
-                    //Duplicate addCard as well
-                    let provinces = deck.provinceCards;
-                    let stronghold = deck.stronghold;
-                    let role = deck.role;
-                    let conflict = deck.conflictCards;
-                    let dynasty = deck.dynastyCards;
-
-                    let list;
-
-                    if(card.type === 'province') {
-                        list = provinces;
-                    } else if(card.side === 'dynasty') {
-                        list = dynasty;
-                    } else if(card.side === 'conflict') {
-                        list = conflict;
-                    } else if(card.type === 'stronghold') {
-                        list = stronghold;
-                    } else {
-                        list = role;
-                    }
-
-                    if(list[card.id]) {
-                        list[card.id].count += num;
-                    } else {
-                        list.push({ count: num, card: card });
-                    }
-                }
-            });
-
-
-            this.setState({cardList: cardList, deck: deck, showAlliance: deck.alliance });
-            this.props.updateDeck(deck);
-
+            this.setState({
+                cardList: cardList,
+                deckName: deckName,
+                faction: deckFaction,
+                alliance: deckAlliance
+            }, this.triggerDeckUpdated);
         }
     }
 
     render() {
-        if(!this.props.deck || this.props.loading) {
-            return <div>Waiting for deck...</div>;
+        if(!this.props.factions || !this.props.cards) {
+            return <div>Please wait while loading from the server...</div>;
         }
 
         let popup = (
@@ -418,22 +405,29 @@ class InnerDeckEditor extends React.Component {
         return (
             <div>
                 { popup }
-                <span className='btn btn-primary' data-toggle='modal' data-target='#decks-modal'>Import deck</span>
+                <div className='form-group'>
+                    <div className='col-xs-12 deck-buttons'>
+                        <span className='btn btn-primary' data-toggle='modal' data-target='#decks-modal'>Import deck</span>
+                        <span className='col-xs-2'><button className='' ref='submit' type='submit' className='btn btn-primary' onClick={ this.onSaveClick.bind(this) }>Save</button></span>
+                        <button ref='submit' type='button' className='btn btn-primary' onClick={ this.onCancelClick.bind(this) }>Cancel</button>
+                    </div>
+                </div>
+               
                 <h4>Either type the cards manually into the box below, add the cards one by one using the card box and autocomplete or for best results, copy the permalink url from <a href='http://fiveringsdb.com' target='_blank'>Five Rings DB</a> and paste it into the popup from clicking the "Import Deck" button.</h4>
                 <form className='form form-horizontal'>
                     <Input name='deckName' label='Deck Name' labelClass='col-sm-3' fieldClass='col-sm-9' placeholder='Deck Name'
-                        type='text' onChange={ this.onChange.bind(this, 'name') } value={ this.state.deck.name } />
-                    <Select name='faction' label='Clan' labelClass='col-sm-3' fieldClass='col-sm-9' options={ _.toArray(this.props.factions) }
-                        onChange={ this.onFactionChange.bind(this) } value={ this.state.deck.faction ? this.state.deck.faction.value : undefined } />
-                    <Select name='alliance' label='Alliance' labelClass='col-sm-3' fieldClass='col-sm-9' options={ _.toArray(this.props.alliances) }
-                        onChange={ this.onAllianceChange.bind(this) } value={ this.state.deck.alliance ? this.state.deck.alliance.value : undefined }
+                        type='text' onChange={ this.onChange.bind(this, 'deckName') } value={ this.state.deckName } />
+                    <Select name='faction' label='Clan' labelClass='col-sm-3' fieldClass='col-sm-9' options={ Object.values(this.props.factions) }
+                        onChange={ this.onFactionChange.bind(this) } value={ this.state.faction ? this.state.faction.value : undefined } />
+                    <Select name='alliance' label='Alliance' labelClass='col-sm-3' fieldClass='col-sm-9' options={ Object.values(this.props.alliances) }
+                        onChange={ this.onAllianceChange.bind(this) } value={ this.state.alliance ? this.state.alliance.value : undefined }
                         valueKey='value' nameKey='name' blankOption={ { name: '- Select -', value: '' } } />
 
-                    <Typeahead label='Card' labelClass={ 'col-sm-3' } fieldClass='col-sm-4' labelKey={ 'name' } options={ _.toArray(this.props.cards) }
+                    <Typeahead label='Card' labelClass={ 'col-sm-3 col-xs-2' } fieldClass='col-sm-4 col-xs-5' labelKey={ 'name' } options={ _.toArray(this.props.cards) }
                         onChange={ this.addCardChange.bind(this) }>
-                        <Input name='numcards' type='text' label='Num' labelClass='col-sm-1' fieldClass='col-sm-2'
-                            value={ this.state.numberToAdd.toString() } onChange={ this.onNumberToAddChange.bind(this) }>
-                            <div className='col-sm-1'>
+                        <Input name='numcards' type='text' label='Num' labelClass='col-xs-1 no-x-padding' fieldClass='col-xs-2'
+                            value={ this.state.numberToAdd.toString() } onChange={ this.onNumberToAddChange.bind(this) } noGroup>
+                            <div className='col-xs-1 no-x-padding'>
                                 <button className='btn btn-primary' onClick={ this.onAddCard.bind(this) }>Add</button>
                             </div>
                         </Input>
@@ -442,7 +436,7 @@ class InnerDeckEditor extends React.Component {
                         onChange={ this.onCardListChange.bind(this) } />
                     <div className='form-group'>
                         <div className='col-sm-offset-3 col-sm-8'>
-                            <button ref='submit' type='submit' className='btn btn-primary' onClick={ this.onSaveClick.bind(this) }>Save Deck</button>
+                            <button ref='submit' type='submit' className='btn btn-primary' onClick={ this.onSaveClick.bind(this) }>Save</button>
                         </div>
                     </div>
                 </form>
@@ -451,32 +445,30 @@ class InnerDeckEditor extends React.Component {
     }
 }
 
-InnerDeckEditor.displayName = 'DeckEditor';
-InnerDeckEditor.propTypes = {
+DeckEditor.displayName = 'DeckEditor';
+DeckEditor.propTypes = {
     alliances: PropTypes.object,
     cards: PropTypes.object,
     deck: PropTypes.object,
     factions: PropTypes.object,
-    loading: PropTypes.bool,
-    mode: PropTypes.string,
+    navigate: PropTypes.func,
     onDeckSave: PropTypes.func,
+    onDeckUpdated: PropTypes.func,
     packs: PropTypes.array,
+    restrictedList: PropTypes.array,
     updateDeck: PropTypes.func
 };
 
 function mapStateToProps(state) {
     return {
-        apiError: state.api.message,
         alliances: state.cards.factions,
         cards: state.cards.cards,
-        deck: state.cards.selectedDeck,
         decks: state.cards.decks,
         factions: state.cards.factions,
         loading: state.api.loading,
-        packs: state.cards.packs
+        packs: state.cards.packs,
+        restrictedList: state.cards.restrictedList
     };
 }
 
-const DeckEditor = connect(mapStateToProps, actions)(InnerDeckEditor);
-
-export default DeckEditor;
+export default connect(mapStateToProps, actions)(DeckEditor);

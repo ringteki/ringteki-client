@@ -19,7 +19,7 @@ function processDecks(decks, state) {
     return decks.map(deck => processDeck(deck, state));
 }
 
-function processDeck(decks, state) {
+function processDeck(deck, state) {
     if(!state.cards || !deck || !deck.faction) {
         return Object.assign({ status: {} }, deck);
     }
@@ -33,69 +33,20 @@ function processDeck(decks, state) {
     }
 
     return formattedDeck;
-
-    //TODO Compare to throneteki
-    _.each(decks, deck => {
-        if(!state.cards || !deck.faction) {
-            deck.status = {};
-            return;
-        }
-
-        deck.faction = state.factions[deck.faction.value];
-        if(deck.alliance) {
-            if(deck.alliance.value === '') {
-                deck.alliance = { name: '', value: '' };
-            } else {
-                deck.alliance = state.factions[deck.alliance.value];
-            }
-        }
-
-        deck.stronghold = _.map(deck.stronghold, card => {
-            return { count: card.count, card: state.cards[card.card.id] };
-        });
-
-        deck.role = _.map(deck.role, card => {
-            return { count: card.count, card: state.cards[card.card.id] };
-        });
-
-        deck.provinceCards = _.map(deck.provinceCards, card => {
-            return { count: card.count, card: state.cards[card.card.id] };
-        });
-
-        deck.conflictCards = _.map(deck.conflictCards, card => {
-            return { count: card.count, card: state.cards[card.card.id] };
-        });
-
-        deck.dynastyCards = _.map(deck.dynastyCards, card => {
-            return { count: card.count, card: state.cards[card.card.id] };
-        });
-
-        deck.status = validateDeck(deck, { packs: state.packs });
-    });
 }
 
 export default function(state = { decks: [] }, action) {
     let newState;
     switch(action.type) {
         case 'RECEIVE_CARDS':
-        //TODO Still looks throneteki/AGOT
-            var agendas = {};
-
-            _.each(action.response.cards, card => {
-                if(card.type === 'agenda' && card.pack_code !== 'VDS') {
-                    agendas[card.id] = card;
-                }
+            newState = Object.assign({}, state, {
+                cards: action.response.cards
             });
 
-            var banners = _.filter(agendas, card => {
-                return card.label.startsWith('Banner of the');
-            });
+            // In case the card list is received after the decks, updated the decks now
+            newState.decks = processDecks(newState.decks, newState);
 
-            return Object.assign({}, state, {
-                cards: action.response.cards,
-                agendas: agendas,
-                banners: banners
-            });
+            return newState;
         case 'RECEIVE_PACKS':
             return Object.assign({}, state, {
                 packs: action.response.packs
