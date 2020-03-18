@@ -4,21 +4,13 @@ import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
 import _ from 'underscore';
 
-import Avatar from '../Site/Avatar.jsx';
+import AlertPanel from '../Site/AlertPanel';
+import Game from './Game';
 import * as actions from '../../actions';
 
-//TODO Update from throneteki
-class InnerGameList extends React.Component {
-    constructor() {
-        super();
-
-        this.joinGame = this.joinGame.bind(this);
-    }
-
-    joinGame(event, game) {
-        event.preventDefault();
-
-        if(!this.props.username) {
+class GameList extends React.Component {
+    joinGame(game) {
+        if(!this.props.user) {
             toastr.error('Please login before trying to join a game');
             return;
         }
@@ -34,10 +26,8 @@ class InnerGameList extends React.Component {
         return !this.props.currentGame && game.allowSpectators;
     }
 
-    watchGame(event, game) {
-        event.preventDefault();
-
-        if(!this.props.username) {
+    watchGame(game) {
+        if(!this.props.user) {
             toastr.error('Please login before trying to watch a game');
             return;
         }
@@ -49,105 +39,83 @@ class InnerGameList extends React.Component {
         }
     }
 
-    removeGame(event, game) {
-        event.preventDefault();
-
+    removeGame(game) {
         this.props.socket.emit('removegame', game.id);
     }
 
-    render() {
-        let gameList = _.map(this.props.games, game => {
-            let firstPlayer = true;
-            let gameRow = [];
+    canJoin(game) {
+        if(this.props.currentGame || game.started || game.full) {
+            return false;
+        }
 
-            _.each(game.players, player => {
-                let playerElement = null;
+        return true;
+    }
 
-                if(firstPlayer) {
-                    gameRow.push(
-                        <span className='col-xs-4 col-sm-3 game-row-avatar'>
-                            <span className='hidden-xs col-sm-3 game-row-avatar'>
-                                <Avatar emailHash={ player.emailHash } forceDefault={ player.settings ? player.settings.disableGravatar : false } />
-                            </span>
-                            <span className='player-name col-sm-8'>{ player.name }</span>
-                        </span>);
-                    gameRow.push();
-                    gameRow.push(<span className={ 'hidden-xs col-xs-1 game-icon icon-clan-' + player.faction } />);
+    getGames(games) {
+        let gamesToReturn = [];
 
-                    firstPlayer = false;
-                } else {
-                    gameRow.push(<span className='col-xs-1 game-row-vs text-center'><b> vs </b></span>);
-                    gameRow.push(<span className={ 'hidden-xs col-xs-1 game-icon icon-clan-' + player.faction } />);
-                    gameRow.push(
-                        <span className='col-xs-4 col-sm-3 game-row-avatar'>
-                            <span className='player-name col-sm-8'>{ player.name }</span>
-                            <span className='hidden-xs game-row-avatar pull-right col-sm-3'>
-                                <Avatar emailHash={ player.emailHash } forceDefault={ player.settings ? player.settings.disableGravatar : false } />
-                            </span>
-                        </span>);
-                }
-
-                return playerElement;
-            });
-
-            let gameTitle = '';
-
-            if(game.needsPassword) {
-                gameTitle += '\uD83D\uDD12 ';
+        for(const game of games) {
+            if(this.props.gameFilter.showOnlyNewGames && game.started) {
+                continue;
             }
 
-            if(game.gameType) {
-                gameTitle += '[' + game.gameType + '] ';
+            if(!this.props.gameFilter[game.gameType]) {
+                continue;
             }
 
-            gameTitle += game.name;
+            let isAdmin = this.props.user && this.props.user.permissions.canManageGames;
 
-            return (
-                <div key={ game.id } className={ 'game-row' + (game.node && this.props.isAdmin ? ' ' + game.node : '') }>
-                    <span className='col-xs-12 game-title'>
-                        { this.props.isAdmin ? <a href='#' className='glyphicon glyphicon-remove' onClick={ event => this.removeGame(event, game) } /> : null }
-                        <b>{ gameTitle }</b> { game.clocks && game.clocks.type !== 'none' ? <img src='/img/free-clock-icon-png.png' className='clock-icon' /> : null }
-                    </span>
-                    <div>{ gameRow }</div>
-                    <div className='col-xs-3 game-row-buttons pull-right'>
-                        { (this.props.currentGame || _.size(game.players) === 2 || game.started) ?
-                            null :
-                            <button className='btn btn-primary pull-right' onClick={ event => this.joinGame(event, game) }>Join</button>
-                        }
-                        { this.canWatch(game) ?
-                            <button className='btn btn-primary pull-right' onClick={ event => this.watchGame(event, game) }>Watch</button> : null }
-                    </div>
-                </div>
-            );
-        });
+            gamesToReturn.push((
+                <Game key={ game.id }
+                    game={ game }
+                    showJoinButton={ this.canJoin(game) }
+                    showWatchButton={ this.canWatch(game) }
+                    onJoinGame={ this.joinGame.bind(this, game) }
+                    onRemoveGame={ this.removeGame.bind(this, game) }
+                    onWatchGame={ this.watchGame.bind(this, game) }
+                    isAdmin={ isAdmin } />
+            ));
+        }
 
         return (
-            <div className='game-list'>
+            <div>
+                { gamesToReturn }
+            </div>);
+    }
+
+    render() {
+        let gameList = this.getGames(this.props.games);
+
+        if(gameList.length === 0) {
+            return (<div className='game-list col-xs-12'>
+                <AlertPanel type='info' message='There are no games matching the filters you have selected' />
+            </div>);
+        }
+
+        return (
+            <div className='game-list col-xs-12'>
                 { gameList }
             </div>);
     }
 }
 
-InnerGameList.displayName = 'GameList';
-InnerGameList.propTypes = {
+GameList.displayName = 'GameList';
+GameList.propTypes = {
     currentGame: PropTypes.object,
+    gameFilter: PropTypes.object,
     games: PropTypes.array,
-    isAdmin: PropTypes.bool,
     joinPasswordGame: PropTypes.func,
     showNodes: PropTypes.bool,
     socket: PropTypes.object,
-    username: PropTypes.string
+    user: PropTypes.object
 };
 
 function mapStateToProps(state) {
     return {
-        currentGame: state.games.currentGame,
-        isAdmin: state.auth.isAdmin,
-        socket: state.socket.socket,
-        username: state.auth.username
+        currentGame: state.lobby.currentGame,
+        socket: state.lobby.socket,
+        user: state.account.user
     };
 }
 
-const GameList = connect(mapStateToProps, actions)(InnerGameList);
-
-export default GameList;
+export default connect(mapStateToProps, actions)(GameList);

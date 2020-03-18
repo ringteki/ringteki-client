@@ -2,32 +2,39 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import DeckSummary from './DeckSummary.jsx';
-import DeckEditor from './DeckEditor.jsx';
-import AlertPanel from '../Site/AlertPanel.jsx';
-
+import DeckSummary from './DeckSummary';
+import DeckEditor from './DeckEditor';
+import AlertPanel from '../Site/AlertPanel';
+import Panel from '../Site/Panel';
 import * as actions from '../../actions';
 
-//TODO Update from throneteki
-class InnerEditDeck extends React.Component {
-    constructor() {
-        super();
+class EditDeck extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+        };
 
         this.onEditDeck = this.onEditDeck.bind(this);
-    }
+        this.onDeckUpdated = this.onDeckUpdated.bind(this);
 
-    componentWillMount() {
-        if(this.props.deckId) {
-            return this.props.loadDeck(this.props.deckId);
-        } else if(this.props.deck) {
-            this.props.setUrl('/decks/edit/' + this.props.deck._id);
-
-            return this.props.loadDeck(this.props.deck._id);
+        if(props.deck) {
+            this.state.deck = props.deck;
         }
     }
 
-    componentWillUpdate() {
-        if(this.props.deckSaved) {
+    componentDidMount() {
+        if(this.props.deckId) {
+            return this.props.loadDeck(this.props.deckId);
+        }
+    }
+
+    componentWillReceiveProps(props) {
+        this.setState({ deck: props.deck });
+    }
+
+    componentWillUpdate(props) {
+        if(props.deckSaved) {
             this.props.navigate('/decks');
 
             return;
@@ -38,33 +45,31 @@ class InnerEditDeck extends React.Component {
         this.props.saveDeck(deck);
     }
 
+    onDeckUpdated(deck) {
+        this.setState({ deck: deck });
+    }
+
     render() {
         let content;
 
-        if(this.props.loading) {
-            content = <div>Loading decks from the server...</div>;
-        } else if(this.props.apiError) {
-            content = <AlertPanel type='error' message={ this.props.apiError } />;
+        if(this.props.apiLoading || !this.props.cards) {
+            content = <div>Loading deck from the server...</div>;
+        } else if(this.props.apiSuccess === false) {
+            content = <AlertPanel type='error' message={ this.props.apiMessage } />;
         } else if(!this.props.deck) {
             content = <AlertPanel message='The specified deck was not found' type='error' />;
         } else {
             content = (
                 <div>
                     <div className='col-sm-6'>
-                        <div className='panel-title text-center'>
-                            Deck Editor
-                        </div>
-                        <div className='panel'>
-                            <DeckEditor mode='Save' onDeckSave={ this.onEditDeck } />
-                        </div>
+                        <Panel title='Deck Editor'>
+                            <DeckEditor onDeckSave={ this.onEditDeck } deck={ this.state.deck } onDeckUpdated={ this.onDeckUpdated } />
+                        </Panel>
                     </div>
                     <div className='col-sm-6'>
-                        <div className='panel-title text-center col-xs-12'>
-                            { this.props.deck.name }
-                        </div>
-                        <div className='panel col-xs-12'>
-                            <DeckSummary cards={ this.props.cards } deck={ this.props.deck } />
-                        </div>
+                        <Panel title={ this.props.deck.name }>
+                            <DeckSummary cards={ this.props.cards } deck={ this.state.deck } />
+                        </Panel>
                     </div>
                 </div>);
         }
@@ -73,11 +78,11 @@ class InnerEditDeck extends React.Component {
     }
 }
 
-InnerEditDeck.displayName = 'InnerEditDeck';
-InnerEditDeck.propTypes = {
-    agendas: PropTypes.object,
-    apiError: PropTypes.string,
-    banners: PropTypes.array,
+EditDeck.displayName = 'EditDeck';
+EditDeck.propTypes = {
+    apiLoading: PropTypes.bool,
+    apiMessage: PropTypes.string,
+    apiSuccess: PropTypes.bool,
     cards: PropTypes.object,
     deck: PropTypes.object,
     deckId: PropTypes.string,
@@ -93,18 +98,17 @@ InnerEditDeck.propTypes = {
 
 function mapStateToProps(state) {
     return {
-        agendas: state.cards.agendas,
+        apiLoading: state.api.REQUEST_DECK ? state.api.REQUEST_DECK.loading : undefined,
+        apiMessage: state.api.REQUEST_DECK ? state.api.REQUEST_DECK.message : undefined,
+        apiSuccess: state.api.REQUEST_DECK ? state.api.REQUEST_DECK.success : undefined,
         apiError: state.api.message,
-        banners: state.cards.banners,
         cards: state.cards.cards,
         deck: state.cards.selectedDeck,
         deckSaved: state.cards.deckSaved,
         factions: state.cards.factions,
         loading: state.api.loading,
-        socket: state.socket.socket
+        socket: state.lobby.socket
     };
 }
 
-const EditDeck = connect(mapStateToProps, actions)(InnerEditDeck);
-
-export default EditDeck;
+export default connect(mapStateToProps, actions)(EditDeck);

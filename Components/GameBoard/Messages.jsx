@@ -1,14 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+
 import _ from 'underscore';
 import EmojiConvertor from 'emoji-js';
-import uuid from 'uuid';
 
-import Avatar from '../Site/Avatar.jsx';
+import Avatar from '../Site/Avatar';
+import { RingsIcons } from '../../constants';
 import * as actions from '../../actions';
 
-class InnerMessages extends React.Component {
+class Messages extends React.Component {
     constructor() {
         super();
 
@@ -52,8 +53,9 @@ class InnerMessages extends React.Component {
     }
 
     getMessage() {
-        var messages = _.map(this.props.messages, message => {
-            return <div key={ 'message' + uuid() } className='message'>{ this.formatMessageText(message.message) }</div>;
+        let index = 0;
+        let messages = this.props.messages.map(message => {
+            return <div key={ 'message' + index++ } className='message'>{ this.formatMessageText(message.message) }</div>;
         });
 
         return messages;
@@ -160,8 +162,8 @@ class InnerMessages extends React.Component {
     }
 }
 
-InnerMessages.displayName = 'Messages';
-InnerMessages.propTypes = {
+Messages.displayName = 'Messages';
+Messages.propTypes = {
     messages: PropTypes.array,
     onCardMouseOut: PropTypes.func,
     onCardMouseOver: PropTypes.func,
@@ -170,12 +172,9 @@ InnerMessages.propTypes = {
 
 function mapStateToProps(state) {
     return {
-        socket: state.socket.socket
+        socket: state.lobby.socket
     };
 }
 
-const Messages = connect(mapStateToProps, actions)(InnerMessages);
-
-export default Messages;
-export { InnerMessages };
+export default connect(mapStateToProps, actions)(Messages);
 

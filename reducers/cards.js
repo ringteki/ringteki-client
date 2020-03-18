@@ -1,8 +1,7 @@
-import _ from 'underscore';
 import { validateDeck, formatDeckAsFullCards } from 'ringteki-deck-helper';
 
 function selectDeck(state, deck) {
-    if(state.decks && state.decks.length !== 0) {
+    if(state.decks.length !== 0) {
         state.selectedDeck = deck;
     } else {
         delete state.selectedDeck;

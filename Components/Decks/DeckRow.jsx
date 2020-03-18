@@ -20,7 +20,7 @@ class DeckRow extends React.Component {
         const { deck } = this.props;
 
         return (
-            <div className={ this.props.active ? 'deck-row active' : 'deck-row' } key={ this.props.deck.name } onClick={ this.props.onClick }>
+            <div className={ this.props.active ? 'deck-row active' : 'deck-row' } key={ this.props.deck.name } onClick={ this.handleDeckClick }>
                 <div className='col-xs-1 deck-image'><img className='deck-sm-mon' src={ '/img/mons/' + this.props.deck.faction.value + '.png' } /></div>
                 <span className='col-xs-9 col-md-9 col-lg-10 deck-name'>
                     <span>{ this.props.deck.name }</span>
