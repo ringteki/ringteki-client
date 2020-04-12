@@ -37,8 +37,8 @@ class DeckSummary extends React.Component {
         _.each(combinedCards, (card) => {
             let type = card.card.type;
 
-            if(type === 'character') {
-                type = card.card.side + ' character';
+            if(type === 'character' || type === 'event') {
+                type = card.card.side + ` ${type}` ;
             }
             if(!groupedCards[type]) {
                 groupedCards[type] = [card];
