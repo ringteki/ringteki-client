@@ -1271,6 +1271,7 @@ class Player extends GameObject {
             faction: this.faction,
             firstPlayer: this.firstPlayer,
             hideProvinceDeck: this.hideProvinceDeck,
+            cardsPlayedThisConflict: this.game.currentConflict ? this.game.currentConflict.getNumberOfCardsPlayed(this) : NaN,
             id: this.id,
             imperialFavor: this.imperialFavor,
             left: this.left,
