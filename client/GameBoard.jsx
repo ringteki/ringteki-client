@@ -421,7 +421,6 @@ export class InnerGameBoard extends React.Component {
 
     getCardsPlayedTracker(conflict, thisPlayer, otherPlayer) {
         const handImageStyle = { backgroundImage: 'url(/img/conflictcard.png)' };
-        console.log(thisPlayer);
 
         if(!conflict.attackingPlayerId) {
             return null;
