@@ -253,7 +253,7 @@ class Card extends React.Component {
         }
         var index = 1;
         var attachments = _.map(this.props.card.attachments, attachment => {
-            var returnedAttachment = (<Card key={ attachment.uuid } source={ this.props.source } card={ attachment }
+            var returnedAttachment = (<Card id={ attachment.uuid } key={ attachment.uuid } source={ this.props.source } card={ attachment }
                 className={ 'attachment' } wrapped={ false } style={ {marginLeft: (-1 * (index * attachmentOffset)) + 'px', marginTop:(-1 * cardHeight - attachmentOffset * (attachment.bowed ? 1 : 0)) + 'px', zIndex: (cardLayer - index)} }
                 onMouseOver={ this.props.disableMouseOver ? null : this.onMouseOver.bind(this, attachment) }
                 onMouseOut={ this.props.disableMouseOver ? null : this.onMouseOut }
@@ -393,15 +393,15 @@ class Card extends React.Component {
         } else {
             cardBack = 'cardback.jpg';
         }
-
         return (
             <div className='card-frame' ref='cardFrame'
                 onTouchMove={ ev => this.onTouchMove(ev) }
                 onTouchEnd={ ev => this.onTouchEnd(ev) }
                 onTouchStart={ ev => this.onTouchStart(ev) }>
                 { this.getCardOrder() }
-                <div className={ cardClass }
+                <div className={ cardClass } // this renders borders in cardClass
                     style={ this.props.wrapped ? {} : this.props.style }
+                    id={ this.props.id }
                     onMouseOver={ this.props.disableMouseOver ? null : this.onMouseOver.bind(this, this.props.card) }
                     onMouseOut={ this.props.disableMouseOver ? null : this.onMouseOut }
                     onClick={ ev => this.onClick(ev, this.props.card) }
@@ -578,6 +578,7 @@ Card.propTypes = {
     className: PropTypes.string,
     declaring: PropTypes.bool,
     disableMouseOver: PropTypes.bool,
+    id: PropTypes.string,
     isInPopup: PropTypes.bool,
     isMe: PropTypes.bool,
     onClick: PropTypes.func,
