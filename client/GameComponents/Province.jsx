@@ -128,7 +128,7 @@ class Province extends React.Component {
                 <div className='panel-header'>
                     { headerText }
                 </div>
-                { provinceCard ? <Card card={ provinceCard } source={ this.props.source }
+                { provinceCard ? <Card id={ provinceCard.uuid } card={ provinceCard } source={ this.props.source }
                     onMouseOver={ this.props.onMouseOver }
                     onMouseOut={ this.props.onMouseOut }
                     disableMouseOver={ provinceCard.facedown && !this.props.isMe }
@@ -136,7 +136,7 @@ class Province extends React.Component {
                     onMenuItemClick={ this.props.onMenuItemClick }
                     onDragDrop={ this.props.onDragDrop } size={ this.props.size } /> : null }
                 { dynastyCards.length > 0 ? _.map(dynastyCards, card => {
-                    return (<Card className={ cardClassName } card={ card } source={ this.props.source }
+                    return (<Card id={ card.uuid } className={ cardClassName } card={ card } source={ this.props.source }
                         popupLocation={ this.props.popupLocation }
                         isMe={ this.props.isMe }
                         key={ card.uuid }
@@ -147,7 +147,7 @@ class Province extends React.Component {
                         onMenuItemClick={ this.props.onMenuItemClick }
                         onDragDrop={ this.props.onDragDrop } size={ this.props.size } />);
                 }) : null }
-                { strongholdCard ? <Card className={ cardClassName } card={ strongholdCard } source={ this.props.source }
+                { strongholdCard ? <Card id={ strongholdCard.uuid } className={ cardClassName } card={ strongholdCard } source={ this.props.source }
                     onMouseOver={ this.props.onMouseOver }
                     onMouseOut={ this.props.onMouseOut }
                     disableMouseOver={ strongholdCard.facedown }
