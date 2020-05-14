@@ -272,7 +272,7 @@ export class InnerGameBoard extends React.Component {
 
         _.each(cardsByType, cards => {
             let cardsInPlay = _.map(cards, card => {
-                return (<Card key={ card.uuid } source='play area' card={ card } disableMouseOver={ card.facedown && !card.code }
+                return (<Card key={ card.uuid } id={ card.uuid } source='play area' card={ card } disableMouseOver={ card.facedown && !card.code }
                     onMenuItemClick={ this.onMenuItemClick } onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut }
                     showStats={ !this.props.user.settings.optionSettings.disableCardStats }
                     onClick={ this.onCardClick } onDragDrop={ this.onDragDrop } size={ this.props.user.settings.cardSize } isMe={ isMe } declaring={ playerDeclaringParticipants }/>);
@@ -414,8 +414,30 @@ export class InnerGameBoard extends React.Component {
         return (<div className='center-bar'>
             { this.getRings(null, 'ring-panel') }
             { conflictElement }
+            { this.getCardsPlayedTracker(conflict, thisPlayer, otherPlayer) }
             { this.getRingAttachments(thisPlayer, otherPlayer) }
         </div>);
+    }
+
+    getCardsPlayedTracker(conflict, thisPlayer, otherPlayer) {
+        const handImageStyle = { backgroundImage: 'url(/img/conflictcard.png)' };
+
+        if(!conflict.attackingPlayerId) {
+            return null;
+        }
+
+        return (
+            <div className='cards-played-tracker__container'>
+                <div className='cards-played-tracker cards-played-tracker--opponent'>
+                    <div className='stat-image undefined' style={ handImageStyle } />
+                    <div className='cards-played-tracker__count' >{ otherPlayer && otherPlayer.cardsPlayedThisConflict || 0 }</div>
+                </div>
+                <div className='cards-played-tracker cards-played-tracker--me'>
+                    <div className='stat-image undefined' style={ handImageStyle } />
+                    <div className='cards-played-tracker__count' >{ thisPlayer.cardsPlayedThisConflict || 0 }</div>
+                </div>
+            </div>
+        );
     }
 
     getRingAttachments(thisPlayer, otherPlayer) {
