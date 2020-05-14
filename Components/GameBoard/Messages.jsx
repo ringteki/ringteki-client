@@ -125,8 +125,8 @@ class Messages extends React.Component {
                 return (
                     <span key={ index++ }
                         className='card-link'
-                        onMouseOver={ this.props.onCardMouseOver.bind(this, fragment) }
-                        onMouseOut={ this.props.onCardMouseOut.bind(this) }>
+                        onMouseOver={ () => this.handleMouseOver(fragment) }
+                        onMouseOut={ () => this.handleMouseOut(fragment) }>
                         { fragment.name }
                     </span>
                 );
@@ -155,6 +155,26 @@ class Messages extends React.Component {
             }
             return '[ERROR: Non-Component in message!]';
         });
+    }
+
+    handleMouseOver(fragment) {
+        let element = document.getElementById(fragment.uuid);
+
+        if(element) {
+            element.classList.add('highlight');
+        }
+
+        this.props.onCardMouseOver.bind(this, fragment)();
+    }
+
+    handleMouseOut(fragment) {
+        let element = document.getElementById(fragment.uuid);
+
+        if(element) {
+            element.classList.remove('highlight');
+        }
+
+        this.props.onCardMouseOut.bind(this, fragment)();
     }
 
     render() {
