@@ -21,6 +21,32 @@ class StrongholdRow extends React.Component {
         );
     }
 
+    getFaction(player) {
+        if (player.faction) {
+            let faction = player.faction.name.toLowerCase();
+            let tokens = faction.split(' ');
+            return tokens[0];
+        }
+        return 'crab';
+    }
+
+    getStronghold(player, isSkirmish) {
+        if (!isSkirmish) {
+            return (
+                <Province isMe={ this.props.isMe } source='stronghold province' cards={ this.props.strongholdProvinceCards } onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onDragDrop={ this.props.onDragDrop } onCardClick={ this.props.onCardClick } size={ this.props.cardSize } onMenuItemClick={ this.props.onMenuItemClick } />
+            );
+        } else {
+            return (
+                <div  className={ `card-wrapper skirmish-stronghold vertical ${this.props.cardSize}` }>
+                    <img
+                        className={ `card-image skirmish-stronghold` }
+                        src={ '/img/skirmish-images/skirmish-stronghold-' + this.getFaction(player) + '.jpg' }
+                    />
+                </div>
+            );
+        }
+    }
+
     render() {
 
         if(this.props.isMe || this.props.spectating && !this.props.otherPlayer) {
@@ -32,7 +58,7 @@ class StrongholdRow extends React.Component {
                 <div className={ shClass }>
                     { this.props.thisPlayer && this.props.thisPlayer.role && this.props.thisPlayer.role.location ? <CardPile className='rolecard' source='role card' cards={ [this.props.thisPlayer.role] } topCard={ this.props.thisPlayer.role } disableMenu
                         onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onCardClick={ this.props.onCardClick } size={ this.props.cardSize } /> : <Placeholder size={ this.props.cardSize } /> }
-                    <Province isMe={ this.props.isMe } source='stronghold province' cards={ this.props.strongholdProvinceCards } onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onDragDrop={ this.props.onDragDrop } onCardClick={ this.props.onCardClick } size={ this.props.cardSize } onMenuItemClick={ this.props.onMenuItemClick } />
+                    { this.getStronghold(this.props.thisPlayer, this.props.isSkirmish) }
                     { this.getFavor(this.props.thisPlayer) }
                 </div>
             );
@@ -66,6 +92,7 @@ StrongholdRow.propTypes = {
     role: PropTypes.object,
     spectating: PropTypes.bool,
     strongholdProvinceCards: PropTypes.array,
+    isSkirmish: PropTypes.bool,
     thisPlayer: PropTypes.object
 };
 

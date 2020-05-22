@@ -226,7 +226,7 @@ class DynastyRow extends React.Component {
         ];
 
         if(this.props.isMe || this.props.spectating && !this.props.otherPlayer) {
-
+            console.log(this.props.isSkirmish);
             return (
                 <div className='dynasty-row no-highlight'>
                     <div className='deck-cards'>
@@ -264,7 +264,7 @@ class DynastyRow extends React.Component {
                             <Province isMe={ this.props.isMe } source='province 1' cards={ this.props.province1Cards } onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onDragDrop={ this.props.onDragDrop } onCardClick={ this.props.onCardClick } size={ this.props.cardSize } onMenuItemClick={ this.props.onMenuItemClick } popupLocation={ this.props.isMe || this.props.spectating ? 'top' : 'bottom' } />
                             <Province isMe={ this.props.isMe } source='province 2' cards={ this.props.province2Cards } onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onDragDrop={ this.props.onDragDrop } onCardClick={ this.props.onCardClick } size={ this.props.cardSize } onMenuItemClick={ this.props.onMenuItemClick } popupLocation={ this.props.isMe || this.props.spectating ? 'top' : 'bottom' } />
                             <Province isMe={ this.props.isMe } source='province 3' cards={ this.props.province3Cards } onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onDragDrop={ this.props.onDragDrop } onCardClick={ this.props.onCardClick } size={ this.props.cardSize } onMenuItemClick={ this.props.onMenuItemClick } popupLocation={ this.props.isMe || this.props.spectating ? 'top' : 'bottom' } />
-                            <Province isMe={ this.props.isMe } source='province 4' cards={ this.props.province4Cards } onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onDragDrop={ this.props.onDragDrop } onCardClick={ this.props.onCardClick } size={ this.props.cardSize } onMenuItemClick={ this.props.onMenuItemClick } popupLocation={ this.props.isMe || this.props.spectating ? 'top' : 'bottom' } />
+                            { !this.props.isSkirmish ? <Province isMe={ this.props.isMe } source='province 4' cards={ this.props.province4Cards } onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onDragDrop={ this.props.onDragDrop } onCardClick={ this.props.onCardClick } size={ this.props.cardSize } onMenuItemClick={ this.props.onMenuItemClick } popupLocation={ this.props.isMe || this.props.spectating ? 'top' : 'bottom' } /> : null }
                         </div>
                         <div className='right-decks'>
                             <CardPile
@@ -359,7 +359,7 @@ class DynastyRow extends React.Component {
                         <Province isMe={ this.props.isMe } source='province 4' cards={ this.props.province4Cards } onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onCardClick={ this.props.onCardClick } size={ this.props.cardSize } onMenuItemClick={ this.props.onMenuItemClick } popupLocation={ this.props.isMe || this.props.spectating ? 'top' : 'bottom' } />
                         <Province isMe={ this.props.isMe } source='province 3' cards={ this.props.province3Cards } onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onCardClick={ this.props.onCardClick } size={ this.props.cardSize } onMenuItemClick={ this.props.onMenuItemClick } popupLocation={ this.props.isMe || this.props.spectating ? 'top' : 'bottom' } />
                         <Province isMe={ this.props.isMe } source='province 2' cards={ this.props.province2Cards } onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onCardClick={ this.props.onCardClick } size={ this.props.cardSize } onMenuItemClick={ this.props.onMenuItemClick } popupLocation={ this.props.isMe || this.props.spectating ? 'top' : 'bottom' } />
-                        <Province isMe={ this.props.isMe } source='province 1' cards={ this.props.province1Cards } onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onCardClick={ this.props.onCardClick } size={ this.props.cardSize } onMenuItemClick={ this.props.onMenuItemClick } popupLocation={ this.props.isMe || this.props.spectating ? 'top' : 'bottom' } />
+                        { !this.props.isSkirmish ? <Province isMe={ this.props.isMe } source='province 1' cards={ this.props.province1Cards } onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onCardClick={ this.props.onCardClick } size={ this.props.cardSize } onMenuItemClick={ this.props.onMenuItemClick } popupLocation={ this.props.isMe || this.props.spectating ? 'top' : 'bottom' } /> : null }
                     </div>
                     <div className='left-decks'>
                         <CardPile
@@ -432,6 +432,7 @@ DynastyRow.propTypes = {
     removedFromGame: PropTypes.array,
     showConflictDeck: PropTypes.bool,
     showDynastyDeck: PropTypes.bool,
+    isSkirmish: PropTypes.bool,
     spectating: PropTypes.bool
 };
 
