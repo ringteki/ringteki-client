@@ -198,12 +198,13 @@ class DeckValidator {
             errors.push('Total influence (' + totalInfluence.toString() + ') is higher than max allowed influence (' + rules.influence.toString() + ')');
         }
 
-        let restrictedResult = this.restrictedList.validate(allCards.map(cardQuantity => cardQuantity.card));
-        let bannedResult = this.bannedList.validate(allCards.map(cardQuantity => cardQuantity.card));
+        let restrictedResult = this.restrictedList.validate(allCards.map(cardQuantity => cardQuantity.card), this.skirmishMode);
+        let bannedResult = this.bannedList.validate(allCards.map(cardQuantity => cardQuantity.card), this.skirmishMode);
         
         return {
             skirmishMode: true,
             basicRules: errors.length === 0,
+            officialRole: true,
             noUnreleasedCards: unreleasedCards.length === 0,
             faqRestrictedList: restrictedResult.valid && bannedResult.valid,
             faqVersion: restrictedResult.version,
@@ -307,8 +308,8 @@ class DeckValidator {
             errors.push('Total influence (' + totalInfluence.toString() + ') is higher than max allowed influence (' + rules.influence.toString() + ')');
         }
 
-        let restrictedResult = this.restrictedList.validate(allCards.map(cardQuantity => cardQuantity.card));
-        let bannedResult = this.bannedList.validate(allCards.map(cardQuantity => cardQuantity.card));
+        let restrictedResult = this.restrictedList.validate(allCards.map(cardQuantity => cardQuantity.card), this.skirmishMode);
+        let bannedResult = this.bannedList.validate(allCards.map(cardQuantity => cardQuantity.card), this.skirmishMode);
         
         return {
             basicRules: errors.length === 0,
