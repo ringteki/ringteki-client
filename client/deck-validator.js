@@ -129,16 +129,15 @@ class DeckValidator {
         let errors = [];
         let unreleasedCards = [];
         let rules = this.getRules(deck);
-        let role = deck.role.length > 0 ? deck.role[0].card : null;
         let provinceCount = getDeckCount(deck.provinceCards);
         let dynastyCount = getDeckCount(deck.dynastyCards);
         let conflictCount = getDeckCount(deck.conflictCards);
 
-        if(deck.stronghold) {
+        if(deck.stronghold && deck.stronghold.length > 0) {
             errors.push('Deck contains a stronghold');
         }
 
-        if(deck.role) {
+        if(deck.role && deck.role.length > 0) {
             errors.push('Deck contains a role');
         }
 
