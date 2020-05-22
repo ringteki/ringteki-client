@@ -47,7 +47,12 @@ function processDecks(decks, state) {
             return { count: card.count, card: state.cards[card.card.id] };
         });
 
-        deck.status = validateDeck(deck, { packs: state.packs });
+        let skirmishMode = false;
+        if (deck.format && deck.format.value === 'skirmish') {
+            skirmishMode = true;
+        }
+
+        deck.status = validateDeck(deck, { packs: state.packs, skirmishMode: skirmishMode });
     });
 }
 

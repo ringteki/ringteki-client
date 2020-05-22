@@ -82,6 +82,7 @@ class InnerDeckEditor extends React.Component {
             conflictCards: deck.conflictCards,
             dynastyCards: deck.dynastyCards,
             faction: deck.faction,
+            format: deck.format,
             alliance: deck.alliance,
             status: deck.status
         };
@@ -98,6 +99,15 @@ class InnerDeckEditor extends React.Component {
 
     onNumberToAddChange(event) {
         this.setState({ numberToAdd: event.target.value });
+    }
+
+    onFormatChange(selectedFormat) {
+        let deck = this.copyDeck(this.state.deck);
+
+        deck.format = selectedFormat;
+
+        this.setState({ deck: deck });
+        this.props.updateDeck(deck);
     }
 
     onFactionChange(selectedFaction) {
@@ -289,7 +299,6 @@ class InnerDeckEditor extends React.Component {
         let deckList = '';
         let cardList = '';
 
-
         if(deckResponse.success) {
             let deckRecord = deckResponse.record;
             if(selector === 'decks') {
@@ -422,6 +431,8 @@ class InnerDeckEditor extends React.Component {
                 <form className='form form-horizontal'>
                     <Input name='deckName' label='Deck Name' labelClass='col-sm-3' fieldClass='col-sm-9' placeholder='Deck Name'
                         type='text' onChange={ this.onChange.bind(this, 'name') } value={ this.state.deck.name } />
+                    <Select name='format' label='Format' labelClass='col-sm-3' fieldClass='col-sm-9' options={ _.toArray({ stronghold: {name: 'Stronghold', value: 'stronghold' }, skirmish: {name: 'Skirmish', value: 'skirmish' }}) }
+                        onChange={ this.onFormatChange.bind(this) } value={ this.state.deck.format ? this.state.deck.format.value : 'stronghold' } />
                     <Select name='faction' label='Clan' labelClass='col-sm-3' fieldClass='col-sm-9' options={ _.toArray(this.props.factions) }
                         onChange={ this.onFactionChange.bind(this) } value={ this.state.deck.faction ? this.state.deck.faction.value : undefined } />
                     <Select name='alliance' label='Alliance' labelClass='col-sm-3' fieldClass='col-sm-9' options={ _.toArray(this.props.alliances) }

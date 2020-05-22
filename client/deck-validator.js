@@ -111,13 +111,112 @@ const roleRules = {
 };
 
 class DeckValidator {
-    constructor(packs) {
+    constructor(packs, skirmishMode) {
         this.packs = packs;
+        this.skirmishMode = skirmishMode;
         this.bannedList = new BannedList();
         this.restrictedList = new RestrictedList();
     }
 
     validateDeck(deck) {
+        if (this.skirmishMode) {
+            return this.validateDeckSkirmish(deck);
+        }
+        return this.validateDeckStandard(deck);
+    }
+
+    validateDeckSkirmish(deck) {
+        let errors = [];
+        let unreleasedCards = [];
+        let rules = this.getRules(deck);
+        let role = deck.role.length > 0 ? deck.role[0].card : null;
+        let provinceCount = getDeckCount(deck.provinceCards);
+        let dynastyCount = getDeckCount(deck.dynastyCards);
+        let conflictCount = getDeckCount(deck.conflictCards);
+
+        if(deck.stronghold) {
+            errors.push('Deck contains a stronghold');
+        }
+
+        if(deck.role) {
+            errors.push('Deck contains a role');
+        }
+
+        if(provinceCount > 0) {
+            errors.push('Deck contains provinces');
+        }
+
+        if(dynastyCount < rules.minimumDynasty) {
+            errors.push('Too few dynasty cards');
+        } else if(dynastyCount > rules.maximumDynasty) {
+            errors.push('Too many dynasty cards');
+        }
+
+        if(conflictCount < rules.minimumConflict) {
+            errors.push('Too few conflict cards');
+        } else if(conflictCount > rules.maximumConflict) {
+            errors.push('Too many conflict cards');
+        }
+
+        _.each(rules.rules, rule => {
+            if(!rule.condition(deck)) {
+                errors.push(rule.message);
+            }
+        });
+
+        let allCards = deck.provinceCards.concat(deck.dynastyCards).concat(deck.conflictCards);
+        let cardCountByName = {};
+
+        _.each(allCards, cardQuantity => {
+            cardCountByName[cardQuantity.card.name] = cardCountByName[cardQuantity.card.name] || { name: cardQuantity.card.name, faction: cardQuantity.card.clan, influence: cardQuantity.card.influence_cost, limit: cardQuantity.card.deck_limit, count: 0, allowed_clans: cardQuantity.card.allowed_clans };
+            cardCountByName[cardQuantity.card.name].count += cardQuantity.count;
+
+            if(!rules.mayInclude(cardQuantity.card) || rules.cannotInclude(cardQuantity.card) || (cardQuantity.card.role_restriction && !rules.roleRestrictions.includes(cardQuantity.card.role_restriction))) {
+                errors.push(cardQuantity.card.name + ' is not allowed by clan, alliance or role');
+            }
+
+            if(!isCardInReleasedPack(this.packs, cardQuantity.card)) {
+                unreleasedCards.push(cardQuantity.card.name + ' is not yet released');
+            }
+        });
+
+        _.each(cardCountByName, card => {
+            if(card.count > card.limit) {
+                errors.push(card.name + ' has limit ' + Math.min(2, card.limit));
+            }
+        });
+
+        let totalInfluence = _.reduce(cardCountByName, (total, card) => {
+            if(card.influence && card.faction !== deck.faction.value) {
+                return total + card.influence * card.count;
+            }
+            return total;
+        }, 0);
+
+        rules.influence = 6;
+
+        if(totalInfluence > rules.influence) {
+            errors.push('Total influence (' + totalInfluence.toString() + ') is higher than max allowed influence (' + rules.influence.toString() + ')');
+        }
+
+        let restrictedResult = this.restrictedList.validate(allCards.map(cardQuantity => cardQuantity.card));
+        let bannedResult = this.bannedList.validate(allCards.map(cardQuantity => cardQuantity.card));
+        
+        return {
+            skirmishMode: true,
+            basicRules: errors.length === 0,
+            noUnreleasedCards: unreleasedCards.length === 0,
+            faqRestrictedList: restrictedResult.valid && bannedResult.valid,
+            faqVersion: restrictedResult.version,
+            provinceCount: provinceCount,
+            dynastyCount: dynastyCount,
+            conflictCount: conflictCount,
+            extendedStatus: errors.concat(unreleasedCards, restrictedResult.errors, bannedResult.errors)
+
+        };
+    }
+
+    validateDeckStandard(deck) {
         let errors = [];
         let unreleasedCards = [];
         let rules = this.getRules(deck);
@@ -211,7 +310,7 @@ class DeckValidator {
 
         let restrictedResult = this.restrictedList.validate(allCards.map(cardQuantity => cardQuantity.card));
         let bannedResult = this.bannedList.validate(allCards.map(cardQuantity => cardQuantity.card));
-
+        
         return {
             basicRules: errors.length === 0,
             noUnreleasedCards: unreleasedCards.length === 0,
@@ -240,11 +339,33 @@ class DeckValidator {
                 water: 1
             }
         };
-        let factionRules = this.getFactionRules(deck.faction.value.toLowerCase());
-        let allianceRules = this.getAllianceRules(deck.alliance.value.toLowerCase(), deck.faction.value.toLowerCase());
-        let roleRules = this.getRoleRules(deck.role.length > 0 ? deck.role[0].card : null);
-        let strongholdRules = this.getStrongholdRules(deck.stronghold.length > 0 ? deck.stronghold[0].card : null);
-        return this.combineValidationRules([standardRules, factionRules, allianceRules, roleRules, strongholdRules]);
+        const skirmishRules = {
+            minimumDynasty: 30,
+            maximumDynasty: 40,
+            minimumConflict: 30,
+            maximumConflict: 40,
+            requiredProvinces: 0,
+            maxProvince: {
+                air: 0,
+                earth: 0,
+                fire: 0,
+                void: 0,
+                water: 0
+            }
+        };
+
+        if (!this.skirmishMode) {
+            let factionRules = this.getFactionRules(deck.faction.value.toLowerCase());
+            let allianceRules = this.getAllianceRules(deck.alliance.value.toLowerCase(), deck.faction.value.toLowerCase());
+            let roleRules = this.getRoleRules(deck.role.length > 0 ? deck.role[0].card : null);
+            let strongholdRules = this.getStrongholdRules(deck.stronghold.length > 0 ? deck.stronghold[0].card : null);
+            return this.combineValidationRules([standardRules, factionRules, allianceRules, roleRules, strongholdRules]);
+        } else {
+            let factionRules = this.getFactionRules(deck.faction.value.toLowerCase());
+            let allianceRules = this.getAllianceRules(deck.alliance.value.toLowerCase(), deck.faction.value.toLowerCase());
+            return this.combineValidationRules([skirmishRules, factionRules, allianceRules]);
+        }
+
     }
 
     getFactionRules(faction) {
@@ -309,7 +430,7 @@ class DeckValidator {
 module.exports = function validateDeck(deck, options) {
     options = Object.assign({ includeExtendedStatus: true }, options);
 
-    let validator = new DeckValidator(options.packs);
+    let validator = new DeckValidator(options.packs, options.skirmishMode);
     let result = validator.validateDeck(deck);
 
     if(!options.includeExtendedStatus) {
