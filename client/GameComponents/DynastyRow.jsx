@@ -226,7 +226,6 @@ class DynastyRow extends React.Component {
         ];
 
         if(this.props.isMe || this.props.spectating && !this.props.otherPlayer) {
-            console.log(this.props.isSkirmish);
             return (
                 <div className='dynasty-row no-highlight'>
                     <div className='deck-cards'>

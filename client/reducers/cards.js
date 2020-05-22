@@ -48,7 +48,7 @@ function processDecks(decks, state) {
         });
 
         let skirmishMode = false;
-        if (deck.format && deck.format.value === 'skirmish') {
+        if (deck.format && deck.format.value === state.formats['skirmish'].value) {
             skirmishMode = true;
         }
 
@@ -90,6 +90,16 @@ export default function(state = {}, action) {
 
             return Object.assign({}, state, {
                 factions: factions
+            });
+        case 'RECEIVE_FORMATS':
+            var formats = {}
+
+            _.each(action.response.formats, format => {
+                formats[format.value] = format;
+            })
+
+            return Object.assign({}, state, {
+                formats: formats
             });
         case 'ZOOM_CARD':
             return Object.assign({}, state, {

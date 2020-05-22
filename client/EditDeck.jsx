@@ -82,6 +82,7 @@ InnerEditDeck.propTypes = {
     deckId: PropTypes.string,
     deckSaved: PropTypes.bool,
     factions: PropTypes.object,
+    formats: PropTypes.object,
     loadDeck: PropTypes.func,
     loading: PropTypes.bool,
     navigate: PropTypes.func,
@@ -99,6 +100,7 @@ function mapStateToProps(state) {
         deck: state.cards.selectedDeck,
         deckSaved: state.cards.deckSaved,
         factions: state.cards.factions,
+        formats: state.cards.formats,
         loading: state.api.loading,
         socket: state.socket.socket
     };
