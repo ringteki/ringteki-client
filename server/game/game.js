@@ -51,6 +51,7 @@ class Game extends EventEmitter {
         this.name = details.name;
         this.allowSpectators = details.allowSpectators;
         this.spectatorSquelch = details.spectatorSquelch;
+        this.skirmishMode = details.skirmishMode;
         this.owner = details.owner;
         this.started = false;
         this.playStarted = false;
@@ -65,7 +66,6 @@ class Game extends EventEmitter {
         this.manualMode = false;
         this.currentPhase = '';
         this.password = details.password;
-        this.skirmishMode = !!options.skirmishMode;
         this.roundNumber = 0;
 
         this.conflictRecord = [];
