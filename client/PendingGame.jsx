@@ -211,7 +211,7 @@ class InnerPendingGame extends React.Component {
                 index++;
 
                 return row;
-            }) : <div>You have no decks, please add one</div>;
+            }) : <div>You have no decks for this format, please add one</div>;
         }
 
         let game = this.props.currentGame;
