@@ -49,6 +49,7 @@ class InnerMessages extends React.Component {
         this.formatMessageText = this.formatMessageText.bind(this);
 
         this.emoji = new EmojiConvertor();
+        this.highlightedCardId = null;
     }
 
     getMessage() {
@@ -156,17 +157,23 @@ class InnerMessages extends React.Component {
     }
 
     handleMouseOver(fragment) {
-        let element = document.getElementById(fragment.uuid);
+        if(this.highlightedCardId) {
+            const highlightedElement = document.getElementById(fragment.uuid);
+            highlightedElement.classList.remove('highlight');
+        }
+
+        const element = document.getElementById(fragment.uuid);
 
         if(element) {
             element.classList.add('highlight');
+            this.highlightedCardId = fragment.uuid;
         }
 
         this.props.onCardMouseOver.bind(this, fragment)();
     }
 
     handleMouseOut(fragment) {
-        let element = document.getElementById(fragment.uuid);
+        const element = document.getElementById(fragment.uuid);
 
         if(element) {
             element.classList.remove('highlight');
