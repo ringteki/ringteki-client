@@ -17,6 +17,12 @@ class Chat extends React.Component {
         };
     }
 
+    componentDidMount() {
+        if(this.state.canScroll) {
+            $(this.refs.messagePanel).scrollTop(999999);
+        }
+    }
+
     componentDidUpdate() {
         if(this.state.canScroll) {
             $(this.refs.messagePanel).scrollTop(999999);
@@ -29,11 +35,20 @@ class Chat extends React.Component {
 
     onKeyPress(event) {
         if(event.key === 'Enter') {
-            this.props.sendMessage(this.state.message);
-            this.setState({ message: '' });
+            this.sendMessage();
 
             event.preventDefault();
         }
+    }
+
+    sendMessage() {
+        if(this.state.message === '') {
+            return;
+        }
+
+        this.props.onSendChat(this.state.message);
+
+        this.setState({ message: '' });
     }
 
     onScroll() {

@@ -27,7 +27,7 @@ import { tryParseJSON } from '../../util.js';
 
 import * as actions from '../../actions';
 
-export class InnerGameBoard extends React.Component {
+export class GameBoard extends React.Component {
     constructor() {
         super();
 
@@ -92,7 +92,7 @@ export class InnerGameBoard extends React.Component {
             return;
         }
 
-        let thisPlayer = props.currentGame.players[props.username];
+        let thisPlayer = props.currentGame.players[props.user.username];
 
         if(thisPlayer) {
             this.setState({ spectating: false });
@@ -112,7 +112,7 @@ export class InnerGameBoard extends React.Component {
 
         if(props.currentGame && props.currentGame.started) {
             if(_.find(props.currentGame.players, p => {
-                return p.name === props.username;
+                return p.name === props.user.username;
             })) {
                 menuOptions.unshift({ text: 'Concede', onClick: this.onConcedeClick });
             }
@@ -154,7 +154,7 @@ export class InnerGameBoard extends React.Component {
             return false;
         }
 
-        let thisPlayer = this.props.currentGame.players[this.props.username];
+        let thisPlayer = this.props.currentGame.players[this.props.user.username];
         if(!thisPlayer) {
             thisPlayer = _.toArray(this.props.currentGame.players)[0];
         }
@@ -274,7 +274,7 @@ export class InnerGameBoard extends React.Component {
             let cardsInPlay = _.map(cards, card => {
                 return (<Card key={ card.uuid } id={ card.uuid } source='play area' card={ card } disableMouseOver={ card.facedown && !card.code }
                     onMenuItemClick={ this.onMenuItemClick } onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut }
-                    showStats={ !this.props.user.settings.optionSettings.disableCardStats }
+                    showStats={ !this.props.user.settings.keywordSettings.disableCardStats }
                     onClick={ this.onCardClick } onDragDrop={ this.onDragDrop } size={ this.props.user.settings.cardSize } isMe={ isMe } declaring={ playerDeclaringParticipants }/>);
             });
             cardsByLocation.push(cardsInPlay);
@@ -327,8 +327,8 @@ export class InnerGameBoard extends React.Component {
         this.props.sendGameMessage('toggleTimerSetting', option, value);
     }
 
-    onOptionSettingToggle(option, value) {
-        this.props.sendGameMessage('toggleOptionSetting', option, value);
+    onKeywordSettingToggle(option, value) {
+        this.props.sendGameMessage('toggleKeywordSetting', option, value);
     }
 
     onTimerExpired() {
@@ -409,7 +409,6 @@ export class InnerGameBoard extends React.Component {
         } else {
             conflictElement = <div />;
         }
-
 
         return (<div className='center-bar'>
             { this.getRings(null, 'ring-panel') }
@@ -552,20 +551,30 @@ export class InnerGameBoard extends React.Component {
         );
     }
 
+    getPromptDefaultPosition() {
+        return {
+            x: (window.innerWidth / 2) - 105,
+            y: (window.innerHeight / 2) - 211
+        };
+    }
+
     getPrompt(thisPlayer) {
-        return (<div className='inset-pane'>
-            <ActivePlayerPrompt title={ thisPlayer.menuTitle }
-                buttons={ thisPlayer.buttons }
-                cards={ this.props.cards }
-                controls={ thisPlayer.controls }
-                promptTitle={ thisPlayer.promptTitle }
-                onButtonClick={ this.onCommand }
-                onMouseOver={ this.onMouseOver }
-                onMouseOut={ this.onMouseOut }
-                user={ this.props.user }
-                onTimerExpired={ this.onTimerExpired.bind(this) }
-                phase={ thisPlayer.phase } />
-        </div>);
+        return (<Draggable handle='grip'
+            defaultPosition={ this.getPromptDefaultPosition() } >
+            <div className='inset-pane'>
+                <ActivePlayerPrompt title={ thisPlayer.menuTitle }
+                    buttons={ thisPlayer.buttons }
+                    cards={ this.props.cards }
+                    controls={ thisPlayer.controls }
+                    promptTitle={ thisPlayer.promptTitle }
+                    onButtonClick={ this.onCommand }
+                    onMouseOver={ this.onMouseOver }
+                    onMouseOut={ this.onMouseOut }
+                    user={ this.props.user }
+                    onTimerExpired={ this.onTimerExpired.bind(this) }
+                    phase={ thisPlayer.phase } />
+            </div>
+        </Draggable>);
     }
 
     getPlayerHand(thisPlayer) {
@@ -598,7 +607,7 @@ export class InnerGameBoard extends React.Component {
 
         let manualMode = this.props.currentGame.manualMode;
 
-        let thisPlayer = this.props.currentGame.players[this.props.username];
+        let thisPlayer = this.props.currentGame.players[this.props.user.username];
         if(!thisPlayer) {
             thisPlayer = _.toArray(this.props.currentGame.players)[0];
         }
@@ -643,7 +652,7 @@ export class InnerGameBoard extends React.Component {
                         </div>
                         <div className='modal-body col-xs-12'>
                             <GameConfiguration actionWindows={ thisPlayer.promptedActionWindows } timerSettings={ thisPlayer.timerSettings }
-                                optionSettings={ thisPlayer.optionSettings } onOptionSettingToggle={ this.onOptionSettingToggle.bind(this) }
+                                keywordSettings={ thisPlayer.keywordSettings } onKeywordSettingToggle={ this.onKeywordSettingToggle.bind(this) }
                                 onToggle={ this.onPromptedActionWindowToggle.bind(this) } onTimerSettingToggle={ this.onTimerSettingToggle.bind(this) }
                             />
                         </div>
@@ -657,7 +666,7 @@ export class InnerGameBoard extends React.Component {
                 { this.getPrompt(thisPlayer) }
                 { this.getPlayerHand(thisPlayer) }
                 {
-                    false && !thisPlayer.optionSettings.showStatusInSidebar &&
+                    false && !thisPlayer.keywordSettings.showStatusInSidebar &&
                     <div className='player-stats-row'>
                         <PlayerStatsRow
                             clockState={ otherPlayer ? otherPlayer.clock : null }
@@ -791,7 +800,7 @@ export class InnerGameBoard extends React.Component {
                     </div>
                 </div>
                 {
-                    false && !thisPlayer.optionSettings.showStatusInSidebar &&
+                    false && !thisPlayer.keywordSettings.showStatusInSidebar &&
                     <div className='player-stats-row our-side'>
                         <PlayerStatsRow
                             { ...bindActionCreators(actions, this.props.dispatch) }
@@ -809,8 +818,8 @@ export class InnerGameBoard extends React.Component {
     }
 }
 
-InnerGameBoard.displayName = 'GameBoard';
-InnerGameBoard.propTypes = {
+GameBoard.displayName = 'GameBoard';
+GameBoard.propTypes = {
     cardToZoom: PropTypes.object,
     cards: PropTypes.object,
     clearZoom: PropTypes.func,
@@ -821,7 +830,6 @@ InnerGameBoard.propTypes = {
     setContextMenu: PropTypes.func,
     socket: PropTypes.object,
     user: PropTypes.object,
-    username: PropTypes.string,
     zoomCard: PropTypes.func
 };
 
@@ -829,10 +837,9 @@ function mapStateToProps(state) {
     return {
         cardToZoom: state.cards.zoomCard,
         cards: state.cards.cards,
-        currentGame: state.games.currentGame,
-        socket: state.socket.socket,
-        user: state.auth.user,
-        username: state.auth.username
+        currentGame: state.lobby.currentGame,
+        socket: state.lobby.socket,
+        user: state.account.user
     };
 }
 
@@ -843,6 +850,4 @@ function mapDispatchToProps(dispatch) {
     return boundActions;
 }
 
-const GameBoard = connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(InnerGameBoard);
-
-export default GameBoard;
+export default connect(mapStateToProps, mapDispatchToProps, null, { withRef: true })(GameBoard);

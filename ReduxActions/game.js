@@ -44,6 +44,12 @@ export function receiveGameState(game, username) {
     };
 }
 
+function hasTimer(game, username) {
+    let player = game.players[username];
+    let buttons = player && player.buttons || [];
+    return buttons.some(button => button.timer);
+}
+
 export function clearGameState() {
     return {
         type: 'CLEAR_GAMESTATE'

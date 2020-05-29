@@ -51,9 +51,9 @@ class GameConfiguration extends React.Component {
         }
     }
 
-    onOptionSettingToggle(option, event) {
-        if(this.props.onOptionSettingToggle) {
-            this.props.onOptionSettingToggle(option, event.target.checked);
+    onKeywordSettingToggle(option, event) {
+        if(this.props.onKeywordSettingToggle) {
+            this.props.onKeywordSettingToggle(option, event.target.checked);
         }
     }
 
@@ -109,44 +109,44 @@ class GameConfiguration extends React.Component {
                     <div className='panel'>
                         <div className='form-group'>
                             <Checkbox
-                                name='optionSettings.markCardsUnselectable'
+                                name='keywordSettings.markCardsUnselectable'
                                 noGroup
                                 label={ 'Grey out cards with no relevant abilities during interrupt/reaction windows' }
                                 fieldClass='col-sm-6'
-                                onChange={ this.onOptionSettingToggle.bind(this, 'markCardsUnselectable') }
-                                checked={ this.props.optionSettings.markCardsUnselectable }
+                                onChange={ this.onKeywordSettingToggle.bind(this, 'markCardsUnselectable') }
+                                checked={ this.props.keywordSettings.markCardsUnselectable }
                             />
                             <Checkbox
-                                name='optionSettings.cancelOwnAbilities'
+                                name='keywordSettings.cancelOwnAbilities'
                                 noGroup
                                 label={ 'Prompt to cancel/react to initiation of my own abilities' }
                                 fieldClass='col-sm-6'
-                                onChange={ this.onOptionSettingToggle.bind(this, 'cancelOwnAbilities') }
-                                checked={ this.props.optionSettings.cancelOwnAbilities }
+                                onChange={ this.onKeywordSettingToggle.bind(this, 'cancelOwnAbilities') }
+                                checked={ this.props.keywordSettings.cancelOwnAbilities }
                             />
                             <Checkbox
-                                name='optionSettings.orderForcedAbilities'
+                                name='keywordSettings.orderForcedAbilities'
                                 noGroup
                                 label={ 'Prompt to order forced triggered/simultaneous abilities' }
                                 fieldClass='col-sm-6'
-                                onChange={ this.onOptionSettingToggle.bind(this, 'orderForcedAbilities') }
-                                checked={ this.props.optionSettings.orderForcedAbilities }
+                                onChange={ this.onKeywordSettingToggle.bind(this, 'orderForcedAbilities') }
+                                checked={ this.props.keywordSettings.orderForcedAbilities }
                             />
                             <Checkbox
-                                name='optionSettings.confirmOneClick'
+                                name='keywordSettings.confirmOneClick'
                                 noGroup
                                 label={ 'Show a confirmation prompt when initating 1-click abilities' }
                                 fieldClass='col-sm-6'
-                                onChange={ this.onOptionSettingToggle.bind(this, 'confirmOneClick') }
-                                checked={ this.props.optionSettings.confirmOneClick }
+                                onChange={ this.onKeywordSettingToggle.bind(this, 'confirmOneClick') }
+                                checked={ this.props.keywordSettings.confirmOneClick }
                             />
                             <Checkbox
-                                name='optionSettings.disableCardStats'
+                                name='keywordSettings.disableCardStats'
                                 noGroup
                                 label={ 'Disable card hover statistics popup' }
                                 fieldClass='col-sm-6'
-                                onChange={ this.onOptionSettingToggle.bind(this, 'disableCardStats') }
-                                checked={ this.props.optionSettings.disableCardStats }
+                                onChange={ this.onKeywordSettingToggle.bind(this, 'disableCardStats') }
+                                checked={ this.props.keywordSettings.disableCardStats }
                             />
                         </div>
                     </div>
@@ -159,10 +159,10 @@ class GameConfiguration extends React.Component {
 GameConfiguration.displayName = 'GameConfiguration';
 GameConfiguration.propTypes = {
     actionWindows: PropTypes.object,
-    onOptionSettingToggle: PropTypes.func,
+    keywordSettings: PropTypes.object,
+    onKeywordSettingToggle: PropTypes.func,
     onTimerSettingToggle: PropTypes.func,
     onToggle: PropTypes.func,
-    optionSettings: PropTypes.object,
     timerSettings: PropTypes.object
 };
 

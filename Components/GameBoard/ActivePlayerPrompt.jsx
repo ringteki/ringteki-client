@@ -177,13 +177,6 @@ class ActivePlayerPrompt extends React.Component {
         });
     }
 
-    getDefaultPosition() {
-        return {
-            x: (window.innerWidth / 2) - 105,
-            y: (window.innerHeight / 2) - 211
-        };
-    }
-
     render() {
         let promptTitle;
 
@@ -203,25 +196,22 @@ class ActivePlayerPrompt extends React.Component {
                 </div>);
         }
 
-        return (<Draggable handle='grip'
-            defaultPosition={ this.getDefaultPosition() } >
-            <div className='no-highlight'>
-                { timer }
-                <grip>
-                    <div className={ 'phase-indicator ' + this.props.phase } onClick={ this.props.onTitleClick }>
-                        { this.props.phase } phase
-                    </div>
-                </grip>
-                { promptTitle }
-                <div className='menu-pane'>
-                    <div className='panel'>
-                        <h4>{ this.props.title }</h4>
-                        { this.getControls() }
-                        { this.getButtons() }
-                    </div>
+        return (<div className='no-highlight'>
+            { timer }
+            <grip>
+                <div className={ 'phase-indicator ' + this.props.phase } onClick={ this.props.onTitleClick }>
+                    { this.props.phase } phase
+                </div>
+            </grip>
+            { promptTitle }
+            <div className='menu-pane'>
+                <div className='panel'>
+                    <h4>{ this.props.title }</h4>
+                    { this.getControls() }
+                    { this.getButtons() }
                 </div>
             </div>
-        </Draggable>);
+        </div>);
     }
 }
 
@@ -230,7 +220,6 @@ ActivePlayerPrompt.propTypes = {
     buttons: PropTypes.array,
     cards: PropTypes.object,
     controls: PropTypes.array,
-    getDefaultPosition: PropTypes.func,
     onButtonClick: PropTypes.func,
     onMouseOut: PropTypes.func,
     onMouseOver: PropTypes.func,
