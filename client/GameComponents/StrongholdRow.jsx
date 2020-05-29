@@ -22,7 +22,7 @@ class StrongholdRow extends React.Component {
     }
 
     getFaction(player) {
-        if (player.faction) {
+        if(player.faction) {
             let faction = player.faction.name.toLowerCase();
             let tokens = faction.split(' ');
             return tokens[0];
@@ -31,29 +31,28 @@ class StrongholdRow extends React.Component {
     }
 
     getStronghold(player, isSkirmish) {
-        if (!isSkirmish) {
-            if (this.props.isMe) {
+        if(!isSkirmish) {
+            if(this.props.isMe) {
                 return (
                     <Province isMe={ this.props.isMe } source='stronghold province' cards={ this.props.strongholdProvinceCards } onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onDragDrop={ this.props.onDragDrop } size={ this.props.cardSize } onCardClick={ this.props.onCardClick } onMenuItemClick={ this.props.onMenuItemClick } />
                 );
-            } else {
-                return (
-                    <Province isMe={ this.props.isMe } source='stronghold province' cards={ this.props.strongholdProvinceCards } onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onCardClick={ this.props.onCardClick } size={ this.props.cardSize } />
-                )
             }
-        } else {
-            if (player && this.getFaction(player))
-            {
-                return (
-                    <div  className={ `card-wrapper skirmish-stronghold vertical ${this.props.cardSize}` }>
-                        <img
-                            className={ `card-image skirmish-stronghold ${ this.props.cardSize }` }
-                            src={ '/img/skirmish-images/skirmish-stronghold-' + this.getFaction(player) + '.jpg' }
-                        />
-                    </div>
-                );
-            }
+            return (
+                <Province isMe={ this.props.isMe } source='stronghold province' cards={ this.props.strongholdProvinceCards } onMouseOver={ this.props.onMouseOver } onMouseOut={ this.props.onMouseOut } onCardClick={ this.props.onCardClick } size={ this.props.cardSize } />
+            );
+
         }
+        if(player && this.getFaction(player)) {
+            return (
+                <div className={ `card-wrapper skirmish-stronghold vertical ${this.props.cardSize}` }>
+                    <img
+                        className={ `card-image skirmish-stronghold ${ this.props.cardSize }` }
+                        src={ '/img/skirmish-images/skirmish-stronghold-' + this.getFaction(player) + '.jpg' }
+                    />
+                </div>
+            );
+        }
+
     }
 
     render() {
@@ -92,6 +91,7 @@ StrongholdRow.displayName = 'StrongholdRow';
 StrongholdRow.propTypes = {
     cardSize: PropTypes.string,
     isMe: PropTypes.bool,
+    isSkirmish: PropTypes.bool,
     onCardClick: PropTypes.func,
     onDragDrop: PropTypes.func,
     onMenuItemClick: PropTypes.func,
@@ -101,7 +101,6 @@ StrongholdRow.propTypes = {
     role: PropTypes.object,
     spectating: PropTypes.bool,
     strongholdProvinceCards: PropTypes.array,
-    isSkirmish: PropTypes.bool,
     thisPlayer: PropTypes.object
 };
 

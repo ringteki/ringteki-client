@@ -20,7 +20,7 @@ const restrictedList = {
             'gateway-to-meido'
         ],
         'skirmish': []
-    } 
+    }
 };
 
 class RestrictedList {

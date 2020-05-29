@@ -185,7 +185,7 @@ class InnerPendingGame extends React.Component {
     }
 
     getDecks() {
-        if (this.props.currentGame.skirmishMode) {
+        if(this.props.currentGame.skirmishMode) {
             return _.filter(this.props.decks, deck => deck.format && deck.format.value === 'skirmish');
         }
         return _.filter(this.props.decks, deck => !deck.format || deck.format.value !== 'skirmish');

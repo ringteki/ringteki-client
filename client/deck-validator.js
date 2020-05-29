@@ -119,7 +119,7 @@ class DeckValidator {
     }
 
     validateDeck(deck) {
-        if (this.skirmishMode) {
+        if(this.skirmishMode) {
             return this.validateDeckSkirmish(deck);
         }
         return this.validateDeckStandard(deck);
@@ -200,7 +200,7 @@ class DeckValidator {
 
         let restrictedResult = this.restrictedList.validate(allCards.map(cardQuantity => cardQuantity.card), this.skirmishMode);
         let bannedResult = this.bannedList.validate(allCards.map(cardQuantity => cardQuantity.card), this.skirmishMode);
-        
+
         return {
             skirmishMode: true,
             basicRules: errors.length === 0,
@@ -310,7 +310,7 @@ class DeckValidator {
 
         let restrictedResult = this.restrictedList.validate(allCards.map(cardQuantity => cardQuantity.card), this.skirmishMode);
         let bannedResult = this.bannedList.validate(allCards.map(cardQuantity => cardQuantity.card), this.skirmishMode);
-        
+
         return {
             basicRules: errors.length === 0,
             noUnreleasedCards: unreleasedCards.length === 0,
@@ -354,17 +354,17 @@ class DeckValidator {
             }
         };
 
-        if (!this.skirmishMode) {
+        if(!this.skirmishMode) {
             let factionRules = this.getFactionRules(deck.faction.value.toLowerCase());
             let allianceRules = this.getAllianceRules(deck.alliance.value.toLowerCase(), deck.faction.value.toLowerCase());
             let roleRules = this.getRoleRules(deck.role.length > 0 ? deck.role[0].card : null);
             let strongholdRules = this.getStrongholdRules(deck.stronghold.length > 0 ? deck.stronghold[0].card : null);
             return this.combineValidationRules([standardRules, factionRules, allianceRules, roleRules, strongholdRules]);
-        } else {
-            let factionRules = this.getFactionRules(deck.faction.value.toLowerCase());
-            let allianceRules = this.getAllianceRules(deck.alliance.value.toLowerCase(), deck.faction.value.toLowerCase());
-            return this.combineValidationRules([skirmishRules, factionRules, allianceRules]);
         }
+        let factionRules = this.getFactionRules(deck.faction.value.toLowerCase());
+        let allianceRules = this.getAllianceRules(deck.alliance.value.toLowerCase(), deck.faction.value.toLowerCase());
+        return this.combineValidationRules([skirmishRules, factionRules, allianceRules]);
+
 
     }
 

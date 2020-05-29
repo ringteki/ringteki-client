@@ -409,6 +409,7 @@ DynastyRow.propTypes = {
     hand: PropTypes.array,
     honor: PropTypes.number,
     isMe: PropTypes.bool,
+    isSkirmish: PropTypes.bool,
     manualMode: PropTypes.bool,
     numConflictCards: PropTypes.number,
     numDynastyCards: PropTypes.number,
@@ -431,7 +432,6 @@ DynastyRow.propTypes = {
     removedFromGame: PropTypes.array,
     showConflictDeck: PropTypes.bool,
     showDynastyDeck: PropTypes.bool,
-    isSkirmish: PropTypes.bool,
     spectating: PropTypes.bool
 };
 
