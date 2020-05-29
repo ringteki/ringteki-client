@@ -42,14 +42,17 @@ class StrongholdRow extends React.Component {
                 )
             }
         } else {
-            return (
-                <div  className={ `card-wrapper skirmish-stronghold vertical ${this.props.cardSize}` }>
-                    <img
-                        className={ `card-image skirmish-stronghold` }
-                        src={ '/img/skirmish-images/skirmish-stronghold-' + this.getFaction(player) + '.jpg' }
-                    />
-                </div>
-            );
+            if (player && this.getFaction(player))
+            {
+                return (
+                    <div  className={ `card-wrapper skirmish-stronghold vertical ${this.props.cardSize}` }>
+                        <img
+                            className={ `card-image skirmish-stronghold ${ this.props.cardSize }` }
+                            src={ '/img/skirmish-images/skirmish-stronghold-' + this.getFaction(player) + '.jpg' }
+                        />
+                    </div>
+                );
+            }
         }
     }
 
