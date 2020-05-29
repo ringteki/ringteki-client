@@ -339,7 +339,6 @@ class DeckEditor extends React.Component {
         let conflictCards = [];
         let dynastyCards = [];
 
-
         if(deckResponse.success) {
             let deckRecord = deckResponse.record;
             if(selector === 'decks') {

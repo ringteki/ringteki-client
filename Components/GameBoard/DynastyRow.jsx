@@ -175,7 +175,6 @@ class DynastyRow extends React.Component {
         }
     }
 
-
     onShowConflictDeckClick() {
         if(this.props.onConflictClick) {
             this.props.onConflictClick();

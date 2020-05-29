@@ -87,7 +87,7 @@ class NewGame extends React.Component {
             gameType: this.state.selectedGameType,
             clocks: clocks,
             password: this.state.password,
-            quickJoin: this.props.quickJoin,
+            quickJoin: this.props.quickJoin
         });
     }
 

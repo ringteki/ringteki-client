@@ -48,15 +48,14 @@ class DeckSummary extends React.Component {
                 continue;
             }
 
-
             let type = typeCode[0].toUpperCase() + typeCode.slice(1);
             
-            if( typeof card.card.side !== 'undefined') {
+            if(typeof card.card.side !== 'undefined') {
                 let sideCode = card.card.side;
-                side =  sideCode[0].toUpperCase() + sideCode.slice(1);
+                side = sideCode[0].toUpperCase() + sideCode.slice(1);
             }
 
-            if(type === 'Character' || type === "Event") {
+            if(type === 'Character' || type === 'Event') {
                 type = side + ' ' + type;
             }
 

@@ -9,7 +9,7 @@ class SquishableCardPanel extends React.Component {
             return false;
         }
 
-        if(revealWhenHiddenTo === this.props.username) {
+        if(revealWhenHiddenTo === this.props.user.username) {
             return false;
         }
 

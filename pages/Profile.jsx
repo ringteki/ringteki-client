@@ -29,7 +29,7 @@ class Profile extends React.Component {
             newPasswordAgain: '',
             successMessage: '',
             timerSettings: {},
-            keywordSettings: {},
+            keywordSettings: {}
         };
 
         this.backgrounds = [

@@ -224,7 +224,6 @@ class Card extends React.Component {
             wrapperStyle = {marginLeft: '4px', marginRight: '4px'};
         }
 
-
         return wrapperStyle;
     }
 

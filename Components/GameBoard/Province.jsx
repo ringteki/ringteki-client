@@ -115,7 +115,6 @@ class Province extends React.Component {
             cardClassName += ' ' + this.props.size;
         }
 
-
         if(this.props.orientation === 'horizontal' || this.props.orientation === 'bowed') {
             className += ' horizontal';
         } else {
