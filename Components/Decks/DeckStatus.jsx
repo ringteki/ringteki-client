@@ -10,7 +10,6 @@ class DeckStatus extends React.Component {
     render() {
         let { status } = this.props;
         const restrictionsFollowed = status.noUnreleasedCards;
-        let statusName;
         let className = classNames('deck-status', this.props.className, {
             'invalid': !status.basicRules || !status.noBannedCards && !restrictionsFollowed,
             'casual-play': status.basicRules && (status.noBannedCards && !restrictionsFollowed || !status.noBannedCards && restrictionsFollowed),

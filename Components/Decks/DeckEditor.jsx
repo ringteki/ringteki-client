@@ -283,14 +283,14 @@ class DeckEditor extends React.Component {
 
     getCardListEntry(count, card) {
         let packName = '';
-        let packId = '';
+        //let packId = ''; // Not currently used by Ringteki
         if(card.pack_cards.length) {
             let packData = card.pack_cards[0];
             this.setState({ test: packData.pack.id });
             let pack = _.find(this.props.packs, p => p.id === packData.pack.id);
             if(pack && pack.name) {
                 packName = ' (' + pack.name + ')';
-                packId = ' (' + pack.id + ')';
+                //packId = ' (' + pack.id + ')'; //Not currently used by Ringteki
             }
         }
         return count + ' ' + card.name + packName + '\n';
@@ -333,11 +333,13 @@ class DeckEditor extends React.Component {
         let deckList = '';
         let cardList = '';
 
+        /* Currently unused
         let stronghold = [];
         let role = [];
         let provinceCards = [];
         let conflictCards = [];
         let dynastyCards = [];
+        */
 
         if(deckResponse.success) {
             let deckRecord = deckResponse.record;
@@ -450,6 +452,7 @@ class DeckEditor extends React.Component {
 DeckEditor.displayName = 'DeckEditor';
 DeckEditor.propTypes = {
     alliances: PropTypes.object,
+    apiState: PropTypes.object,
     cards: PropTypes.object,
     deck: PropTypes.object,
     factions: PropTypes.object,
@@ -464,6 +467,7 @@ DeckEditor.propTypes = {
 function mapStateToProps(state) {
     return {
         alliances: state.cards.factions,
+        apiState: state.api.SAVE_DECK,
         cards: state.cards.cards,
         decks: state.cards.decks,
         factions: state.cards.factions,

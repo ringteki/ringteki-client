@@ -1,5 +1,3 @@
-import $ from 'jquery';
-
 export function loadCards() {
     return {
         types: ['REQUEST_CARDS', 'RECEIVE_CARDS'],

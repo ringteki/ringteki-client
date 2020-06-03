@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
-import _ from 'underscore';
 
 import AlertPanel from '../Site/AlertPanel';
 import Game from './Game';

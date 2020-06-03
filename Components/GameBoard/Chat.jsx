@@ -94,6 +94,7 @@ Chat.propTypes = {
     messages: PropTypes.array,
     onMouseOut: PropTypes.func,
     onMouseOver: PropTypes.func,
+    onSendChat: PropTypes.func,
     sendMessage: PropTypes.func,
     visible: PropTypes.bool
 };

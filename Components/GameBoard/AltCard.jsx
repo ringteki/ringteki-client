@@ -19,7 +19,7 @@ class AltCard extends React.Component {
         }
 
         let cardText = this.props.card.text.replace(/\n/g, '<br />');
-        for(let icon of ThronesIcons) {
+        for(let icon of RingsIcons) {
             cardText = cardText.replace(new RegExp(`\\[${icon}\\]`, 'g'), `<span class='ringsicon ringsicon-${icon}'></span>`);
         }
 

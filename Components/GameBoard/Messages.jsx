@@ -6,7 +6,7 @@ import _ from 'underscore';
 import EmojiConvertor from 'emoji-js';
 
 import Avatar from '../Site/Avatar';
-import { RingsIcons } from '../../constants';
+//import { RingsIcons } from '../../constants'; //Currently unused
 import * as actions from '../../actions';
 
 class Messages extends React.Component {

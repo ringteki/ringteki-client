@@ -1,5 +1,7 @@
 {
-  "extends": "eslint:recommended",
+  "extends": [
+    "eslint:recommended"
+  ],
   "rules": {
     "indent": [
       2,
@@ -159,6 +161,11 @@
   "plugins": [
     "react"
   ],
+  settings: {
+    "react": {
+      "version": "detect"
+    }
+  },
   "parserOptions": {
     "ecmaFeatures": {
       "jsx": true,

@@ -538,6 +538,7 @@ Card.propTypes = {
         baseMilitarySkill: PropTypes.number,
         basePoliticalSkill: PropTypes.number,
         bowed: PropTypes.bool,
+        childCards: PropTypes.array,
         controlled: PropTypes.bool,
         controller: PropTypes.string,
         covert: PropTypes.bool,

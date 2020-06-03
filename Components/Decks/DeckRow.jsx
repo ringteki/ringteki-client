@@ -17,7 +17,7 @@ class DeckRow extends React.Component {
     }
 
     render() {
-        const { deck } = this.props;
+        //const { deck } = this.props; //Unused variable
 
         return (
             <div className={ this.props.active ? 'deck-row active' : 'deck-row' } key={ this.props.deck.name } onClick={ this.handleDeckClick }>
