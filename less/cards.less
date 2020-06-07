@@ -23,41 +23,46 @@
   &.imperial-favor {
     margin: 0 7px 10px;
   }
-    &.small {
-      &.vertical {
-        height: @card-sm-height;
-        min-width: @card-sm-width;
-      }
 
-      &.horizontal {
-        height: @card-sm-width;
-        width: @card-sm-height;
-      }
+  &.skirmish-stronghold {
+    margin: 0 7px 10px;
+  }
+
+  &.small {
+    &.vertical {
+      height: @card-sm-height;
+      min-width: @card-sm-width;
     }
 
-    &.large {
-      &.vertical {
-        height: @card-lg-height;
-        min-width: @card-lg-width;
-      }
+    &.horizontal {
+      height: @card-sm-width;
+      width: @card-sm-height;
+    }
+  }
 
-      &.horizontal {
-        height: @card-lg-width;
-        width: @card-lg-height;
-      }
+  &.large {
+    &.vertical {
+      height: @card-lg-height;
+      min-width: @card-lg-width;
     }
 
-    &.x-large {
-      &.vertical {
-        height: @card-xl-height;
-        min-width: @card-xl-width;
-      }
-
-      &.horizontal {
-        height: @card-xl-width;
-        width: @card-xl-height;
-      }
+    &.horizontal {
+      height: @card-lg-width;
+      width: @card-lg-height;
     }
+  }
+
+  &.x-large {
+    &.vertical {
+      height: @card-xl-height;
+      min-width: @card-xl-width;
+    }
+
+    &.horizontal {
+      height: @card-xl-width;
+      width: @card-xl-height;
+    }
+  }
 }
 
 .generate-wrappers(@n, @i: 0) when (@i =< @n) {

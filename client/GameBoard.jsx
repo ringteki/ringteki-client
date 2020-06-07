@@ -692,6 +692,7 @@ export class InnerGameBoard extends React.Component {
                                     onMouseOver={ this.onMouseOver }
                                     onMouseOut={ this.onMouseOut }
                                     otherPlayer= { otherPlayer }
+                                    isSkirmish = { this.props.currentGame.skirmishMode }
                                     cardSize={ this.props.user.settings.cardSize } />
                             </div>
                             { otherPlayerCards }
@@ -702,6 +703,7 @@ export class InnerGameBoard extends React.Component {
                                 otherPlayer= { otherPlayer }
                                 strongholdProvinceCards={ otherPlayer ? otherPlayer.strongholdProvince : [] }
                                 role={ otherPlayer ? otherPlayer.role : null }
+                                isSkirmish = { this.props.currentGame.skirmishMode }
                                 cardSize={ this.props.user.settings.cardSize }
                             />
                         </div>
@@ -718,6 +720,7 @@ export class InnerGameBoard extends React.Component {
                                 strongholdProvinceCards={ thisPlayer.strongholdProvince }
                                 role={ thisPlayer.role }
                                 thisPlayer ={ thisPlayer }
+                                isSkirmish = { this.props.currentGame.skirmishMode }
                                 cardSize={ this.props.user.settings.cardSize } />
                             {
                                 !thisPlayer.hideProvinceDeck &&
@@ -765,6 +768,7 @@ export class InnerGameBoard extends React.Component {
                                     onDragDrop={ this.onDragDrop }
                                     spectating={ this.state.spectating }
                                     onMenuItemClick={ this.onMenuItemClick }
+                                    isSkirmish = { this.props.currentGame.skirmishMode }
                                     cardSize={ this.props.user.settings.cardSize } />
                             </div>
                         </div>

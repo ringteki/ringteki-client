@@ -20,12 +20,14 @@ class InnerNewGame extends React.Component {
         this.onNameChange = this.onNameChange.bind(this);
         this.onClockClick = this.onClockClick.bind(this);
         this.onSpectatorsClick = this.onSpectatorsClick.bind(this);
+        this.onSkirmishModeClick = this.onSkirmishModeClick.bind(this);
         this.onSpectatorSquelchClick = this.onSpectatorSquelchClick.bind(this);
         this.onPasswordChange = this.onPasswordChange.bind(this);
 
         this.state = {
             spectators: true,
             spectatorSquelch: false,
+            skirmishMode: false,
             clocks: false,
             selectedClockType: 'timer',
             clockTimer: 60,
@@ -58,6 +60,10 @@ class InnerNewGame extends React.Component {
         this.setState({ spectators: event.target.checked });
     }
 
+    onSkirmishModeClick(event) {
+        this.setState({ skirmishMode: event.target.checked });
+    }
+
     onSpectatorSquelchClick(event) {
         this.setState({ spectatorSquelch: event.target.checked });
     }
@@ -81,6 +87,7 @@ class InnerNewGame extends React.Component {
             spectators: this.state.spectators,
             spectatorSquelch: this.state.spectatorSquelch,
             gameType: this.state.selectedGameType,
+            skirmishMode: this.state.skirmishMode,
             clocks: clocks,
             password: this.state.password
         });
@@ -181,6 +188,12 @@ class InnerNewGame extends React.Component {
                                 <label>
                                     <input type='checkbox' onChange={ this.onClockClick } checked={ this.state.clocks } />
                                     Timed game
+                                </label>
+                            </div>
+                            <div className='checkbox col-sm-8'>
+                                <label>
+                                    <input type='checkbox' onChange={ this.onSkirmishModeClick } checked={ this.state.skirmishMode } />
+                                    Skirmish Mode
                                 </label>
                             </div>
                         </div>

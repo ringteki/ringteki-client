@@ -61,6 +61,7 @@ export function saveDeck(deck) {
         deckName: deck.name,
         faction: { name: deck.faction.name, value: deck.faction.value },
         alliance: { name: deck.alliance.name, value: deck.alliance.value },
+        format: { name: deck.format.name, value: deck.format.value },
         stronghold: formatCards(deck.stronghold),
         role: formatCards(deck.role),
         provinceCards: formatCards(deck.provinceCards),

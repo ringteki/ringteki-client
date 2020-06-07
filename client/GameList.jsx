@@ -95,6 +95,10 @@ class InnerGameList extends React.Component {
                 gameTitle += '\uD83D\uDD12 ';
             }
 
+            if(game.skirmishMode) {
+                gameTitle += '[SKIRMISH] ';
+            }
+
             if(game.gameType) {
                 gameTitle += '[' + game.gameType + '] ';
             }
@@ -102,7 +106,7 @@ class InnerGameList extends React.Component {
             gameTitle += game.name;
 
             return (
-                <div key={ game.id } className={ 'game-row' + (game.node && this.props.isAdmin ? ' ' + game.node : '') }>
+                <div key={ game.id } className={ 'game-row' + (game.skirmishMode ? ' skirmish ' : '') + (game.node && this.props.isAdmin ? ' ' + game.node : '') }>
                     <span className='col-xs-12 game-title'>
                         { this.props.isAdmin ? <a href='#' className='glyphicon glyphicon-remove' onClick={ event => this.removeGame(event, game) } /> : null }
                         <b>{ gameTitle }</b> { game.clocks && game.clocks.type !== 'none' ? <img src='/img/free-clock-icon-png.png' className='clock-icon' /> : null }

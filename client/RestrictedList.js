@@ -1,28 +1,32 @@
 const restrictedList = {
-    version: '9',
-    cards: [
-        'city-of-the-open-hand',
-        'rebuild',
-        'mirumoto-s-fury',
-        'forged-edict',
-        'duty',
-        'embrace-the-void',
-        'pathfinder-s-blade',
-        'policy-debate',
-        'the-imperial-palace',
-        'consumed-by-five-fires',
-        'cunning-magistrate',
-        'a-fate-worse-than-death',
-        'mark-of-shame',
-        'magistrate-station',
-        'kakita-toshimoko',
-        'gateway-to-meido'
-    ]
+    version: '12',
+    cards: {
+        'standard': [
+            'city-of-the-open-hand',
+            'rebuild',
+            'mirumoto-s-fury',
+            'forged-edict',
+            'duty',
+            'embrace-the-void',
+            'pathfinder-s-blade',
+            'policy-debate',
+            'the-imperial-palace',
+            'consumed-by-five-fires',
+            'cunning-magistrate',
+            'a-fate-worse-than-death',
+            'mark-of-shame',
+            'magistrate-station',
+            'kakita-toshimoko',
+            'gateway-to-meido'
+        ],
+        'skirmish': []
+    }
 };
 
 class RestrictedList {
-    validate(cards) {
-        let cardsOnRestrictedList = cards.filter(card => restrictedList.cards.includes(card.id));
+    validate(cards, skirmishMode) {
+        let gameType = skirmishMode ? 'skirmish' : 'standard';
+        let cardsOnRestrictedList = cards.filter(card => restrictedList.cards[gameType].includes(card.id));
 
         let errors = [];
 

@@ -51,6 +51,7 @@ class Game extends EventEmitter {
         this.name = details.name;
         this.allowSpectators = details.allowSpectators;
         this.spectatorSquelch = details.spectatorSquelch;
+        this.skirmishMode = details.skirmishMode;
         this.owner = details.owner;
         this.started = false;
         this.playStarted = false;
@@ -1161,6 +1162,7 @@ class Game extends EventEmitter {
             players: players,
             winner: this.winner ? this.winner.name : undefined,
             winReason: this.winReason,
+            skirmishMode: this.skirmishMode,
             finishedAt: this.finishedAt
         };
     }
@@ -1204,6 +1206,7 @@ class Game extends EventEmitter {
                     };
                 }),
                 started: this.started,
+                skirmishMode: this.skirmishMode,
                 winner: this.winner ? this.winner.name : undefined
             };
         }
@@ -1255,6 +1258,7 @@ class Game extends EventEmitter {
             players: playerSummaries,
             started: this.started,
             startedAt: this.startedAt,
+            skirmishMode: this.skirmishMode,
             spectators: this.getSpectators().map(spectator => {
                 return {
                     id: spectator.id,

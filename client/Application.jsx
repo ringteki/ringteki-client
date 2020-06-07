@@ -63,6 +63,7 @@ class App extends React.Component {
         this.props.loadCards();
         this.props.loadPacks();
         this.props.loadFactions();
+        this.props.loadFormats();
 
         $(document).ajaxError((event, xhr) => {
             if(xhr.status === 401) {
@@ -440,6 +441,7 @@ App.propTypes = {
     games: PropTypes.array,
     loadCards: PropTypes.func,
     loadFactions: PropTypes.func,
+    loadFormats: PropTypes.func,
     loadPacks: PropTypes.func,
     loggedIn: PropTypes.bool,
     navigate: PropTypes.func,

@@ -47,7 +47,12 @@ function processDecks(decks, state) {
             return { count: card.count, card: state.cards[card.card.id] };
         });
 
-        deck.status = validateDeck(deck, { packs: state.packs });
+        let skirmishMode = false;
+        if(deck.format && deck.format.value === state.formats['skirmish'].value) {
+            skirmishMode = true;
+        }
+
+        deck.status = validateDeck(deck, { packs: state.packs, skirmishMode: skirmishMode });
     });
 }
 
@@ -85,6 +90,16 @@ export default function(state = {}, action) {
 
             return Object.assign({}, state, {
                 factions: factions
+            });
+        case 'RECEIVE_FORMATS':
+            var formats = {};
+
+            _.each(action.response.formats, format => {
+                formats[format.value] = format;
+            });
+
+            return Object.assign({}, state, {
+                formats: formats
             });
         case 'ZOOM_CARD':
             return Object.assign({}, state, {
