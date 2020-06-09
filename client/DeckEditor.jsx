@@ -37,11 +37,11 @@ class InnerDeckEditor extends React.Component {
             deck.alliance = { name: '', value: '' };
             updatedDefaultFields = true;
         }
-        if (!this.props.deck.format && this.props.formats) {
+        if(!this.props.deck.format && this.props.formats) {
             deck.format = this.props.formats['stronghold'];
             updatedDefaultFields = true;
         }
-        if (updatedDefaultFields) {
+        if(updatedDefaultFields) {
             this.setState({ deck: deck });
             this.props.updateDeck(deck);
         }
