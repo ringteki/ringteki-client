@@ -30,12 +30,18 @@ class InnerDeckEditor extends React.Component {
     }
 
     componentWillMount() {
+        let deck = this.copyDeck(this.state.deck);
+        let updatedDefaultFields = false;
         if(!this.props.deck.faction && this.props.factions) {
-            let deck = this.copyDeck(this.state.deck);
-
             deck.faction = this.props.factions['crab'];
             deck.alliance = { name: '', value: '' };
-
+            updatedDefaultFields = true;
+        }
+        if(!this.props.deck.format && this.props.formats) {
+            deck.format = this.props.formats['stronghold'];
+            updatedDefaultFields = true;
+        }
+        if(updatedDefaultFields) {
             this.setState({ deck: deck });
             this.props.updateDeck(deck);
         }
