@@ -184,6 +184,13 @@ class InnerPendingGame extends React.Component {
         return 'Clock: ' + game.clocks.time + ' mins (' + (game.clocks.type) + ')';
     }
 
+    getDecks() {
+        if(this.props.currentGame.skirmishMode) {
+            return _.filter(this.props.decks, deck => deck.format && deck.format.value === 'skirmish');
+        }
+        return _.filter(this.props.decks, deck => !deck.format || deck.format.value !== 'skirmish');
+    }
+
     render() {
         if(this.props.currentGame && this.props.currentGame.started) {
             return <div>Loading game in progress, please wait...</div>;
@@ -197,13 +204,14 @@ class InnerPendingGame extends React.Component {
         } else if(this.props.apiError) {
             decks = <AlertPanel type='error' message={ this.props.apiError } />;
         } else {
-            decks = _.size(this.props.decks) > 0 ? _.map(this.props.decks, deck => {
+            let filteredDecks = this.getDecks();
+            decks = _.size(filteredDecks) > 0 ? _.map(filteredDecks, deck => {
                 let row = <DeckRow key={ deck.name + index.toString() } deck={ deck } onClick={ this.selectDeck.bind(this, index) } active={ index === this.state.selectedDeck } />;
 
                 index++;
 
                 return row;
-            }) : <div>You have no decks, please add one</div>;
+            }) : <div>You have no decks for this format, please add one</div>;
         }
 
         let game = this.props.currentGame;

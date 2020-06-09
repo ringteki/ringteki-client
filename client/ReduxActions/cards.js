@@ -29,3 +29,13 @@ export function loadFactions() {
         callAPI: () => $.ajax('/api/factions', { cache: false })
     };
 }
+
+export function loadFormats() {
+    return {
+        types: ['REQUEST_FORMATS', 'RECEIVE_FORMATS'],
+        shouldCallAPI: (state) => {
+            return !state.cards.formats;
+        },
+        callAPI: () => $.ajax('/api/formats', { cache: false })
+    };
+}

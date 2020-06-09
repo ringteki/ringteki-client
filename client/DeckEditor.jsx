@@ -82,6 +82,7 @@ class InnerDeckEditor extends React.Component {
             conflictCards: deck.conflictCards,
             dynastyCards: deck.dynastyCards,
             faction: deck.faction,
+            format: deck.format,
             alliance: deck.alliance,
             status: deck.status
         };
@@ -98,6 +99,15 @@ class InnerDeckEditor extends React.Component {
 
     onNumberToAddChange(event) {
         this.setState({ numberToAdd: event.target.value });
+    }
+
+    onFormatChange(selectedFormat) {
+        let deck = this.copyDeck(this.state.deck);
+
+        deck.format = selectedFormat;
+
+        this.setState({ deck: deck });
+        this.props.updateDeck(deck);
     }
 
     onFactionChange(selectedFaction) {
@@ -288,7 +298,7 @@ class InnerDeckEditor extends React.Component {
         let deckName = '';
         let deckList = '';
         let cardList = '';
-
+        let deckFormat = '';
 
         if(deckResponse.success) {
             let deckRecord = deckResponse.record;
@@ -297,11 +307,13 @@ class InnerDeckEditor extends React.Component {
                 deckAlliance = deckRecord.secondary_clan;
                 deckName = deckRecord.name;
                 deckList = deckRecord.cards;
+                deckFormat = deckRecord.format;
             } else if(selector === 'strains') {
                 deckClan = deckRecord.head.primary_clan;
                 deckAlliance = deckRecord.head.secondary_clan;
                 deckName = deckRecord.head.name;
                 deckList = deckRecord.head.cards;
+                deckFormat = deckRecord.head.format;
             }
 
             let deck = this.copyDeck(this.state.deck);
@@ -317,6 +329,12 @@ class InnerDeckEditor extends React.Component {
                 deck.alliance = this.props.factions[deckAlliance];
             } else {
                 deck.alliance = this.props.factions['crab'];
+            }
+
+            if(deckFormat && deckFormat === 'skirmish') {
+                deck.format = this.props.formats['skirmish'];
+            } else {
+                deck.format = this.props.formats['stronghold'];
             }
 
             _.each(deckList, (count, id) => {
@@ -422,6 +440,8 @@ class InnerDeckEditor extends React.Component {
                 <form className='form form-horizontal'>
                     <Input name='deckName' label='Deck Name' labelClass='col-sm-3' fieldClass='col-sm-9' placeholder='Deck Name'
                         type='text' onChange={ this.onChange.bind(this, 'name') } value={ this.state.deck.name } />
+                    <Select name='format' label='Format' labelClass='col-sm-3' fieldClass='col-sm-9' options={ _.toArray(this.props.formats) }
+                        onChange={ this.onFormatChange.bind(this) } value={ this.state.deck.format ? this.state.deck.format.value : 'stronghold' } />
                     <Select name='faction' label='Clan' labelClass='col-sm-3' fieldClass='col-sm-9' options={ _.toArray(this.props.factions) }
                         onChange={ this.onFactionChange.bind(this) } value={ this.state.deck.faction ? this.state.deck.faction.value : undefined } />
                     <Select name='alliance' label='Alliance' labelClass='col-sm-3' fieldClass='col-sm-9' options={ _.toArray(this.props.alliances) }
@@ -456,6 +476,7 @@ InnerDeckEditor.propTypes = {
     cards: PropTypes.object,
     deck: PropTypes.object,
     factions: PropTypes.object,
+    formats: PropTypes.object,
     loading: PropTypes.bool,
     mode: PropTypes.string,
     onDeckSave: PropTypes.func,
@@ -471,6 +492,7 @@ function mapStateToProps(state) {
         deck: state.cards.selectedDeck,
         decks: state.cards.decks,
         factions: state.cards.factions,
+        formats: state.cards.formats,
         loading: state.api.loading,
         packs: state.cards.packs
     };

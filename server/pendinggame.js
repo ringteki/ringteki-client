@@ -14,6 +14,7 @@ class PendingGame {
         this.name = details.name;
         this.allowSpectators = details.spectators;
         this.spectatorSquelch = details.spectatorSquelch;
+        this.skirmishMode = details.skirmishMode;
         this.gameType = details.gameType;
         this.clocks = details.clocks;
         this.createdAt = new Date();
@@ -305,6 +306,7 @@ class PendingGame {
             owner: this.owner.username,
             players: playerSummaries,
             spectatorSquelch: this.spectatorSquelch,
+            skirmishMode: this.skirmishMode,
             started: this.started,
             spectators: _.map(this.spectators, spectator => {
                 return {

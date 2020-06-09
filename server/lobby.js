@@ -534,7 +534,7 @@ class Lobby {
                     dynasty.card = cards[dynasty.card.id];
                 });
 
-                deck.status = validateDeck(deck, { packs: packs, includeExtendedStatus: false });
+                deck.status = validateDeck(deck, { packs: packs, includeExtendedStatus: false, skirmishMode: game.skirmishMode });
                 game.selectDeck(socket.user.username, deck);
 
                 this.sendGameState(game);

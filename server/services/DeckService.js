@@ -28,6 +28,7 @@ class DeckService {
             dynastyCards: deck.dynastyCards,
             faction: deck.faction,
             alliance: deck.alliance,
+            format: deck.format,
             lastUpdated: new Date()
         };
 
@@ -44,6 +45,7 @@ class DeckService {
             dynastyCards: deck.dynastyCards,
             faction: deck.faction,
             alliance: deck.alliance,
+            format: deck.format,
             lastUpdated: new Date()
         };
 

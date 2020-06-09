@@ -157,8 +157,8 @@ class InnerMessages extends React.Component {
     }
 
     handleMouseOver(fragment) {
-        if(this.highlightedCardId) {
-            const highlightedElement = document.getElementById(fragment.uuid);
+        const highlightedElement = document.getElementById(this.highlightedCardId);
+        if(this.highlightedCardId && highlightedElement) {
             highlightedElement.classList.remove('highlight');
         }
 
