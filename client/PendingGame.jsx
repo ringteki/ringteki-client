@@ -75,7 +75,7 @@ class InnerPendingGame extends React.Component {
     selectDeck(index) {
         $(findDOMNode(this.refs.modal)).modal('hide');
 
-        this.props.socket.emit('selectdeck', this.props.currentGame.id, this.props.decks[index]);
+        this.props.socket.emit('selectdeck', this.props.currentGame.id, this.getDecks()[index]);
     }
 
     getPlayerStatus(player, username) {
