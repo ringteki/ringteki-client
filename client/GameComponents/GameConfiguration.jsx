@@ -148,6 +148,14 @@ class GameConfiguration extends React.Component {
                                 onChange={ this.onOptionSettingToggle.bind(this, 'disableCardStats') }
                                 checked={ this.props.optionSettings.disableCardStats }
                             />
+                            <Checkbox
+                                name='optionSettings.sortHandByName'
+                                noGroup
+                                label={ 'Sort Hand by Name' }
+                                fieldClass='col-sm-6'
+                                onChange={ this.onOptionSettingToggle.bind(this, 'sortHandByName') }
+                                checked={ this.props.optionSettings.sortHandByName }
+                            />
                         </div>
                     </div>
                 </form>
