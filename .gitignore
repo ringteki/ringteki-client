@@ -13,3 +13,4 @@ server/logs/*.gz
 build/
 !tsconfig.json
 .idea/
+!Components/Form/formFields.json
