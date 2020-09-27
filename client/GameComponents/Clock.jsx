@@ -31,7 +31,7 @@ class Clock extends React.Component {
             this.timerHandle = setInterval(() => {
                 if(this.state.delayToStartClock > 0) {
                     this.setState({ delayToStartClock: this.state.delayToStartClock - 1 });
-                } else if (this.state.delayToStartClock <= 0) {
+                } else {
                     this.setState({
                         timeLeft: this.state.timeLeft + (newProps.mode === 'up' ? 1 : -1)
                     });    
@@ -41,9 +41,15 @@ class Clock extends React.Component {
     }
 
     getFormattedClock() {
-        let delaySeconds = formattedSeconds(this.state.delayToStartClock);
+        let delaySeconds = '';
+        if (typeof this.state.delayToStartClock === 'number') {
+            delaySeconds = this.state.delayToStartClock > 0 ? formattedSeconds(this.state.delayToStartClock) : '0:00';
+        }
         if(!this.state.periods || this.state.timeLeft <= 0) {
-            return `${formattedSeconds(this.state.timeLeft)} - ${delaySeconds}`;
+            if (delaySeconds) {
+                return `${formattedSeconds(this.state.timeLeft)}(${delaySeconds})`;
+            }
+            return `${formattedSeconds(this.state.timeLeft)}`;
         }
         let stage = '';
         let timeLeftInPeriod = 0;
