@@ -7,7 +7,7 @@ class Clock extends React.Component {
     constructor() {
         super();
 
-        this.state = { timeLeft: 0, periods: 0, mainTime: 0, timePeriod: 0 };
+        this.state = { timeLeft: 0, periods: 0, mainTime: 0, timePeriod: 0, delayToStartClock: 0 };
     }
 
     componentWillReceiveProps(newProps) {
@@ -19,7 +19,8 @@ class Clock extends React.Component {
             timeLeft: newProps.secondsLeft,
             periods: newProps.periods,
             mainTime: newProps.mainTime,
-            timePeriod: newProps.timePeriod
+            timePeriod: newProps.timePeriod,
+            delayToStartClock: newProps.delayToStartClock
         });
 
         if(this.timerHandle) {
@@ -28,16 +29,21 @@ class Clock extends React.Component {
 
         if(newProps.mode !== 'stop') {
             this.timerHandle = setInterval(() => {
-                this.setState({
-                    timeLeft: this.state.timeLeft + (newProps.mode === 'up' ? 1 : -1)
-                });
+                if(this.state.delayToStartClock > 0) {
+                    this.setState({ delayToStartClock: this.state.delayToStartClock - 1 });
+                } else if (this.state.delayToStartClock <= 0) {
+                    this.setState({
+                        timeLeft: this.state.timeLeft + (newProps.mode === 'up' ? 1 : -1)
+                    });    
+                }
             }, 1000);
         }
     }
 
     getFormattedClock() {
+        let delaySeconds = formattedSeconds(this.state.delayToStartClock);
         if(!this.state.periods || this.state.timeLeft <= 0) {
-            return formattedSeconds(this.state.timeLeft);
+            return `${formattedSeconds(this.state.timeLeft)} - ${delaySeconds}`;
         }
         let stage = '';
         let timeLeftInPeriod = 0;
@@ -74,6 +80,7 @@ class Clock extends React.Component {
 
 Clock.displayName = 'Clock';
 Clock.propTypes = {
+    delayToStartClock: PropTypes.number,
     mainTime: PropTypes.number,
     mode: PropTypes.string,
     periods: PropTypes.number,
