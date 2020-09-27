@@ -7,7 +7,7 @@ class Clock extends React.Component {
     constructor() {
         super();
 
-        this.state = { timeLeft: 0, periods: 0, mainTime: 0, timePeriod: 0, delayToStartClock: 0 };
+        this.state = { timeLeft: 0, periods: 0, mainTime: 0, timePeriod: 0, delayToStartClock: 0, manuallyPaused: false };
     }
 
     componentWillReceiveProps(newProps) {
@@ -20,6 +20,7 @@ class Clock extends React.Component {
             periods: newProps.periods,
             mainTime: newProps.mainTime,
             timePeriod: newProps.timePeriod,
+            manuallyPaused: newProps.manuallyPaused,
             delayToStartClock: newProps.delayToStartClock
         });
 
@@ -27,7 +28,7 @@ class Clock extends React.Component {
             clearInterval(this.timerHandle);
         }
 
-        if(newProps.mode !== 'stop') {
+        if(newProps.mode !== 'stop' && !newProps.manuallyPaused) {
             this.timerHandle = setInterval(() => {
                 if(this.state.delayToStartClock > 0) {
                     this.setState({ delayToStartClock: this.state.delayToStartClock - 1 });
@@ -89,6 +90,7 @@ Clock.propTypes = {
     delayToStartClock: PropTypes.number,
     mainTime: PropTypes.number,
     mode: PropTypes.string,
+    manuallyPaused: PropTypes.bool,
     periods: PropTypes.number,
     secondsLeft: PropTypes.number,
     stateId: PropTypes.number,
