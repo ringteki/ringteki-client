@@ -435,7 +435,7 @@ export class InnerGameBoard extends React.Component {
     anyRemovedRings() {
         const rings = this.props.currentGame.rings;
 
-        return rings.air.removedFromGame || rings.earth.removedFromGame || rings.water.removedFromGame || rings.fire.removedFromGame || rings.void.removedFromGame
+        return rings.air.removedFromGame || rings.earth.removedFromGame || rings.water.removedFromGame || rings.fire.removedFromGame || rings.void.removedFromGame;
     }
 
     getCardsPlayedTracker(conflict, thisPlayer, otherPlayer) {
