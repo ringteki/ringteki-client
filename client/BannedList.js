@@ -1,5 +1,5 @@
 const bannedList = {
-    version: '13',
+    version: '14',
     cards: {
         'standard': [
             'guest-of-honor',
@@ -14,11 +14,14 @@ const bannedList = {
             'mirumoto-daisho',
             'gateway-to-meido',
             'bayushi-liar',
-            'policy-debate'
+            'policy-debate',
+            'lost-papers'
         ],
         'skirmish': [
             'guest-of-honor',
+            'spyglass',
             'charge',
+            'windswept-yurt',
             'karada-district',
             'the-imperial-palace',
             'way-of-the-chrysanthemum',
@@ -28,7 +31,8 @@ const bannedList = {
             'hidden-moon-dojo',
             'mirumoto-daisho',
             'prayers-to-ebisu',
-            'chronicler-of-conquests'
+            'chronicler-of-conquests',
+            'lost-papers'
         ]
     }
 };
