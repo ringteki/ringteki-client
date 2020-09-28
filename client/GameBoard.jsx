@@ -373,7 +373,7 @@ export class InnerGameBoard extends React.Component {
                 { this.props.currentGame.rings.void.removedFromGame ? <Ring owner={ owner } ring={ this.props.currentGame.rings.void } onClick={ this.onRingClick } size={ this.props.user.settings.cardSize } onMenuItemClick={ this.onRingMenuItemClick } /> : null }
                 { this.props.currentGame.rings.water.removedFromGame ? <Ring owner={ owner } ring={ this.props.currentGame.rings.water } onClick={ this.onRingClick } size={ this.props.user.settings.cardSize } onMenuItemClick={ this.onRingMenuItemClick } /> : null }
             </div>
-        )
+        );
     }
 
     renderCenterBar(thisPlayer, otherPlayer, conflict) {
