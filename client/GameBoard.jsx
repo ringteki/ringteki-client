@@ -425,11 +425,17 @@ export class InnerGameBoard extends React.Component {
 
         return (<div className='center-bar'>
             { this.getRings(null, 'ring-panel') }
-            { this.getRemovedRings(null, 'ring-panel removed-rings') }
+            { this.anyRemovedRings() ? this.getRemovedRings(null, 'ring-panel removed-rings') : null }
             { conflictElement }
             { this.getCardsPlayedTracker(conflict, thisPlayer, otherPlayer) }
             { this.getRingAttachments(thisPlayer, otherPlayer) }
         </div>);
+    }
+
+    anyRemovedRings() {
+        const rings = this.props.currentGame.rings;
+
+        return rings.air.removedFromGame || rings.earth.removedFromGame || rings.water.removedFromGame || rings.fire.removedFromGame || rings.void.removedFromGame
     }
 
     getCardsPlayedTracker(conflict, thisPlayer, otherPlayer) {
