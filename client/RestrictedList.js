@@ -1,5 +1,5 @@
 const restrictedList = {
-    version: '13',
+    version: '14',
     cards: {
         'standard': [
             'city-of-the-open-hand',
@@ -22,7 +22,9 @@ const restrictedList = {
             'tactical-ingenuity',
             'iron-mine',
             'kuni-laboratory',
-            'bayushi-shoju-2'
+            'bayushi-shoju-2',
+            'contested-countryside',
+            'ikoma-tsanuri-2'
         ],
         'skirmish': []
     }
