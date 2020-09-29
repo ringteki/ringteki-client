@@ -17,6 +17,17 @@ s.ring-pane {
     font-size:40pt;
 }
 
+.ring-panel.removed-rings {
+    padding-left: 10px;
+    justify-content: start;
+    border-left: silver 3px dotted;
+    min-width: 0%;
+
+    .ring {
+        opacity: 0.7;
+    }
+}
+
 .ring-prompt {
     font-size:40pt;
     min-height:@ring-height;
@@ -40,7 +51,7 @@ circle.ring-background {
     cx:50%;
     cy:50%;
     r:50%;
-    
+
     &.unselectable {
         filter: brightness(60%);
     }
@@ -51,7 +62,7 @@ svg.ring-svg {
     position:absolute;
     height:@ring-height;
     width:@ring-width;
-    
+
     &.contested {
         &.tint-military {
             -webkit-filter: drop-shadow( 0 0 12px pink);
@@ -104,7 +115,7 @@ svg.ring-svg {
         fill:darkred;
     }
   }
-  
+
   .tint-political {
     fill: @political-ring-color;
     &.unselectable {
