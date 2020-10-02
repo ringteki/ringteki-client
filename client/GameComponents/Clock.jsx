@@ -35,7 +35,7 @@ class Clock extends React.Component {
                 } else {
                     this.setState({
                         timeLeft: this.state.timeLeft + (newProps.mode === 'up' ? 1 : -1)
-                    });    
+                    });
                 }
             }, 1000);
         }
@@ -43,11 +43,11 @@ class Clock extends React.Component {
 
     getFormattedClock() {
         let delaySeconds = '';
-        if (typeof this.state.delayToStartClock === 'number') {
+        if(typeof this.state.delayToStartClock === 'number') {
             delaySeconds = this.state.delayToStartClock > 0 ? formattedSeconds(this.state.delayToStartClock) : '0:00';
         }
         if(!this.state.periods || this.state.timeLeft <= 0) {
-            if (delaySeconds) {
+            if(delaySeconds) {
                 return `${formattedSeconds(this.state.timeLeft)}(${delaySeconds})`;
             }
             return `${formattedSeconds(this.state.timeLeft)}`;
@@ -89,8 +89,8 @@ Clock.displayName = 'Clock';
 Clock.propTypes = {
     delayToStartClock: PropTypes.number,
     mainTime: PropTypes.number,
-    mode: PropTypes.string,
     manuallyPaused: PropTypes.bool,
+    mode: PropTypes.string,
     periods: PropTypes.number,
     secondsLeft: PropTypes.number,
     stateId: PropTypes.number,
