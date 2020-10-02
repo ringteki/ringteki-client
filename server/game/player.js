@@ -504,27 +504,6 @@ class Player extends GameObject {
      * Takes a decklist passed from the lobby, creates all the cards in it, and puts references to them in the relevant lists
      */
     prepareDecks() {
-        var deck = new Deck(this.deck);
-        var preparedDeck = deck.prepare(this);
-        this.faction = preparedDeck.faction;
-        this.provinceDeck = _(preparedDeck.provinceCards);
-        if(preparedDeck.stronghold instanceof StrongholdCard) {
-            this.stronghold = preparedDeck.stronghold;
-        }
-        if(preparedDeck.role instanceof RoleCard) {
-            this.role = preparedDeck.role;
-        }
-        this.conflictDeck = _(preparedDeck.conflictCards);
-        this.dynastyDeck = _(preparedDeck.dynastyCards);
-        this.preparedDeck = preparedDeck;
-        this.conflictDeck.each(card => {
-            // register event reactions in case event-in-deck bluff window is enabled
-            if(card.type === CardTypes.Event) {
-                for(let reaction of card.abilities.reactions) {
-                    reaction.registerEvents();
-                }
-            }
-        });
     }
 
     /**
