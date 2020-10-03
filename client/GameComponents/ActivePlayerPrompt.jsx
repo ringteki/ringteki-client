@@ -208,10 +208,10 @@ class ActivePlayerPrompt extends React.Component {
             bottom: Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0) - 172,
             left: 0,
             right: Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0) - 210
-        }
+        };
 
         return (<Draggable handle='grip'
-        bounds={ activePromptBounds }
+            bounds={ activePromptBounds }
             defaultPosition={ this.getDefaultPosition() } >
             <div className='no-highlight'>
                 { timer }
