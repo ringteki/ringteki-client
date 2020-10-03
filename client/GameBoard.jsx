@@ -593,8 +593,16 @@ export class InnerGameBoard extends React.Component {
             y: (window.innerHeight / 2)
         };
 
+        var handBounds = {
+            left: 0,
+            right: Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0) - 490,
+            top: 0,
+            bottom: Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0) - 160
+        }
+
         if(!this.state.spectating) {
             return (<Draggable handle='grip'
+                bounds= { handBounds }
                 defaultPosition={ defaultPosition } >
                 <div className='player-home-row-container'>
                     <PlayerHand
