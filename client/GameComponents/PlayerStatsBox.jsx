@@ -52,6 +52,7 @@ export class PlayerStatsBox extends React.Component {
         let clock = (!this.props.clockState || this.props.clockState.mode === 'off') ? null : (
             <div className='state clock-frame'>
                 <Clock
+                    delayToStartClock={ this.props.clockState.delayToStartClock } manuallyPaused={ this.props.clockState.manuallyPaused }
                     secondsLeft={ this.props.clockState.timeLeft } mode={ this.props.clockState.mode } stateId={ this.props.clockState.stateId }
                     periods={ this.props.clockState.periods } mainTime={ this.props.clockState.mainTime } timePeriod={ this.props.clockState.timePeriod }
                 />
