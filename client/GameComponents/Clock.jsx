@@ -7,7 +7,7 @@ class Clock extends React.Component {
     constructor() {
         super();
 
-        this.state = { timeLeft: 0, periods: 0, mainTime: 0, timePeriod: 0 };
+        this.state = { timeLeft: 0, periods: 0, mainTime: 0, timePeriod: 0, delayToStartClock: 0, manuallyPaused: false };
     }
 
     componentWillReceiveProps(newProps) {
@@ -19,25 +19,38 @@ class Clock extends React.Component {
             timeLeft: newProps.secondsLeft,
             periods: newProps.periods,
             mainTime: newProps.mainTime,
-            timePeriod: newProps.timePeriod
+            timePeriod: newProps.timePeriod,
+            manuallyPaused: newProps.manuallyPaused,
+            delayToStartClock: newProps.delayToStartClock
         });
 
         if(this.timerHandle) {
             clearInterval(this.timerHandle);
         }
 
-        if(newProps.mode !== 'stop') {
+        if(newProps.mode !== 'stop' && !newProps.manuallyPaused) {
             this.timerHandle = setInterval(() => {
-                this.setState({
-                    timeLeft: this.state.timeLeft + (newProps.mode === 'up' ? 1 : -1)
-                });
+                if(this.state.delayToStartClock > 0) {
+                    this.setState({ delayToStartClock: this.state.delayToStartClock - 1 });
+                } else {
+                    this.setState({
+                        timeLeft: this.state.timeLeft + (newProps.mode === 'up' ? 1 : -1)
+                    });
+                }
             }, 1000);
         }
     }
 
     getFormattedClock() {
+        let delaySeconds = '';
+        if(typeof this.state.delayToStartClock === 'number') {
+            delaySeconds = this.state.delayToStartClock > 0 ? formattedSeconds(this.state.delayToStartClock) : '0:00';
+        }
         if(!this.state.periods || this.state.timeLeft <= 0) {
-            return formattedSeconds(this.state.timeLeft);
+            if(delaySeconds) {
+                return `${formattedSeconds(this.state.timeLeft)}(${delaySeconds})`;
+            }
+            return `${formattedSeconds(this.state.timeLeft)}`;
         }
         let stage = '';
         let timeLeftInPeriod = 0;
@@ -74,7 +87,9 @@ class Clock extends React.Component {
 
 Clock.displayName = 'Clock';
 Clock.propTypes = {
+    delayToStartClock: PropTypes.number,
     mainTime: PropTypes.number,
+    manuallyPaused: PropTypes.bool,
     mode: PropTypes.string,
     periods: PropTypes.number,
     secondsLeft: PropTypes.number,
