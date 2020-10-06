@@ -614,6 +614,13 @@ class Lobby {
 
     onNodeReconnected(nodeName, games) {
         _.each(games, game => {
+            let owner = game.players[game.owner];
+
+            if(!owner) {
+                logger.error('Got a game where the owner wasn\'t a player', game.owner);
+                continue;
+            }
+            
             let syncGame = new PendingGame({ username: game.owner }, { spectators: game.allowSpectators, name: game.name });
             syncGame.id = game.id;
             syncGame.node = this.router.workers[nodeName];
