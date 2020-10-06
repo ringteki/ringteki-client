@@ -613,7 +613,14 @@ class Lobby {
     }
 
     onNodeReconnected(nodeName, games) {
-        _.each(games, game => {
+        for(let game of Object.values(games)) {
+            let owner = game.players[game.owner];
+
+            if(!owner) {
+                logger.error('Got a game where the owner wasn\'t a player', game.owner);
+                continue;
+            }
+
             let syncGame = new PendingGame({ username: game.owner }, { spectators: game.allowSpectators, name: game.name });
             syncGame.id = game.id;
             syncGame.node = this.router.workers[nodeName];
@@ -622,7 +629,7 @@ class Lobby {
             syncGame.gameType = game.gameType;
             syncGame.password = game.password;
 
-            _.each(game.players, player => {
+            for(let player of Object.values(game.players)) {
                 syncGame.players[player.name] = {
                     id: player.id,
                     name: player.name,
@@ -630,20 +637,20 @@ class Lobby {
                     owner: game.owner === player.name,
                     faction: { cardData: { code: player.faction } }
                 };
-            });
+            }
 
-            _.each(game.spectators, player => {
+            for(let player of Object.values(game.spectators)) {
                 syncGame.spectators[player.name] = {
                     id: player.id,
                     name: player.name,
                     emailHash: player.emailHash
                 };
-            });
+            }
 
             this.games[syncGame.id] = syncGame;
-        });
+        }
 
-        _.each(this.games, game => {
+        for(let game of Object.values(this.games)) {
             if(game.node && game.node.identity === nodeName && _.find(games, nodeGame => {
                 return nodeGame.id === game.id;
             })) {
@@ -651,7 +658,7 @@ class Lobby {
             } else if(game.node && game.node.identity === nodeName) {
                 delete this.games[game.id];
             }
-        });
+        }
 
         this.broadcastGameList();
     }
