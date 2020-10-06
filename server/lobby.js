@@ -620,7 +620,7 @@ class Lobby {
                 logger.error('Got a game where the owner wasn\'t a player', game.owner);
                 continue;
             }
-            
+
             let syncGame = new PendingGame({ username: game.owner }, { spectators: game.allowSpectators, name: game.name });
             syncGame.id = game.id;
             syncGame.node = this.router.workers[nodeName];
@@ -629,7 +629,7 @@ class Lobby {
             syncGame.gameType = game.gameType;
             syncGame.password = game.password;
 
-           for(let player of Object.values(game.players)) {
+            for(let player of Object.values(game.players)) {
                 syncGame.players[player.name] = {
                     id: player.id,
                     name: player.name,
