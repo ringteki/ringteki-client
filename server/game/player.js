@@ -1,7 +1,6 @@
 const _ = require('underscore');
 
 const GameObject = require('./GameObject');
-const Deck = require('./deck.js');
 const AttachmentPrompt = require('./gamesteps/attachmentprompt.js');
 const ClockSelector = require('./Clocks/ClockSelector');
 const CostReducer = require('./costreducer.js');
@@ -9,7 +8,6 @@ const GameActions = require('./GameActions/GameActions');
 const RingEffects = require('./RingEffects.js');
 const PlayableLocation = require('./playablelocation.js');
 const PlayerPromptState = require('./playerpromptstate.js');
-const RoleCard = require('./rolecard.js');
 const StrongholdCard = require('./strongholdcard.js');
 const Ring = require('./ring.js');
 
