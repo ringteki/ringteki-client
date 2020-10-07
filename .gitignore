@@ -12,3 +12,4 @@ server/logs/*.gz
 build/
 !tsconfig.json
 .idea/
+assets/
