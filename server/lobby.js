@@ -13,6 +13,7 @@ const DeckService = require('./services/DeckService.js');
 const CardService = require('./services/CardService.js');
 const validateDeck = require('../client/deck-validator.js'); // XXX Move this to a common location
 const Settings = require('./settings.js');
+const { sortBy } = require('./Array');
 
 class Lobby {
     constructor(server, options = {}) {
@@ -50,9 +51,7 @@ class Lobby {
 
     // External methods
     getStatus() {
-        var nodeStatus = this.router.getNodeStatus();
-
-        return nodeStatus;
+        return this.router.getNodeStatus();
     }
 
     disableNode(nodeName) {
@@ -64,8 +63,8 @@ class Lobby {
     }
 
     debugDump() {
-        var games = _.map(this.games, game => {
-            var players = _.map(game.players, player => {
+        let games = Object.values(this.games).map(game => {
+            let players = Object.values(game.players).map(player => {
                 return {
                     name: player.name,
                     left: player.left,
@@ -74,7 +73,7 @@ class Lobby {
                 };
             });
 
-            var spectators = _.map(game.spectators, spectator => {
+            let spectators = Object.values(game.spectators).map(spectator => {
                 return {
                     name: spectator.name,
                     id: spectator.id
@@ -97,14 +96,14 @@ class Lobby {
         return {
             games: games,
             nodes: nodes,
-            socketCount: _.size(this.sockets),
-            userCount: _.size(this.users)
+            socketCount: Object.values(this.sockets).length,
+            userCount: Object.values(this.users).length
         };
     }
 
     // Helpers
     findGameForUser(user) {
-        return _.find(this.games, game => {
+        return Object.values(this.games).find(game => {
             if(game.spectators[user]) {
                 return true;
             }
@@ -120,7 +119,7 @@ class Lobby {
     }
 
     getUserList() {
-        let userList = _.map(this.users, function(user) {
+        let userList = Object.values(this.users).map(user => {
             return {
                 name: user.username,
                 emailHash: user.emailHash,
@@ -128,7 +127,7 @@ class Lobby {
             };
         });
 
-        userList = _.sortBy(userList, user => {
+        userList = sortBy(userList, user => {
             return user.name.toLowerCase();
         });
 
@@ -196,7 +195,7 @@ class Lobby {
 
     broadcastGameList(socket) {
         let sockets = socket ? [socket] : this.sockets;
-        _.each(sockets, socket => {
+        Object.values(sockets).forEach(socket => {
             let filteredGames = this.filterGameListWithBlockList(socket.user);
             let gameSummaries = this.mapGamesToGameSummaries(filteredGames);
             socket.send('games', gameSummaries);
@@ -214,7 +213,7 @@ class Lobby {
 
         let users = this.getUserList();
 
-        _.each(this.sockets, socket => {
+        Object.values(this.sockets).forEach(socket => {
             this.sendUserListFilteredWithBlockList(socket, users);
         });
     }
@@ -224,22 +223,22 @@ class Lobby {
             return;
         }
 
-        _.each(game.getPlayersAndSpectators(), player => {
+        for(let player of Object.values(game.getPlayersAndSpectators())) {
             if(!this.sockets[player.id]) {
                 logger.info('Wanted to send to ', player.id, ' but have no socket');
-                return;
+                continue;
             }
 
             this.sockets[player.id].send('gamestate', game.getSummary(player.name));
-        });
+        }
     }
 
     clearGamesForNode(nodeName) {
-        _.each(this.games, game => {
+        for(let game of Object.values(this.games)) {
             if(game.node && game.node.identity === nodeName) {
                 delete this.games[game.id];
             }
-        });
+        }
 
         this.broadcastGameList();
     }
@@ -405,7 +404,7 @@ class Lobby {
             return;
         }
 
-        if(_.any(game.getPlayers(), function(player) {
+        if(Object.values(game.getPlayers()).some(player => {
             return !player.deck;
         })) {
             return;
@@ -489,13 +488,13 @@ class Lobby {
     onLobbyChat(socket, message) {
         var chatMessage = { user: { username: socket.user.username, emailHash: socket.user.emailHash, noAvatar: socket.user.settings.disableGravatar }, message: message, time: new Date() };
 
-        _.each(this.sockets, s => {
+        for(let s of Object.values(this.sockets)) {
             if(s.user && _.contains(s.user.blockList, chatMessage.user.username.toLowerCase())) {
                 return;
             }
 
             s.send('lobbychat', chatMessage);
-        });
+        }
 
         this.messageService.addMessage(chatMessage);
     }
@@ -614,7 +613,17 @@ class Lobby {
 
     onNodeReconnected(nodeName, games) {
         for(let game of Object.values(games)) {
-            let owner = game.players[game.owner];
+            if(!game || !game.owner || !game.players) {
+                continue;
+            }
+
+            let owner = undefined;
+            for(let player of Object.values(game.players)) {
+                if(player.name === game.owner.username) {
+                    owner = player;
+                    break;
+                }
+            }
 
             if(!owner) {
                 logger.error('Got a game where the owner wasn\'t a player', game.owner);
@@ -630,6 +639,10 @@ class Lobby {
             syncGame.password = game.password;
 
             for(let player of Object.values(game.players)) {
+                if(!player) {
+                    continue;
+                }
+
                 syncGame.players[player.name] = {
                     id: player.id,
                     name: player.name,
@@ -640,18 +653,25 @@ class Lobby {
             }
 
             for(let player of Object.values(game.spectators)) {
+                if(!player) {
+                    continue;
+                }
+
                 syncGame.spectators[player.name] = {
                     id: player.id,
                     name: player.name,
                     emailHash: player.emailHash
                 };
             }
-
             this.games[syncGame.id] = syncGame;
         }
 
         for(let game of Object.values(this.games)) {
-            if(game.node && game.node.identity === nodeName && _.find(games, nodeGame => {
+            if(!game) {
+                continue;
+            }
+
+            if(game.node && game.node.identity === nodeName && Object.values(games).find(nodeGame => {
                 return nodeGame.id === game.id;
             })) {
                 this.games[game.id] = game;
