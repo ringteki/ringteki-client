@@ -614,7 +614,17 @@ class Lobby {
 
     onNodeReconnected(nodeName, games) {
         for(let game of Object.values(games)) {
-            let owner = game.players[game.owner];
+            if(!game || !game.owner || !game.players) {
+                continue;
+            }
+
+            let owner = undefined;
+            for(let player of Object.values(game.players)) {
+                if(player.name === game.owner.username) {
+                    owner = player;
+                    break;
+                }
+            }
 
             if(!owner) {
                 logger.error('Got a game where the owner wasn\'t a player', game.owner);
@@ -630,6 +640,10 @@ class Lobby {
             syncGame.password = game.password;
 
             for(let player of Object.values(game.players)) {
+                if(!player) {
+                    continue;
+                }
+
                 syncGame.players[player.name] = {
                     id: player.id,
                     name: player.name,
@@ -640,18 +654,25 @@ class Lobby {
             }
 
             for(let player of Object.values(game.spectators)) {
+                if(!player) {
+                    continue;
+                }
+
                 syncGame.spectators[player.name] = {
                     id: player.id,
                     name: player.name,
                     emailHash: player.emailHash
                 };
             }
-
             this.games[syncGame.id] = syncGame;
         }
 
         for(let game of Object.values(this.games)) {
-            if(game.node && game.node.identity === nodeName && _.find(games, nodeGame => {
+            if(!game) {
+                continue;
+            }
+
+            if(game.node && game.node.identity === nodeName && Object.values(games).find(nodeGame => {
                 return nodeGame.id === game.id;
             })) {
                 this.games[game.id] = game;
