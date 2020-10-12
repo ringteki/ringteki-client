@@ -673,7 +673,7 @@ class Lobby {
             }
 
             if(game.node && game.node.identity === nodeName && Object.values(games).find(nodeGame => {
-                return nodeGame.id === game.id;
+                return nodeGame && game && nodeGame.id === game.id;
             })) {
                 this.games[game.id] = game;
             } else if(game.node && game.node.identity === nodeName) {
