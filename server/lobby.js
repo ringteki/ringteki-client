@@ -561,7 +561,7 @@ class Lobby {
     }
 
     onRemoveGame(socket, gameId) {
-        if(!socket && !socket.user.admin) {
+        if(!socket || !socket.user.admin) {
             return;
         }
 
