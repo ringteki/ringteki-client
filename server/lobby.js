@@ -197,9 +197,11 @@ class Lobby {
     broadcastGameList(socket) {
         let sockets = socket ? [socket] : this.sockets;
         _.each(sockets, socket => {
-            let filteredGames = this.filterGameListWithBlockList(socket.user);
-            let gameSummaries = this.mapGamesToGameSummaries(filteredGames);
-            socket.send('games', gameSummaries);
+            if(socket) {
+                let filteredGames = this.filterGameListWithBlockList(socket.user);
+                let gameSummaries = this.mapGamesToGameSummaries(filteredGames);
+                socket.send('games', gameSummaries);
+            }
         });
     }
 
@@ -215,7 +217,9 @@ class Lobby {
         let users = this.getUserList();
 
         _.each(this.sockets, socket => {
-            this.sendUserListFilteredWithBlockList(socket, users);
+            if(socket) {
+                this.sendUserListFilteredWithBlockList(socket, users);
+            }
         });
     }
 
@@ -247,9 +251,9 @@ class Lobby {
     clearStaleGames() {
         let now = Date.now();
         const timeout = 60 * 60 * 1000;
-        let stalePendingGames = _.filter(this.games, game => !game.started && now - game.createdAt > timeout);
+        let stalePendingGames = _.filter(this.games, game => game && !game.started && now - game.createdAt > timeout);
         let emptyGames = _.filter(this.games, game =>
-            game.started && now - game.createdAt > timeout && _.isEmpty(game.getPlayers()));
+            game && game.started && now - game.createdAt > timeout && _.isEmpty(game.getPlayers()));
 
         _.each(stalePendingGames, game => {
             logger.info('closed pending game', game.id, 'due to inactivity');
@@ -302,7 +306,7 @@ class Lobby {
 
         this.broadcastGameList(socket);
 
-        if(!socket.user) {
+        if(!socket || !socket.user) {
             return;
         }
 
@@ -490,7 +494,7 @@ class Lobby {
         var chatMessage = { user: { username: socket.user.username, emailHash: socket.user.emailHash, noAvatar: socket.user.settings.disableGravatar }, message: message, time: new Date() };
 
         _.each(this.sockets, s => {
-            if(s.user && _.contains(s.user.blockList, chatMessage.user.username.toLowerCase())) {
+            if(s && s.user && _.contains(s.user.blockList, chatMessage.user.username.toLowerCase())) {
                 return;
             }
 
@@ -557,7 +561,7 @@ class Lobby {
     }
 
     onRemoveGame(socket, gameId) {
-        if(!socket.user.admin) {
+        if(!socket || !socket.user.admin) {
             return;
         }
 
