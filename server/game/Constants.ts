@@ -1,17 +1,19 @@
 export enum Locations {
     Any = 'any',
     Hand = 'hand',
-    ConflictDeck = 'conflict deck',
-    DynastyDeck = 'dynasty deck',
-    ConflictDiscardPile = 'conflict discard pile',
-    DynastyDiscardPile = 'dynasty discard pile',
+    DrawDeck = 'draw deck',
+    DilemmaDeck = 'dilemma deck',
+    DrawDiscardPile = 'draw discard pile',
+    DilemmaDiscardPile = 'dilemma discard pile',
     PlayArea = 'play area',
-    Provinces = 'province',
-    ProvinceOne = 'province 1',
-    ProvinceTwo = 'province 2',
-    ProvinceThree = 'province 3',
-    ProvinceFour = 'province 4',
-    StrongholdProvince = 'stronghold province',
+    Core = 'core',
+    Brig = 'brig',
+    Mission = 'mission',
+    MissionOne = 'mission 1',
+    MissionTwo = 'mission 2',
+    MissionThree = 'mission 3',
+    MissionFour = 'mission 4',
+    Homeworld = 'homeworld',
     ProvinceDeck = 'province deck',
     RemovedFromGame = 'removed from game',
     UnderneathStronghold = 'underneath stronghold',
@@ -20,8 +22,8 @@ export enum Locations {
 };
 
 export enum Decks {
-    ConflictDeck = 'conflict deck',
-    DynastyDeck = 'dynasty deck'
+    DrawDeck = 'draw deck',
+    DilemmaDeck = 'dilemma deck'
 };
 
 export enum EffectNames {
@@ -172,26 +174,25 @@ export enum TargetModes {
 };
 
 export enum Phases {
-    Dynasty = 'dynasty',
-    Draw = 'draw',
-    Conflict = 'conflict',
-    Fate = 'fate',
-    Regroup = 'regroup'
+    PlayAndDrawCards = 'play',
+    ExecuteOrders = 'execute',
+    DiscardExcessCards = 'discard'
 };
 
 export enum CardTypes {
-    Stronghold = 'stronghold',
-    Role = 'role',
-    Province = 'province',
-    Character = 'character',
-    Holding = 'holding',
+    Homeworld = 'homeworld',
+    Personnel = 'personnel',
+    Ship = 'ship',
+    Equipment = 'equipment',
+    Interrupt = 'interrupt',
     Event = 'event',
-    Attachment = 'attachment'
+    Mission = 'mission',
+    Dilemma = 'dilemma'
 };
 
 export enum PlayTypes {
     PlayFromHand = 'playFromHand',
-    PlayFromProvince = 'playFromProvince',
+    PlayFromDilemma = 'playFromDilemma',
     Other = 'other'
 };
 
@@ -283,25 +284,3 @@ export enum AbilityTypes {
     OtherEffects = 'OtherEffects'
 };
 
-export enum DuelTypes {
-    Military = 'military',
-    Political = 'political',
-    Glory = 'glory'
-};
-
-export enum Elements {
-    Fire = 'fire',
-    Earth = 'earth',
-    Air = 'air',
-    Water = 'water',
-    Void = 'void',
-};
-
-export enum ConflictTypes {
-    Military = 'military',
-    Political = 'political'
-};
-
-export enum TokenTypes {
-    Honor = 'honor'
-};
