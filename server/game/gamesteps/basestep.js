@@ -10,9 +10,6 @@ class BaseStep {
         return false;
     }
 
-    onRingClicked() {
-        return false;
-    }
 
     onMenuCommand() {
         return false;

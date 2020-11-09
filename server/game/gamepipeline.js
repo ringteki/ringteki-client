@@ -71,16 +71,6 @@ class GamePipeline {
         return false;
     }
 
-    handleRingClicked(player, ring) {
-        if(this.pipeline.length > 0) {
-            var step = this.getCurrentStep();
-            if(step.onRingClicked(player, ring) !== false) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     handleMenuCommand(player, arg, uuid, method) {
         if(this.pipeline.length > 0) {
