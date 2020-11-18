@@ -1,6 +1,6 @@
 .inset-pane {
     position: absolute;
-    width: 210px;
+    width: 10px;
     z-index: @layer-popups;
 }
 
@@ -18,10 +18,14 @@
     margin: 0 5px;
     padding: 4px;
     text-align: center;
+    width: 200px;
+    z-index: @layer-popups - 1;
 }
 
 .menu-pane {
     text-align: center;
+    width: 210px;
+    z-index: @layer-popups;
 }
 
 .menu-pane .panel {
