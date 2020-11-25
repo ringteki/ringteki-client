@@ -131,7 +131,6 @@ class Province extends React.Component {
                 { provinceCard ? <Card id={ provinceCard.uuid } card={ provinceCard } source={ this.props.source }
                     onMouseOver={ this.props.onMouseOver }
                     onMouseOut={ this.props.onMouseOut }
-                    disableMouseOver={ provinceCard.facedown && !this.props.isMe }
                     onClick={ this.props.onCardClick }
                     onMenuItemClick={ this.props.onMenuItemClick }
                     onDragDrop={ this.props.onDragDrop } size={ this.props.size } /> : null }
