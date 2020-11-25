@@ -274,7 +274,7 @@ export class InnerGameBoard extends React.Component {
             let cardsInPlay = _.map(cards, card => {
                 return (<Card key={ card.uuid } id={ card.uuid } source='play area' card={ card } disableMouseOver={ card.facedown && !card.code }
                     onMenuItemClick={ this.onMenuItemClick } onMouseOver={ this.onMouseOver } onMouseOut={ this.onMouseOut }
-                    showStats={ !this.props.user.settings.optionSettings.disableCardStats }
+                    showStats={ !this.props.user.settings.optionSettings.disableCardStats } player={ player }
                     onClick={ this.onCardClick } onDragDrop={ this.onDragDrop } size={ this.props.user.settings.cardSize } isMe={ isMe } declaring={ playerDeclaringParticipants }/>);
             });
             cardsByLocation.push(cardsInPlay);
