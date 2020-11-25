@@ -430,9 +430,9 @@ class Card extends React.Component {
         const player = this.props.player;
         const cardPile = player && card && player.cardPiles[card.uuid];
 
-        let className = 'card-frame'
+        let className = 'card-frame';
         if(cardPile) {
-            className += ' card-pile-frame'
+            className += ' card-pile-frame';
         }
 
         return (
