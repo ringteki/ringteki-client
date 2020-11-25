@@ -238,15 +238,13 @@ class Card extends React.Component {
         const card = this.props.card;
         const player = this.props.player;
         const cardPile = player && card && player.cardPiles[card.uuid];
-        if(!cardPile || !cardPile.length)
+        if(!cardPile || !cardPile.length) {
             return null;
-
-
-        console.log('card click', this.props.onClick)
+        }
 
         return <CardPile
             source='none'
-            title={ `${card.name}`}
+            title={ `${card.name}` }
             className={ 'underneath' }
             cards={ cardPile }
             onMouseOver={ this.props.onMouseOver }
@@ -259,7 +257,7 @@ class Card extends React.Component {
             topCard={ cardPile[0] }
             hiddenTopCard={ true }
             cardCount={ cardPile.length }
-            size={ this.props.size } />
+            size={ this.props.size } />;
     }
 
     getAttachments() {
@@ -427,8 +425,18 @@ class Card extends React.Component {
         } else {
             cardBack = 'cardback.jpg';
         }
+
+        const card = this.props.card;
+        const player = this.props.player;
+        const cardPile = player && card && player.cardPiles[card.uuid];
+
+        let className = 'card-frame'
+        if(cardPile) {
+            className += ' card-pile-frame'
+        }
+
         return (
-            <div className='card-frame' ref='cardFrame'
+            <div className={ className } ref='cardFrame'
                 onTouchMove={ ev => this.onTouchMove(ev) }
                 onTouchEnd={ ev => this.onTouchEnd(ev) }
                 onTouchStart={ ev => this.onTouchStart(ev) }>

@@ -89,7 +89,10 @@
 .card-frame {
   border-radius:6px;
   position: relative;
-  z-index: @layer-cards;
+}
+
+.card-frame.card-pile-frame {
+  z-index: 60;
 }
 
 .card {
