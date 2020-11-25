@@ -9,6 +9,7 @@ import CardMenu from './CardMenu.jsx';
 import CardStats from './CardStats.jsx';
 import CardCounters from './CardCounters.jsx';
 import SquishableCardPanel from './SquishableCardPanel.jsx';
+import CardPile from './CardPile.jsx';
 
 class Card extends React.Component {
     constructor() {
@@ -194,6 +195,11 @@ class Card extends React.Component {
         let wrapperStyle = {};
         let attachmentOffset = 13;
         let cardHeight = 84;
+
+        const card = this.props.card;
+        const player = this.props.player;
+        const cardPile = player && card && player.cardPiles[card.uuid];
+
         switch(this.props.size) {
             case 'large':
                 attachmentOffset *= 1.4;
@@ -219,13 +225,41 @@ class Card extends React.Component {
         });
 
         if(attachmentCount > 0) {
-            wrapperStyle = { marginLeft:(4 + attachmentCount * attachmentOffset) + 'px', minHeight: (cardHeight + totalTiers * attachmentOffset) + 'px' };
+            wrapperStyle = { marginLeft:(4 + attachmentCount * attachmentOffset) + 'px', minHeight: (cardHeight + totalTiers * attachmentOffset) + 'px', marginTop: cardPile ? '25px' : '0px' };
         } else if(this.props.source === 'play area') {
-            wrapperStyle = {marginLeft: '4px', marginRight: '4px'};
+            wrapperStyle = {marginLeft: '4px', marginRight: '4px', marginTop: cardPile ? '25px' : '0px'};
         }
 
 
         return wrapperStyle;
+    }
+
+    getCardPile() {
+        const card = this.props.card;
+        const player = this.props.player;
+        const cardPile = player && card && player.cardPiles[card.uuid];
+        if(!cardPile || !cardPile.length)
+            return null;
+
+
+        console.log('card click', this.props.onClick)
+
+        return <CardPile
+            source='none'
+            title={ `${card.name}`}
+            className={ 'underneath' }
+            cards={ cardPile }
+            onMouseOver={ this.props.onMouseOver }
+            onMouseOut={ this.props.onMouseOut }
+            onCardClick={ this.props.onClick }
+            popupLocation='top'
+            showPopup={ true }
+            popupLocation={ 'top' }
+            onDragDrop={ this.props.onDragDrop }
+            topCard={ cardPile[0] }
+            hiddenTopCard={ true }
+            cardCount={ cardPile.length }
+            size={ this.props.size } />
     }
 
     getAttachments() {
@@ -522,6 +556,7 @@ class Card extends React.Component {
             return (
                 <div className={ 'card-wrapper ' + this.getWrapper() } style={ Object.assign({}, this.props.style ? this.props.style : {}, this.getWrapperStyle()) }>
                     { this.getCard() }
+                    { this.getCardPile() }
                     { this.getAttachments() }
                     { this.renderUnderneathCards() }
                 </div>);
