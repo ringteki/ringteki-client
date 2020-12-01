@@ -91,6 +91,10 @@
   position: relative;
 }
 
+.card-frame.card-pile-frame {
+  z-index: 60;
+}
+
 .card {
   position: relative;
   border-radius: 6px;
@@ -560,7 +564,6 @@
   margin-left: 0;
   margin-top: -(@card-height + @card-height / 2);
   position: relative;
-  z-index: @layer-cards - 1;
 
   &.small {
     margin-top: -(@card-sm-height + @card-sm-height / 2);

@@ -7,7 +7,7 @@
     border-radius:6px;
     margin-left:5px;
     margin-right:5px;
-    
+
     position: relative;
 
     &.small {
@@ -99,6 +99,34 @@
     &.panel {
         top: 0px;
     }
+
+    & .popup {
+        position: absolute;
+        left: 0;
+        bottom: 95px;
+
+        & .inner {
+            width: 400px;
+        }
+    }
+
+    &.underneath {
+        margin-left: 0;
+        margin-top: -(@card-height + @card-height / 5);
+        position: absolute;
+
+        &.small {
+          margin-top: -(@card-sm-height + @card-sm-height / 5);
+        }
+
+        &.large {
+          margin-top: -(@card-lg-height + @card-lg-height / 5);
+        }
+
+        &.x-large {
+          margin-top: -(@card-xl-height + @card-xl-height / 5);
+        }
+      }
 }
 
 .player-home-row .card-pile.horizontal {
