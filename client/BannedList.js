@@ -1,5 +1,5 @@
 const bannedList = {
-    version: '14',
+    version: '15',
     cards: {
         'standard': [
             'guest-of-honor',
@@ -13,6 +13,8 @@ const bannedList = {
             'hidden-moon-dojo',
             'mirumoto-daisho',
             'gateway-to-meido',
+            'forged-edict',
+            'magistrate-station',
             'bayushi-liar',
             'policy-debate',
             'lost-papers'

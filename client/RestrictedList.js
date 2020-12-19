@@ -2,10 +2,8 @@ const restrictedList = {
     version: '14',
     cards: {
         'standard': [
-            'city-of-the-open-hand',
             'rebuild',
             'mirumoto-s-fury',
-            'forged-edict',
             'duty',
             'embrace-the-void',
             'pathfinder-s-blade',
@@ -15,7 +13,6 @@ const restrictedList = {
             'cunning-magistrate',
             'a-fate-worse-than-death',
             'mark-of-shame',
-            'magistrate-station',
             'kakita-toshimoko',
             'keeper-initiate',
             'display-of-power',
@@ -24,7 +21,10 @@ const restrictedList = {
             'kuni-laboratory',
             'bayushi-shoju-2',
             'contested-countryside',
-            'ikoma-tsanuri-2'
+            'ikoma-tsanuri-2',
+            'common-cause',
+            'doji-diplomat',
+            'bayushi-kachiko-2'
         ],
         'skirmish': []
     }
