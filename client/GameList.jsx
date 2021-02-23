@@ -100,7 +100,7 @@ class InnerGameList extends React.Component {
                 gameTitle += '[SKIRMISH] ';
             }
 
-            if (game.gameMode === GameModes.JadeEdict) {
+            if(game.gameMode === GameModes.JadeEdict) {
                 gameTitle += '[JADE] ';
             }
 
@@ -111,10 +111,10 @@ class InnerGameList extends React.Component {
             gameTitle += game.name;
 
             let gameModifier = '';
-            if (game.gameMode === GameModes.Skirmish) {
+            if(game.gameMode === GameModes.Skirmish) {
                 gameModifier = ' skirmish';
             }
-            if (game.gameMode === GameModes.JadeEdict) {
+            if(game.gameMode === GameModes.JadeEdict) {
                 gameModifier = ' jade';
             }
 

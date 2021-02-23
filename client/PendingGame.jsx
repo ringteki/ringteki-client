@@ -10,7 +10,6 @@ import DeckRow from './DeckRow.jsx';
 import Messages from './GameComponents/Messages.jsx';
 import Avatar from './Avatar.jsx';
 import DeckStatus from './DeckStatus.jsx';
-import GameModes from './GameModes';
 
 import * as actions from './actions';
 

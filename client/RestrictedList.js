@@ -1,4 +1,4 @@
-const GameModes = require("./GameModes");
+const GameModes = require('./GameModes');
 
 const restrictedList = {
     version: '14',
@@ -60,7 +60,7 @@ class RestrictedList {
         let errors = [];
 
         if(cardsOnRestrictedList.length > 1) {
-            if (gameMode === GameModes.JadeEdict) {
+            if(gameMode === GameModes.JadeEdict) {
                 errors.push(`Contains more than 1 card on the Jade Edict restricted list: ${cardsOnRestrictedList.map(card => card.name).join(', ')}`);
             } else {
                 errors.push(`Contains more than 1 card on the FAQ v${restrictedList.version} restricted list: ${cardsOnRestrictedList.map(card => card.name).join(', ')}`);

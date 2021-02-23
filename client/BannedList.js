@@ -1,4 +1,4 @@
-const GameModes = require("./GameModes");
+const GameModes = require('./GameModes');
 
 const bannedList = {
     version: '15',
@@ -114,7 +114,7 @@ class BannedList {
         let errors = [];
 
         if(cardsOnBannedList.length > 0) {
-            if (gameMode === GameModes.JadeEdict) {
+            if(gameMode === GameModes.JadeEdict) {
                 errors.push(`Contains a card on the Jade Edict banned list: ${cardsOnBannedList.map(card => card.name).join(', ')}`);
             } else {
                 errors.push(`Contains a card on the FAQ v${bannedList.version} banned list: ${cardsOnBannedList.map(card => card.name).join(', ')}`);
