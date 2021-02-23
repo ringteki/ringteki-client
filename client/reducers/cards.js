@@ -1,5 +1,6 @@
 import _ from 'underscore';
 import validateDeck from '../deck-validator.js';
+import GameModes from '../GameModes.js';
 
 function selectDeck(state, deck) {
     if(state.decks && state.decks.length !== 0) {
@@ -47,12 +48,14 @@ function processDecks(decks, state) {
             return { count: card.count, card: state.cards[card.card.id] };
         });
 
-        let skirmishMode = false;
+        let gameMode = GameModes.Stronghold;
         if(deck.format && deck.format.value === state.formats['skirmish'].value) {
-            skirmishMode = true;
+            gameMode = GameModes.Skirmish;
+        } else if(deck.format && deck.format.value === state.formats['jade-edict'].value) {
+            gameMode = GameModes.JadeEdict;
         }
 
-        deck.status = validateDeck(deck, { packs: state.packs, skirmishMode: skirmishMode });
+        deck.status = validateDeck(deck, { packs: state.packs, gameMode: gameMode });
     });
 }
 

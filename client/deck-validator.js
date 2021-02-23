@@ -4,6 +4,7 @@ const moment = require('moment');
 
 const RestrictedList = require('./RestrictedList');
 const BannedList = require('./BannedList');
+const GameModes = require('./GameModes');
 
 const openRoles = [
     'keeper-of-air',
@@ -111,18 +112,18 @@ const roleRules = {
 };
 
 class DeckValidator {
-    constructor(packs, skirmishMode) {
+    constructor(packs, gameMode) {
         this.packs = packs;
-        this.skirmishMode = skirmishMode;
+        this.gameMode = gameMode;
         this.bannedList = new BannedList();
         this.restrictedList = new RestrictedList();
     }
 
     validateDeck(deck) {
-        if(this.skirmishMode) {
+        if(this.gameMode === GameModes.Skirmish) {
             return this.validateDeckSkirmish(deck);
         }
-        return this.validateDeckStandard(deck);
+        return this.validateDeckStandard(deck, this.gameMode);
     }
 
     validateDeckSkirmish(deck) {
@@ -198,11 +199,11 @@ class DeckValidator {
             errors.push('Total influence (' + totalInfluence.toString() + ') is higher than max allowed influence (' + rules.influence.toString() + ')');
         }
 
-        let restrictedResult = this.restrictedList.validate(allCards.map(cardQuantity => cardQuantity.card), this.skirmishMode);
-        let bannedResult = this.bannedList.validate(allCards.map(cardQuantity => cardQuantity.card), this.skirmishMode);
+        let restrictedResult = this.restrictedList.validate(allCards.map(cardQuantity => cardQuantity.card), GameModes.Skirmish);
+        let bannedResult = this.bannedList.validate(allCards.map(cardQuantity => cardQuantity.card), GameModes.Skirmish);
 
         return {
-            skirmishMode: true,
+            gameMode: this.gameMode,
             basicRules: errors.length === 0,
             officialRole: true,
             noUnreleasedCards: unreleasedCards.length === 0,
@@ -216,7 +217,7 @@ class DeckValidator {
         };
     }
 
-    validateDeckStandard(deck) {
+    validateDeckStandard(deck, gameMode) {
         let errors = [];
         let unreleasedCards = [];
         let rules = this.getRules(deck);
@@ -308,10 +309,11 @@ class DeckValidator {
             errors.push('Total influence (' + totalInfluence.toString() + ') is higher than max allowed influence (' + rules.influence.toString() + ')');
         }
 
-        let restrictedResult = this.restrictedList.validate(allCards.map(cardQuantity => cardQuantity.card), this.skirmishMode);
-        let bannedResult = this.bannedList.validate(allCards.map(cardQuantity => cardQuantity.card), this.skirmishMode);
+        let restrictedResult = this.restrictedList.validate(allCards.map(cardQuantity => cardQuantity.card), gameMode);
+        let bannedResult = this.bannedList.validate(allCards.map(cardQuantity => cardQuantity.card), gameMode);
 
         return {
+            gameMode: this.gameMode,
             basicRules: errors.length === 0,
             noUnreleasedCards: unreleasedCards.length === 0,
             officialRole: !role || openRoles.includes(role.id),
@@ -354,7 +356,7 @@ class DeckValidator {
             }
         };
 
-        if(!this.skirmishMode) {
+        if(this.gameMode !== GameModes.Skirmish) {
             let factionRules = this.getFactionRules(deck.faction.value.toLowerCase());
             let allianceRules = this.getAllianceRules(deck.alliance.value.toLowerCase(), deck.faction.value.toLowerCase());
             let roleRules = this.getRoleRules(deck.role.length > 0 ? deck.role[0].card : null);
@@ -430,7 +432,7 @@ class DeckValidator {
 module.exports = function validateDeck(deck, options) {
     options = Object.assign({ includeExtendedStatus: true }, options);
 
-    let validator = new DeckValidator(options.packs, options.skirmishMode);
+    let validator = new DeckValidator(options.packs, options.gameMode);
     let result = validator.validateDeck(deck);
 
     if(!options.includeExtendedStatus) {

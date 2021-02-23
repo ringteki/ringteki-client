@@ -10,6 +10,7 @@ import DeckRow from './DeckRow.jsx';
 import Messages from './GameComponents/Messages.jsx';
 import Avatar from './Avatar.jsx';
 import DeckStatus from './DeckStatus.jsx';
+import GameModes from './GameModes';
 
 import * as actions from './actions';
 
@@ -185,10 +186,7 @@ class InnerPendingGame extends React.Component {
     }
 
     getDecks() {
-        if(this.props.currentGame.skirmishMode) {
-            return _.filter(this.props.decks, deck => deck.format && deck.format.value === 'skirmish');
-        }
-        return _.filter(this.props.decks, deck => !deck.format || deck.format.value !== 'skirmish');
+        return _.filter(this.props.decks, deck => deck.format && deck.format.value === this.props.currentGame.gameMode);
     }
 
     render() {
