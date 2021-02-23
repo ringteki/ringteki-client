@@ -198,7 +198,7 @@ class InnerNewGame extends React.Component {
                         </div>
                         <div className='row'>
                             <div className='col-sm-12'>
-                                <b>Rule Set</b>
+                                <b>Format</b>
                             </div>
                             <div className='col-sm-10'>
                                 <label className='radio-inline'>
