@@ -109,7 +109,6 @@ const bannedList = {
 
 class BannedList {
     validate(cards, gameMode) {
-        console.log(gameMode);
         let cardsOnBannedList = cards.filter(card => bannedList.cards[gameMode].includes(card.id));
 
         let errors = [];

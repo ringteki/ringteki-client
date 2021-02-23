@@ -15,6 +15,7 @@ class PendingGame {
         this.name = details.name;
         this.allowSpectators = details.spectators;
         this.spectatorSquelch = details.spectatorSquelch;
+        this.skirmishMode = details.gameMode === GameModes.Skirmish;
         this.gameMode = details.gameMode;
         this.gameType = details.gameType;
         this.clocks = details.clocks;
