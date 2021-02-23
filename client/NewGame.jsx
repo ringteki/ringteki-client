@@ -83,6 +83,7 @@ class InnerNewGame extends React.Component {
             spectators: this.state.spectators,
             spectatorSquelch: this.state.spectatorSquelch,
             gameType: this.state.selectedGameType,
+            skirmishMode: this.state.selectedGameMode === GameModes.Skirmish, //TODO: Legacy support, remove in a bit
             gameMode: this.state.selectedGameMode,
             clocks: clocks,
             password: this.state.password
