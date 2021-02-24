@@ -3,7 +3,7 @@ const GameModes = require('./GameModes');
 const bannedList = {
     version: '15',
     cards: {
-        'standard': [
+        'stronghold': [
             'guest-of-honor',
             'spyglass',
             'charge',

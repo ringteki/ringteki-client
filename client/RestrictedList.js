@@ -3,7 +3,7 @@ const GameModes = require('./GameModes');
 const restrictedList = {
     version: '14',
     cards: {
-        'standard': [
+        'stronghold': [
             'rebuild',
             'mirumoto-s-fury',
             'duty',
