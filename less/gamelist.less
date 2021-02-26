@@ -26,11 +26,12 @@
   margin-bottom: 5px;
 
   &.skirmish {
-    background-color: fade(rgb(3, 152, 252), 40%);
+    border-color: @brand-info;
+    background-color: fade(rgb(35, 115, 168), 10%);
   }
 
   &.jade {
-    background-color: fade(rgb(19, 252, 3), 20%);
+    background-color: fade(rgb(62, 146, 56), 10%);
   }
 }
 
@@ -41,11 +42,6 @@
   padding-left: 0;
   text-overflow: ellipsis;
   overflow: hidden;
-}
-
-.game-row:hover {
-  border-color: @brand-info;
-  background-color: fade(@brand-info, 20%);
 }
 
 .game-row.active {

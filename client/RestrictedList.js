@@ -48,7 +48,8 @@ const restrictedList = {
             'khanbulak-benefactor',
             'utaku-tetsuko',
             'shinjo-yasamura',
-            'scouted-terrain'
+            'scouted-terrain',
+            'alibi-artist'
         ]
     }
 };
