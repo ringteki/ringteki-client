@@ -100,7 +100,6 @@ const bannedList = {
             'cunning-magistrate',
             'dispatch-to-nowhere',
             'shadowed-village',
-            'alibi-artist',
             'governor-s-spy',
             'talisman-of-the-sun'
         ]
