@@ -1,15 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import GameModes from './GameModes';
 
 class DeckStatusSummary extends React.Component {
     render() {
-        let { basicRules, officialRole, noUnreleasedCards, faqVersion, faqRestrictedList, skirmishMode } = this.props.status;
+        let { basicRules, officialRole, noUnreleasedCards, faqVersion, faqRestrictedList, gameMode } = this.props.status;
         let items = [];
-        if(!skirmishMode) {
+        if(gameMode === GameModes.Skirmish) {
             items = [
                 { title: 'Basic deckbuilding rules', value: basicRules },
                 { title: 'Official FFG OP role', value: officialRole },
                 { title: `FAQ v${faqVersion} restricted/ban list`, value: faqRestrictedList },
+                { title: 'Only released cards', value: noUnreleasedCards }
+            ];
+        } else if(gameMode === GameModes.JadeEdict) {
+            items = [
+                { title: 'Basic deckbuilding rules', value: basicRules },
+                { title: 'Jade Edict restricted/ban list' },
                 { title: 'Only released cards', value: noUnreleasedCards }
             ];
         } else {

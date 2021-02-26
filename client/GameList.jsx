@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { toastr } from 'react-redux-toastr';
 import _ from 'underscore';
+import GameModes from './GameModes';
 
 import Avatar from './Avatar.jsx';
 import * as actions from './actions';
@@ -95,8 +96,12 @@ class InnerGameList extends React.Component {
                 gameTitle += '\uD83D\uDD12 ';
             }
 
-            if(game.skirmishMode) {
+            if(game.gameMode === GameModes.Skirmish) {
                 gameTitle += '[SKIRMISH] ';
+            }
+
+            if(game.gameMode === GameModes.JadeEdict) {
+                gameTitle += '[JADE] ';
             }
 
             if(game.gameType) {
@@ -105,8 +110,16 @@ class InnerGameList extends React.Component {
 
             gameTitle += game.name;
 
+            let gameModifier = '';
+            if(game.gameMode === GameModes.Skirmish) {
+                gameModifier = ' skirmish';
+            }
+            if(game.gameMode === GameModes.JadeEdict) {
+                gameModifier = ' jade';
+            }
+
             return (
-                <div key={ game.id } className={ 'game-row' + (game.skirmishMode ? ' skirmish ' : '') + (game.node && this.props.isAdmin ? ' ' + game.node : '') }>
+                <div key={ game.id } className={ 'game-row' + (gameModifier) + (game.node && this.props.isAdmin ? ' ' + game.node : '') }>
                     <span className='col-xs-12 game-title'>
                         { this.props.isAdmin ? <a href='#' className='glyphicon glyphicon-remove' onClick={ event => this.removeGame(event, game) } /> : null }
                         <b>{ gameTitle }</b> { game.clocks && game.clocks.type !== 'none' ? <img src='/img/free-clock-icon-png.png' className='clock-icon' /> : null }

@@ -242,7 +242,7 @@ class Card extends React.Component {
             return null;
         }
 
-        return <CardPile
+        return (<CardPile
             source='none'
             title={ `${card.name}` }
             className={ 'underneath' }
@@ -251,13 +251,13 @@ class Card extends React.Component {
             onMouseOut={ this.props.onMouseOut }
             onCardClick={ this.props.onClick }
             popupLocation='top'
-            showPopup={ true }
+            showPopup
             popupLocation={ 'top' }
             onDragDrop={ this.props.onDragDrop }
             topCard={ cardPile[0] }
-            hiddenTopCard={ true }
+            hiddenTopCard
             cardCount={ cardPile.length }
-            size={ this.props.size } />;
+            size={ this.props.size } />);
     }
 
     getAttachments() {

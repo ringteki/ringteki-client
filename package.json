@@ -7,7 +7,7 @@
     "test": "npm run karma",
     "karma": "tsc && cross-env karma start karma.config.js --single-run",
     "coverage": "cross-env JASMINE_CONFIG_PATH=./jasmine.json nyc jasmine && nyc report --reporter=text-lcov | coveralls",
-    "lint": "eslint server/ test/server/ client/ --ext=js --ext=jsx",
+    "lint": "eslint server/ client/ --ext=js --ext=jsx",
     "build": "cross-env NODE_ENV=production webpack -p --config webpack.config.production.js"
   },
   "repository": {
