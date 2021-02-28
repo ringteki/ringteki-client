@@ -20,8 +20,11 @@ class GameService {
             startedAt: game.startedAt,
             players: game.players,
             winner: game.winner,
+            gameMode: game.gameMode,
             winReason: game.winReason,
-            finishedAt: game.finishedAt
+            finishedAt: game.finishedAt,
+            roundNumber: game.roundNumber,
+            initialFirstPlayer: game.initialFirstPlayer
         };
         return this.games.update({ gameId: game.gameId }, { '$set': properties })
             .catch(err => {

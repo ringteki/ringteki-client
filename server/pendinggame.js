@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 
 const logger = require('./log.js');
 const GameChat = require('./game/gamechat.js');
+const GameModes = require('../client/GameModes.js');
 
 class PendingGame {
     constructor(owner, details) {
@@ -14,7 +15,8 @@ class PendingGame {
         this.name = details.name;
         this.allowSpectators = details.spectators;
         this.spectatorSquelch = details.spectatorSquelch;
-        this.skirmishMode = details.skirmishMode;
+        this.skirmishMode = details.gameMode === GameModes.Skirmish;
+        this.gameMode = details.gameMode;
         this.gameType = details.gameType;
         this.clocks = details.clocks;
         this.createdAt = new Date();
@@ -306,7 +308,8 @@ class PendingGame {
             owner: this.owner.username,
             players: playerSummaries,
             spectatorSquelch: this.spectatorSquelch,
-            skirmishMode: this.skirmishMode,
+            skirmishMode: this.gameMode === GameModes.Skirmish, //TODO: Legacy support, remove this soon
+            gameMode: this.gameMode,
             started: this.started,
             spectators: _.map(this.spectators, spectator => {
                 return {

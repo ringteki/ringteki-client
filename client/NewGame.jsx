@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import GameModes from './GameModes';
 
 import * as actions from './actions';
 
@@ -20,14 +21,13 @@ class InnerNewGame extends React.Component {
         this.onNameChange = this.onNameChange.bind(this);
         this.onClockClick = this.onClockClick.bind(this);
         this.onSpectatorsClick = this.onSpectatorsClick.bind(this);
-        this.onSkirmishModeClick = this.onSkirmishModeClick.bind(this);
         this.onSpectatorSquelchClick = this.onSpectatorSquelchClick.bind(this);
         this.onPasswordChange = this.onPasswordChange.bind(this);
 
         this.state = {
             spectators: true,
             spectatorSquelch: false,
-            skirmishMode: false,
+            selectedGameMode: GameModes.Stronghold,
             clocks: false,
             selectedClockType: 'timer',
             clockTimer: 60,
@@ -60,10 +60,6 @@ class InnerNewGame extends React.Component {
         this.setState({ spectators: event.target.checked });
     }
 
-    onSkirmishModeClick(event) {
-        this.setState({ skirmishMode: event.target.checked });
-    }
-
     onSpectatorSquelchClick(event) {
         this.setState({ spectatorSquelch: event.target.checked });
     }
@@ -87,7 +83,8 @@ class InnerNewGame extends React.Component {
             spectators: this.state.spectators,
             spectatorSquelch: this.state.spectatorSquelch,
             gameType: this.state.selectedGameType,
-            skirmishMode: this.state.skirmishMode,
+            skirmishMode: this.state.selectedGameMode === GameModes.Skirmish, //TODO: Legacy support, remove in a bit
+            gameMode: this.state.selectedGameMode,
             clocks: clocks,
             password: this.state.password
         });
@@ -97,12 +94,20 @@ class InnerNewGame extends React.Component {
         this.setState({ selectedGameType: gameType });
     }
 
+    onRulesRadioChange(gameMode) {
+        this.setState({ selectedGameMode: gameMode });
+    }
+
     onClockRadioChange(clockType) {
         this.setState({ selectedClockType: clockType, clockTimer: defaultTime[clockType] });
     }
 
     isGameTypeSelected(gameType) {
         return this.state.selectedGameType === gameType;
+    }
+
+    isGameModeSelected(gameMode) {
+        return this.state.selectedGameMode === gameMode;
     }
 
     isClockTypeSelected(clockType) {
@@ -190,14 +195,27 @@ class InnerNewGame extends React.Component {
                                     Timed game
                                 </label>
                             </div>
-                            <div className='checkbox col-sm-8'>
-                                <label>
-                                    <input type='checkbox' onChange={ this.onSkirmishModeClick } checked={ this.state.skirmishMode } />
-                                    Skirmish Mode
+                        </div>
+                        <div className='row'>
+                            <div className='col-sm-12'>
+                                <b>Format</b>
+                            </div>
+                            <div className='col-sm-10'>
+                                <label className='radio-inline'>
+                                    <input name type='radio' onChange={ this.onRulesRadioChange.bind(this, GameModes.Stronghold) } checked={ this.isGameModeSelected(GameModes.Stronghold) } />
+                                    Stronghold
+                                </label>
+                                <label className='radio-inline'>
+                                    <input type='radio' onChange={ this.onRulesRadioChange.bind(this, GameModes.Skirmish) } checked={ this.isGameModeSelected(GameModes.Skirmish) } />
+                                    Skirmish
+                                </label>
+                                <label className='radio-inline'>
+                                    <input type='radio' onChange={ this.onRulesRadioChange.bind(this, GameModes.JadeEdict) } checked={ this.isGameModeSelected(GameModes.JadeEdict) } />
+                                    Jade
                                 </label>
                             </div>
                         </div>
-                        <div className='row'>
+                        <div className='row game-password'>
                             <div className='col-sm-12'>
                                 <b>Game Type</b>
                             </div>

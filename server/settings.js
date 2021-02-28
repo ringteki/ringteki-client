@@ -1,9 +1,9 @@
 const defaultWindows = {
     dynasty: true,
-    draw: false,
+    draw: true,
     preConflict: true,
     conflict: true,
-    fate: false,
+    fate: true,
     regroup: false
 };
 
