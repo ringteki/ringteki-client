@@ -16,7 +16,7 @@ class DeckStatusSummary extends React.Component {
         } else if(gameMode === GameModes.JadeEdict) {
             items = [
                 { title: 'Basic deckbuilding rules', value: basicRules },
-                { title: 'Jade Edict restricted/ban list' },
+                { title: 'Jade Edict restricted/ban list', value: faqRestrictedList },
                 { title: 'Only released cards', value: noUnreleasedCards }
             ];
         } else {
