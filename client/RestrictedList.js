@@ -49,7 +49,8 @@ const restrictedList = {
             'utaku-tetsuko',
             'shinjo-yasamura',
             'scouted-terrain',
-            'alibi-artist'
+            'alibi-artist',
+            'contested-countryside'
         ]
     }
 };
