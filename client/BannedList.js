@@ -65,11 +65,9 @@ const bannedList = {
             'daidoji-netsu',
             'daidoji-uji-2',
             'the-wealth-of-the-crane',
-            'ki-alignment',
             'shoshi-ni-kie',
             'logistics',
             'tactical-ingenuity',
-            'embrace-the-void',
             'display-of-power',
             'consumed-by-five-fires',
             'duty',
@@ -77,7 +75,11 @@ const bannedList = {
             'dispatch-to-nowhere',
             'shadowed-village',
             'governor-s-spy',
-            'talisman-of-the-sun'
+            'talisman-of-the-sun',
+            'scouted-terrain',
+            'glorious-victory',
+            'festival-for-the-fortunes',
+            'enlightenment'
         ]
     }
 };
