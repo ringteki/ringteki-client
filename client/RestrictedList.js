@@ -37,7 +37,6 @@ const restrictedList = {
             'sacred-sanctuary',
             'seal-of-the-dragon',
             'mirumoto-s-fury',
-            'spectral-visitation',
             'exposed-courtyard',
             'chronicler-of-conquests',
             'sanpuku-seido',
@@ -48,9 +47,14 @@ const restrictedList = {
             'khanbulak-benefactor',
             'utaku-tetsuko',
             'shinjo-yasamura',
-            'scouted-terrain',
             'alibi-artist',
-            'contested-countryside'
+            'contested-countryside',
+            'slovenly-scavenger',
+            'ki-alignment',
+            'called-to-war',
+            'embrace-the-void',
+            'forgotten-library',
+            'secluded-shrine'
         ]
     }
 };
