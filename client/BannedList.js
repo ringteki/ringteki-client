@@ -73,13 +73,13 @@ const bannedList = {
             'duty',
             'cunning-magistrate',
             'dispatch-to-nowhere',
-            'shadowed-village',
             'governor-s-spy',
             'talisman-of-the-sun',
             'scouted-terrain',
-            'glorious-victory',
             'festival-for-the-fortunes',
-            'enlightenment'
+            'enlightenment',
+            'calling-the-storm',
+            'force-of-the-river'
         ]
     }
 };
