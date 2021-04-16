@@ -54,7 +54,9 @@ const restrictedList = {
             'called-to-war',
             'embrace-the-void',
             'forgotten-library',
-            'secluded-shrine'
+            'secluded-shrine',
+            'adorned-temple',
+            'shadowed-village'
         ]
     }
 };
