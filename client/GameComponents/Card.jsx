@@ -144,15 +144,23 @@ class Card extends React.Component {
 
     getCountersForCard(card) {
         var counters = {};
+        let statusFlag = 1;
+        if(card.isHonored) {
+            statusFlag *= 2;
+        }
+        if(card.isDishonored) {
+            statusFlag *= 3;
+        }
+        if(card.isTainted) {
+            statusFlag *= 5;
+        }
 
         counters['card-fate'] = card.fate ? { count: card.fate, fade: card.type === 'attachment', shortName: 'F' } : undefined;
         counters['card-honor'] = card.honor ? { count: card.honor, fade: card.type === 'attachment', shortName: 'H' } : undefined;
-        if(card.isHonored) {
-            counters['honor-status'] = { count: 1, fade: card.type === 'attachment', shortName: 'Hd' };
-        } else if(card.isDishonored) {
-            counters['honor-status'] = { count: 2, fade: card.type === 'attachment', shortName: 'Dd' };
+        if(statusFlag > 1) {
+            counters['card-status'] = { count: statusFlag, fade: card.type === 'attachment', shortName: 'Hd' };
         } else {
-            counters['honor-status'] = undefined;
+            counters['card-status'] = undefined;
         }
 
         _.each(card.tokens, (token, key) => {
