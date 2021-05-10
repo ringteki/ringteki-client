@@ -38,9 +38,9 @@ class CardCounters extends React.Component {
                 return (<HonorStatusCounter key={ key }
                     name={ key }
                     value={ counter.count }
-                    honored={ counter.count % 2 === 0}
-                    dishonored={ counter.count % 3 === 0}
-                    tainted={ counter.count % 5 === 0}
+                    honored={ counter.count % 2 === 0 }
+                    dishonored={ counter.count % 3 === 0 }
+                    tainted={ counter.count % 5 === 0 }
                     fade={ counter.fade }
                     cancel={ counter.cancel }
                     shortName={ counter.shortName } />);
