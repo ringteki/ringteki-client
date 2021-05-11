@@ -27,7 +27,7 @@ class HonorStatusCounter extends Counter {
             { this.props.honored ? <img src='/img/honor-stone.png' title='Honored' alt='Honored' /> : null }
             { this.props.dishonored ? <img src='/img/dishonor-stone.png' title='Dishonored' alt='Dishonored' /> : null }
             { totalProps > 1 ? <div className='honorstatusspacer'/> : null }
-            { this.props.tainted ? <img src='/img/tainted-stone-2.png' title='Tainted' alt='Tainted' /> : null }
+            { this.props.tainted ? <img src='/img/tainted-stone.png' title='Tainted' alt='Tainted' /> : null }
         </div>);
     }
 }
