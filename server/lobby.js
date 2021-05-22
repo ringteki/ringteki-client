@@ -13,6 +13,7 @@ const DeckService = require('./services/DeckService.js');
 const CardService = require('./services/CardService.js');
 const validateDeck = require('../client/deck-validator.js'); // XXX Move this to a common location
 const Settings = require('./settings.js');
+const GetShadowlandsSummonables = require('./shadowLandsHelper.js');
 
 class Lobby {
     constructor(server, options = {}) {
@@ -537,6 +538,8 @@ class Lobby {
                 _.each(deck.dynastyCards, dynasty => {
                     dynasty.card = cards[dynasty.card.id];
                 });
+
+                deck.outsideTheGameCards = GetShadowlandsSummonables(cards);
 
                 deck.status = validateDeck(deck, { packs: packs, includeExtendedStatus: false, gameMode: game.gameMode });
                 game.selectDeck(socket.user.username, deck);
