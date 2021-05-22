@@ -590,6 +590,7 @@ Card.propTypes = {
         baseMilitarySkill: PropTypes.number,
         basePoliticalSkill: PropTypes.number,
         bowed: PropTypes.bool,
+        childCards: PropTypes.array,
         controlled: PropTypes.bool,
         controller: PropTypes.string,
         covert: PropTypes.bool,
@@ -640,6 +641,9 @@ Card.propTypes = {
     onMouseOver: PropTypes.func,
     onTouchMove: PropTypes.func,
     orientation: PropTypes.oneOf(['horizontal', 'bowed', 'vertical']),
+    player: PropTypes.shape({
+        cardPiles: PropTypes.array
+    }),
     popupLocation: PropTypes.string,
     showStats: PropTypes.bool,
     size: PropTypes.string,
