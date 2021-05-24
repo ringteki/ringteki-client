@@ -501,9 +501,29 @@
   }
 }
 
-.honorstatuscounter {
+.card.horizontal .honorstatuscounter {
   box-sizing: border-box;
   width: 25px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.honorstatuscounter {
+  box-sizing: border-box;
+  width: 100%;
+  height: 25px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.honorstatusspacer {
+  box-sizing: border-box;
+  width: 5px;
   height: 25px;
 }
 

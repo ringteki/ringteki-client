@@ -34,23 +34,13 @@ class CardCounters extends React.Component {
                     shortName={ counter.shortName } />);
             }
 
-            if(key === 'honor-status' && counter.count === 1) {
+            if(key === 'card-status' && counter.count > 1) {
                 return (<HonorStatusCounter key={ key }
                     name={ key }
                     value={ counter.count }
-                    honored
-                    dishonored={ false }
-                    fade={ counter.fade }
-                    cancel={ counter.cancel }
-                    shortName={ counter.shortName } />);
-            }
-
-            if(key === 'honor-status' && counter.count === 2) {
-                return (<HonorStatusCounter key={ key }
-                    name={ key }
-                    value={ counter.count }
-                    honored={ false }
-                    dishonored
+                    honored={ counter.count % 2 === 0 }
+                    dishonored={ counter.count % 3 === 0 }
+                    tainted={ counter.count % 5 === 0 }
                     fade={ counter.fade }
                     cancel={ counter.cancel }
                     shortName={ counter.shortName } />);
