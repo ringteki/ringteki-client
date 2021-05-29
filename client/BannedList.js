@@ -79,7 +79,10 @@ const bannedList = {
             'festival-for-the-fortunes',
             'enlightenment',
             'calling-the-storm',
-            'force-of-the-river'
+            'force-of-the-river',
+            'accursed-summoning,
+            'dance-of-chikusho-do',
+            'centered-breath'
         ]
     }
 };
