@@ -337,12 +337,8 @@ class InnerDeckEditor extends React.Component {
                 deck.alliance = this.props.factions['crab'];
             }
 
-            if(deckFormat && deckFormat === 'skirmish') {
-                deck.format = this.props.formats['skirmish'];
-            } else if(deckFormat && deckFormat === 'jade-edict') {
-                deck.format = this.props.formats['jade-edict'];
-            } else {
-                deck.format = this.props.formats['stronghold'];
+            if(deckFormat) {
+                deck.format = this.props.formats(deckFormat) || 'stronghold';
             }
 
             _.each(deckList, (count, id) => {

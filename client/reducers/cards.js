@@ -48,12 +48,17 @@ function processDecks(decks, state) {
             return { count: card.count, card: state.cards[card.card.id] };
         });
 
-        let gameMode = GameModes.Stronghold;
+        let gameMode = GameModes.Emerald;
         if(deck.format && deck.format.value === state.formats['skirmish'].value) {
             gameMode = GameModes.Skirmish;
         } else if(deck.format && deck.format.value === state.formats['jade-edict'].value) {
             gameMode = GameModes.JadeEdict;
+        } else if(deck.format && deck.format.value === state.formats['emerald'].value) {
+            gameMode = GameModes.Emerald;
+        } else if(deck.format && deck.format.value === state.formats['stronghold'].value) {
+            gameMode = GameModes.Stronghold;
         }
+
 
         deck.status = validateDeck(deck, { packs: state.packs, gameMode: gameMode });
     });

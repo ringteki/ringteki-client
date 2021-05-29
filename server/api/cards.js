@@ -43,7 +43,8 @@ module.exports.init = function(server) {
         let formats = [
             { name: 'Stronghold', value: 'stronghold' },
             { name: 'Skirmish', value: 'skirmish' },
-            { name: 'Jade', value: 'jade-edict'}
+            { name: 'Jade', value: 'jade-edict'},
+            { name: 'Emerald', value: 'emerald'}
         ];
         res.send({ success: true, formats: formats });
     });
