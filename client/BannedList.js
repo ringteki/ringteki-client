@@ -80,7 +80,7 @@ const bannedList = {
             'enlightenment',
             'calling-the-storm',
             'force-of-the-river',
-            'accursed-summoning,
+            'accursed-summoning',
             'dance-of-chikusho-do',
             'centered-breath'
         ]
