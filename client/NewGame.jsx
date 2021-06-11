@@ -201,7 +201,7 @@ class InnerNewGame extends React.Component {
                                 <b>Format</b>
                             </div>
                             <div className='col-sm-10'>
-                            <label className='radio-inline'>
+                                <label className='radio-inline'>
                                     <input name type='radio' onChange={ this.onRulesRadioChange.bind(this, GameModes.Emerald) } checked={ this.isGameModeSelected(GameModes.Emerald) } />
                                     Emerald
                                 </label>
