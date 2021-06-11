@@ -38,7 +38,7 @@ class InnerDeckEditor extends React.Component {
             updatedDefaultFields = true;
         }
         if(!this.props.deck.format && this.props.formats) {
-            deck.format = this.props.formats['stronghold'];
+            deck.format = this.props.formats['emerald'];
             updatedDefaultFields = true;
         }
         if(updatedDefaultFields) {
@@ -338,7 +338,7 @@ class InnerDeckEditor extends React.Component {
             }
 
             if(deckFormat) {
-                deck.format = this.props.formats(deckFormat) || 'stronghold';
+                deck.format = this.props.formats[deckFormat] || 'emerald';
             }
 
             _.each(deckList, (count, id) => {
@@ -445,7 +445,7 @@ class InnerDeckEditor extends React.Component {
                     <Input name='deckName' label='Deck Name' labelClass='col-sm-3' fieldClass='col-sm-9' placeholder='Deck Name'
                         type='text' onChange={ this.onChange.bind(this, 'name') } value={ this.state.deck.name } />
                     <Select name='format' label='Format' labelClass='col-sm-3' fieldClass='col-sm-9' options={ _.toArray(this.props.formats) }
-                        onChange={ this.onFormatChange.bind(this) } value={ this.state.deck.format ? this.state.deck.format.value : 'stronghold' } />
+                        onChange={ this.onFormatChange.bind(this) } value={ this.state.deck.format ? this.state.deck.format.value : 'emerald' } />
                     <Select name='faction' label='Clan' labelClass='col-sm-3' fieldClass='col-sm-9' options={ _.toArray(this.props.factions) }
                         onChange={ this.onFactionChange.bind(this) } value={ this.state.deck.faction ? this.state.deck.faction.value : undefined } />
                     <Select name='alliance' label='Alliance' labelClass='col-sm-3' fieldClass='col-sm-9' options={ _.toArray(this.props.alliances) }

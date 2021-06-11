@@ -81,7 +81,7 @@ class DeckSummary extends React.Component {
                     <div className='col-xs-8 col-sm-6'>
                         <div className='info-row row'><span>Clan:</span>{ this.props.deck.faction ? <span className={ 'pull-right' }>{ this.props.deck.faction.name }</span> : null }</div>
                         <div className='info-row row' ref='alliance'><span>Alliance:</span>{ this.props.deck.alliance && this.props.deck.alliance.name ? <span className='pull-right'>{ this.props.deck.alliance.name }</span> : <span> None </span> }</div>
-                        <div className='info-row row' ref='deckFormat'><span>Format:</span><span className='pull-right'>{ this.props.deck.format ? this.props.deck.format.name : 'Stronghold' }</span></div>
+                        <div className='info-row row' ref='deckFormat'><span>Format:</span><span className='pull-right'>{ this.props.deck.format ? this.props.deck.format.name : 'Emerald' }</span></div>
                         <div className='info-row row' ref='provinceCount'><span>Province deck:</span><span className='pull-right'>{ this.props.deck.status.provinceCount } cards</span></div>
                         <div className='info-row row' ref='dynastyDrawCount'><span>Dynasty Deck:</span><span className='pull-right'>{ this.props.deck.status.dynastyCount } cards</span></div>
                         <div className='info-row row' ref='conflictDrawCount'><span>Conflict Deck:</span><span className='pull-right'>{ this.props.deck.status.conflictCount } cards</span></div>
