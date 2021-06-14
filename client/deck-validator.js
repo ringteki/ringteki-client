@@ -168,7 +168,7 @@ class DeckValidator {
         let cardCountByName = {};
 
         _.each(allCards, cardQuantity => {
-            cardCountByName[cardQuantity.card.name] = cardCountByName[cardQuantity.card.name] || { name: cardQuantity.card.name, faction: cardQuantity.card.clan, influence: cardQuantity.card.influence_cost, limit: cardQuantity.card.deck_limit, count: 0, allowed_clans: cardQuantity.card.allowed_clans };
+            cardCountByName[cardQuantity.card.name] = cardCountByName[cardQuantity.card.name] || { name: cardQuantity.card.name, faction: cardQuantity.card.faction, influence: cardQuantity.card.influence_cost, limit: cardQuantity.card.deck_limit, count: 0, allowed_clans: cardQuantity.card.allowed_clans };
             cardCountByName[cardQuantity.card.name].count += cardQuantity.count;
 
             if(!rules.mayInclude(cardQuantity.card) || rules.cannotInclude(cardQuantity.card) || (cardQuantity.card.role_restriction && !rules.roleRestrictions.includes(cardQuantity.card.role_restriction))) {
@@ -263,7 +263,7 @@ class DeckValidator {
         let cardCountByName = {};
 
         _.each(allCards, cardQuantity => {
-            cardCountByName[cardQuantity.card.name] = cardCountByName[cardQuantity.card.name] || { name: cardQuantity.card.name, faction: cardQuantity.card.clan, influence: cardQuantity.card.influence_cost, limit: cardQuantity.card.deck_limit, count: 0, allowed_clans: cardQuantity.card.allowed_clans };
+            cardCountByName[cardQuantity.card.name] = cardCountByName[cardQuantity.card.name] || { name: cardQuantity.card.name, faction: cardQuantity.card.faction, influence: cardQuantity.card.influence_cost, limit: cardQuantity.card.deck_limit, count: 0, allowed_clans: cardQuantity.card.allowed_clans };
             cardCountByName[cardQuantity.card.name].count += cardQuantity.count;
 
             if(!rules.mayInclude(cardQuantity.card) || rules.cannotInclude(cardQuantity.card) || (cardQuantity.card.role_restriction && !rules.roleRestrictions.includes(cardQuantity.card.role_restriction))) {
@@ -372,13 +372,13 @@ class DeckValidator {
 
     getFactionRules(faction) {
         return {
-            mayInclude: card => card.clan === faction || card.clan === 'neutral'
+            mayInclude: card => card.faction === faction || card.faction === 'neutral'
         };
     }
 
     getAllianceRules(clan, faction) {
         return {
-            mayInclude: card => card.side === 'conflict' && card.clan === clan && card.allowed_clans.includes(faction)
+            mayInclude: card => card.side === 'conflict' && card.faction === clan && card.allowed_clans.includes(faction)
         };
     }
 
@@ -391,7 +391,7 @@ class DeckValidator {
             rules: [
                 {
                     message: 'Your stronghold must match your clan',
-                    condition: deck => stronghold.clan === deck.faction.value
+                    condition: deck => stronghold.faction === deck.faction.value
                 }
             ]
 
