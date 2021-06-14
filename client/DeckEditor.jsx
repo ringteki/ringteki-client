@@ -193,10 +193,10 @@ class InnerDeckEditor extends React.Component {
             });
 
             let card = _.find(this.props.cards, function(card) {
-                if(pack && card.pack_cards.length) {
+                if(pack && card.versions.length) {
                     if(card.name.toLowerCase() === cardName.toLowerCase()) {
-                        return _.find(card.pack_cards, function(packCard) {
-                            return packCard.pack.id === pack.id;
+                        return _.find(card.versions, function(packCard) {
+                            return packCard.pack_id === pack.id;
                         });
                     }
                     return false;
@@ -258,10 +258,10 @@ class InnerDeckEditor extends React.Component {
 
     getCardListEntry(count, card) {
         let packName = '';
-        if(card.pack_cards.length) {
-            let packData = card.pack_cards[0];
-            this.setState({ test: packData.pack.id });
-            let pack = _.find(this.props.packs, p => p.id === packData.pack.id);
+        if(card.versions.length) {
+            let packData = card.versions[0];
+            this.setState({ test: packData.id });
+            let pack = _.find(this.props.packs, p => p.id === packData.pack_id);
             if(pack && pack.name) {
                 packName = ' (' + pack.name + ')';
             }
@@ -369,8 +369,8 @@ class InnerDeckEditor extends React.Component {
                 });
 
                 let card = _.find(this.props.cards, function(card) {
-                    if(pack && card.pack_cards.length) {
-                        return card.name.toLowerCase() === cardName.toLowerCase() && _.any(card.pack_cards, data => data.pack.id === pack.id);
+                    if(pack && card.versions.length) {
+                        return card.name.toLowerCase() === cardName.toLowerCase() && _.any(card.versions, data => data.pack_id === pack.id);
                     }
                     return card.name.toLowerCase() === cardName.toLowerCase();
                 });

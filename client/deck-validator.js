@@ -37,7 +37,7 @@ function getDeckCount(deck) {
 }
 
 function isCardInReleasedPack(packs, card) {
-    let packsWithCard = _.compact(_.map(card.pack_cards, pack => _.find(packs, p => p.id === pack.pack.id)));
+    let packsWithCard = _.compact(_.map(card.versions, pack => _.find(packs, p => p.id === pack.pack_id)));
 
     if(packsWithCard.length === 0) {
         return false;
