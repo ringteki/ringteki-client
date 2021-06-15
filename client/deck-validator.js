@@ -286,7 +286,7 @@ class DeckValidator {
         }
 
         _.each(rules.maxProvince, (amount, element) => {
-            let provinces = _.filter(deck.provinceCards, card => card.card.element === element);
+            let provinces = _.filter(deck.provinceCards, card => card.card.elements.includes(element));
             if(provinces.length > amount) {
                 errors.push('Too many provinces with ' + element + ' element');
             }
