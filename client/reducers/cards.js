@@ -1,6 +1,4 @@
 import _ from 'underscore';
-import validateDeck from '../deck-validator.js';
-import GameModes from '../GameModes.js';
 
 function selectDeck(state, deck) {
     if(state.decks && state.decks.length !== 0) {
@@ -15,10 +13,8 @@ function selectDeck(state, deck) {
 function processDecks(decks, state) {
     _.each(decks, deck => {
         if(!state.cards || !deck.faction) {
-            deck.status = {};
             return;
         }
-
         deck.faction = state.factions[deck.faction.value];
         if(deck.alliance) {
             if(deck.alliance.value === '') {
@@ -47,20 +43,6 @@ function processDecks(decks, state) {
         deck.dynastyCards = _.map(deck.dynastyCards, card => {
             return { count: card.count, card: state.cards[card.card.id] };
         });
-
-        let gameMode = GameModes.Emerald;
-        if(deck.format && deck.format.value === state.formats['skirmish'].value) {
-            gameMode = GameModes.Skirmish;
-        } else if(deck.format && deck.format.value === state.formats['jade-edict'].value) {
-            gameMode = GameModes.JadeEdict;
-        } else if(deck.format && deck.format.value === state.formats['emerald'].value) {
-            gameMode = GameModes.Emerald;
-        } else if(deck.format && deck.format.value === state.formats['stronghold'].value) {
-            gameMode = GameModes.Stronghold;
-        }
-
-
-        deck.status = validateDeck(deck, { packs: state.packs, gameMode: gameMode });
     });
 }
 

@@ -66,12 +66,25 @@ class DeckSummary extends React.Component {
         return cardsToRender;
     }
 
+    getDeckCount(deck) {
+        let count = 0;
+
+        _.each(deck, function(card) {
+            count += card.count;
+        });
+
+        return count;
+    }
+
     render() {
         if(!this.props.deck) {
             return <div>Waiting for selected deck...</div>;
         }
 
         var cardsToRender = this.getCardsToRender();
+        const provinceCount = this.getDeckCount(this.props.deck.provinceCards);
+        const dynastyCount = this.getDeckCount(this.props.deck.dynastyCards);
+        const conflictCount = this.getDeckCount(this.props.deck.conflictCards);
 
         return (
             <div className='deck-summary col-xs-12'>
@@ -82,11 +95,11 @@ class DeckSummary extends React.Component {
                         <div className='info-row row'><span>Clan:</span>{ this.props.deck.faction ? <span className={ 'pull-right' }>{ this.props.deck.faction.name }</span> : null }</div>
                         <div className='info-row row' ref='alliance'><span>Alliance:</span>{ this.props.deck.alliance && this.props.deck.alliance.name ? <span className='pull-right'>{ this.props.deck.alliance.name }</span> : <span> None </span> }</div>
                         <div className='info-row row' ref='deckFormat'><span>Format:</span><span className='pull-right'>{ this.props.deck.format ? this.props.deck.format.name : 'Emerald' }</span></div>
-                        <div className='info-row row' ref='provinceCount'><span>Province deck:</span><span className='pull-right'>{ this.props.deck.status.provinceCount } cards</span></div>
-                        <div className='info-row row' ref='dynastyDrawCount'><span>Dynasty Deck:</span><span className='pull-right'>{ this.props.deck.status.dynastyCount } cards</span></div>
-                        <div className='info-row row' ref='conflictDrawCount'><span>Conflict Deck:</span><span className='pull-right'>{ this.props.deck.status.conflictCount } cards</span></div>
+                        <div className='info-row row' ref='provinceCount'><span>Province deck:</span><span className='pull-right'>{ provinceCount } cards</span></div>
+                        <div className='info-row row' ref='dynastyDrawCount'><span>Dynasty Deck:</span><span className='pull-right'>{ dynastyCount } cards</span></div>
+                        <div className='info-row row' ref='conflictDrawCount'><span>Conflict Deck:</span><span className='pull-right'>{ conflictCount } cards</span></div>
                         <div className='info-row row'><span>Validity:</span>
-                            <DeckStatus className='pull-right' status={ this.props.deck.status } />
+                            <DeckStatus className='pull-right' deck={ this.props.deck } />
                         </div>
                     </div>
                     <div className='col-xs-2 col-sm-3 no-x-padding'>{ this.props.deck.alliance && this.props.deck.alliance.value !== 'none' ? <img className='deck-alliance-mon img-responsive' src={ '/img/mons/' + this.props.deck.alliance.value + '.png' } /> : null }</div>
