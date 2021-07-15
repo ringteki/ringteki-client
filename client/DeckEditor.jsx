@@ -271,8 +271,12 @@ class InnerDeckEditor extends React.Component {
 
     importDeck() {
         $(findDOMNode(this.refs.modal)).modal('hide');
-
         let importUrl = document.getElementById('importUrl').value;
+        if (importUrl.includes('fiveringsdb.com')) {
+            this.importDeck5rdb();
+            return;
+        }
+
         let emeraldUrl = importUrl.replace('/decks', '/api/decklists');
         let deckResponse = {};
 
@@ -316,6 +320,9 @@ class InnerDeckEditor extends React.Component {
             }
 
             if(deckFormat) {
+                if (deckFormat === 'standard') {
+                    deckFormat = 'stronghold';
+                }
                 deck.format = this.props.formats[deckFormat] || 'emerald';
             }
 
@@ -459,7 +466,10 @@ class InnerDeckEditor extends React.Component {
             }
 
             if(deckFormat) {
-                deck.format = this.props.formats[deckFormat] || 'emerald';
+                if (deckFormat === 'standard') {
+                    deckFormat = 'stronghold';
+                }
+                deck.format = this.props.formats[deckFormat] || 'stronghold';
             }
 
             _.each(deckList, (count, id) => {
