@@ -41,7 +41,8 @@ module.exports.init = function(server) {
 
     server.get('/api/formats', function(req, res) {
         let formats = [
-            { name: 'Stronghold', value: 'stronghold' },
+            { name: 'Emerald', value: 'emerald'},
+            { name: 'Imperial', value: 'stronghold' },
             { name: 'Skirmish', value: 'skirmish' },
             { name: 'Jade', value: 'jade-edict'}
         ];
