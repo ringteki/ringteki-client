@@ -516,7 +516,7 @@ class Lobby {
         }
 
         Promise.all([this.cardService.getAllCards(), this.cardService.getAllPacks(), this.deckService.getById(deckId)])
-            .then(results => {
+            .then(async results => {
                 let [cards, packs, deck] = results;
 
                 _.each(deck.stronghold, stronghold => {
@@ -541,7 +541,7 @@ class Lobby {
 
                 deck.outsideTheGameCards = GetShadowlandsSummonables(cards);
 
-                deck.status = validateDeck(deck, { packs: packs, includeExtendedStatus: false, gameMode: game.gameMode });
+                deck.status = await validateDeck(deck, { packs: packs, includeExtendedStatus: false, gameMode: game.gameMode });
                 game.selectDeck(socket.user.username, deck);
 
                 this.sendGameState(game);

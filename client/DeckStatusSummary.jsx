@@ -19,6 +19,12 @@ class DeckStatusSummary extends React.Component {
                 { title: 'Jade Edict restricted/ban list', value: faqRestrictedList },
                 { title: 'Only released cards', value: noUnreleasedCards }
             ];
+        } else if(gameMode === GameModes.Emerald) {
+            items = [
+                { title: 'Basic deckbuilding rules', value: basicRules },
+                { title: 'Emerald Legacy restricted/ban list', value: faqRestrictedList },
+                { title: 'Only released cards', value: noUnreleasedCards }
+            ];
         } else {
             items = [
                 { title: 'Basic deckbuilding rules', value: basicRules },

@@ -104,6 +104,14 @@ class InnerGameList extends React.Component {
                 gameTitle += '[JADE] ';
             }
 
+            if(game.gameMode === GameModes.Stronghold) {
+                gameTitle += '[IMPERIAL] ';
+            }
+
+            if(game.gameMode === GameModes.Emerald) {
+                gameTitle += '[EMERALD] ';
+            }
+
             if(game.gameType) {
                 gameTitle += '[' + game.gameType + '] ';
             }
@@ -116,6 +124,9 @@ class InnerGameList extends React.Component {
             }
             if(game.gameMode === GameModes.JadeEdict) {
                 gameModifier = ' jade';
+            }
+            if(game.gameMode === GameModes.Stronghold) {
+                gameModifier = ' imperial';
             }
 
             return (

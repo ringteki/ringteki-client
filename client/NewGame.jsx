@@ -27,7 +27,7 @@ class InnerNewGame extends React.Component {
         this.state = {
             spectators: true,
             spectatorSquelch: false,
-            selectedGameMode: GameModes.Stronghold,
+            selectedGameMode: GameModes.Emerald,
             clocks: false,
             selectedClockType: 'timer',
             clockTimer: 60,
@@ -202,8 +202,12 @@ class InnerNewGame extends React.Component {
                             </div>
                             <div className='col-sm-10'>
                                 <label className='radio-inline'>
+                                    <input name type='radio' onChange={ this.onRulesRadioChange.bind(this, GameModes.Emerald) } checked={ this.isGameModeSelected(GameModes.Emerald) } />
+                                    Emerald
+                                </label>
+                                <label className='radio-inline'>
                                     <input name type='radio' onChange={ this.onRulesRadioChange.bind(this, GameModes.Stronghold) } checked={ this.isGameModeSelected(GameModes.Stronghold) } />
-                                    Stronghold
+                                    Imperial
                                 </label>
                                 <label className='radio-inline'>
                                     <input type='radio' onChange={ this.onRulesRadioChange.bind(this, GameModes.Skirmish) } checked={ this.isGameModeSelected(GameModes.Skirmish) } />

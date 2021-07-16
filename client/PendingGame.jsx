@@ -74,7 +74,6 @@ class InnerPendingGame extends React.Component {
 
     selectDeck(index) {
         $(findDOMNode(this.refs.modal)).modal('hide');
-
         this.props.socket.emit('selectdeck', this.props.currentGame.id, this.getDecks()[index]);
     }
 
@@ -92,7 +91,7 @@ class InnerPendingGame extends React.Component {
                 deck = <span className='deck-selection'>Deck Selected</span>;
             }
 
-            status = <DeckStatus status={ player.deck.status } />;
+            status = <DeckStatus deck={ player.deck } />;
         } else if(player && playerIsMe) {
             selectLink = <span className='card-link' data-toggle='modal' data-target='#decks-modal'>Select deck...</span>;
         }
