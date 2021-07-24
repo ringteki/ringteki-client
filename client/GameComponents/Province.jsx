@@ -152,6 +152,7 @@ class Province extends React.Component {
                     disableMouseOver={ strongholdCard.facedown }
                     onClick={ this.props.onCardClick }
                     onMenuItemClick={ this.props.onMenuItemClick }
+                    isMe={ !!this.props.isMe }
                     onDragDrop={ this.props.onDragDrop } size={ this.props.size } /> : null }
             </div>);
     }

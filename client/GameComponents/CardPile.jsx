@@ -5,6 +5,7 @@ import $ from 'jquery';
 
 import Card from './Card.jsx';
 import { tryParseJSON } from '../util.js';
+import Draggable from 'react-draggable';
 
 class CardPile extends React.Component {
     constructor() {
@@ -162,21 +163,25 @@ class CardPile extends React.Component {
         }) }</div>) : null;
 
         popup = (
-            <div className='popup'>
-                <div className='panel-title' onClick={ event => event.stopPropagation() }>
-                    <span className='text-center'>{ this.props.title }</span>
-                    <span className='pull-right'>
-                        <a className='close-button glyphicon glyphicon-remove' onClick={ this.onCloseClick.bind(this) } />
-                    </span>
-                </div>
-                <div className={ popupClass } onClick={ event => event.stopPropagation() }>
-                    { popupMenu }
-                    <div className='inner'>
-                        { cardList }
+            <Draggable handle='grip'>
+                <div className={ `popup ${this.props.isMe ? '' : 'opponent'}` }>
+                    <grip>
+                        <div className='panel-title' onClick={ event => event.stopPropagation() }>
+                            <span className='text-center'>{ this.props.title }</span>
+                            <span className='pull-right'>
+                                <a className='close-button glyphicon glyphicon-remove' onClick={ this.onCloseClick.bind(this) } />
+                            </span>
+                        </div>
+                    </grip>
+                    <div className={ popupClass } onClick={ event => event.stopPropagation() }>
+                        { popupMenu }
+                        <div className='inner'>
+                            { cardList }
+                        </div>
+                        <div className={ arrowClass } />
                     </div>
-                    <div className={ arrowClass } />
                 </div>
-            </div>);
+            </Draggable>);
 
         return popup;
     }
@@ -248,6 +253,7 @@ CardPile.propTypes = {
     disableMenu: PropTypes.bool,
     disableMouseOver: PropTypes.bool,
     hiddenTopCard: PropTypes.bool,
+    isMe: PropTypes.bool,
     menu: PropTypes.array,
     onCardClick: PropTypes.func,
     onCloseClick: PropTypes.func,
@@ -265,7 +271,8 @@ CardPile.propTypes = {
     topCard: PropTypes.object
 };
 CardPile.defaultProps = {
-    orientation: 'vertical'
+    orientation: 'vertical',
+    isMe: true
 };
 
 export default CardPile;

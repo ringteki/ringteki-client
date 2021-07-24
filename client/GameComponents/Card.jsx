@@ -8,7 +8,6 @@ import 'jquery-nearest';
 import CardMenu from './CardMenu.jsx';
 import CardStats from './CardStats.jsx';
 import CardCounters from './CardCounters.jsx';
-import SquishableCardPanel from './SquishableCardPanel.jsx';
 import CardPile from './CardPile.jsx';
 
 class Card extends React.Component {
@@ -319,18 +318,30 @@ class Card extends React.Component {
             return;
         }
 
-        let maxCards = 1 + (underneathCards.length - 1) / 6;
+        const cardPile = underneathCards;
+        if(!cardPile || !cardPile.length) {
+            return null;
+        }
 
         return (
-            <SquishableCardPanel
-                cardSize={ this.props.size }
-                cards={ underneathCards }
-                className='underneath'
-                maxCards={ maxCards }
-                onCardClick={ this.props.onClick }
-                onMouseOut={ this.props.onMouseOut }
+            <CardPile
+                source='none'
+                title={ 'Underneath' }
+                className={ 'beside' }
+                cards={ cardPile }
                 onMouseOver={ this.props.onMouseOver }
-                source='underneath stronghold' />);
+                onMouseOut={ this.props.onMouseOut }
+                onCardClick={ this.props.onClick }
+                popupLocation='top'
+                showPopup
+                isMe={ this.props.isMe }
+                popupLocation={ 'top' }
+                onDragDrop={ this.props.onDragDrop }
+                topCard={ cardPile[0] }
+                hiddenTopCard
+                cardCount={ cardPile.length }
+                size={ this.props.size }
+            />);
     }
 
     getCardOrder() {
