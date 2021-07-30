@@ -42,8 +42,8 @@ class InnerMessages extends React.Component {
         this.otherIcons = {
             fate: { className: 'icon-fate', imageSrc: '/img/Fate.png' },
             honor: { className: 'icon-honor', imageSrc: '/img/Honor.png' },
-            card: { className: 'icon-card', imageSrc: '/img/cards/conflictcardback.jpg' },
-            cards: { className: 'icon-card', imageSrc: '/img/cards/conflictcardback.jpg' }
+            card: { className: 'icon-card', imageSrc: '/img/cards/conflictcardback.png' },
+            cards: { className: 'icon-card', imageSrc: '/img/cards/conflictcardback.png' }
         };
 
         this.formatMessageText = this.formatMessageText.bind(this);
