@@ -108,6 +108,10 @@ class InnerGameList extends React.Component {
                 gameTitle += '[IMPERIAL] ';
             }
 
+            if(game.gameMode === GameModes.Emerald) {
+                gameTitle += '[EMERALD] ';
+            }
+
             if(game.gameType) {
                 gameTitle += '[' + game.gameType + '] ';
             }

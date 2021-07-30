@@ -30,6 +30,7 @@ class DeckValidator {
 
         try {
             const res = await axios.post('https://beta-emeralddb.herokuapp.com/api/decklists/validate', body);
+            // const res = await axios.post('https://www.emeralddb.org/api/decklists/validate', body);
             return {
                 valid: res.data.valid,
                 extendedStatus: res.data.errors

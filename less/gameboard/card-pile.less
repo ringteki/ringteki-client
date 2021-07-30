@@ -110,6 +110,11 @@
         }
     }
 
+    & .opponent {
+        bottom: -25px;
+        left: 100px;
+    }
+
     &.underneath {
         margin-left: 0;
         margin-top: -(@card-height + @card-height / 5);
@@ -127,6 +132,25 @@
           margin-top: -(@card-xl-height + @card-xl-height / 5);
         }
       }
+
+    &.beside {
+        margin-left: -(@card-width / 2);
+        margin-top: -(@card-height);
+        position: absolute;
+        z-index: 25;
+
+        &.small {
+            margin-top: -(@card-sm-height + @card-sm-height / 5);
+        }
+
+        &.large {
+            margin-top: -(@card-lg-height + @card-lg-height / 5);
+        }
+
+        &.x-large {
+            margin-top: -(@card-xl-height + @card-xl-height / 5);
+        }
+    }
 }
 
 .player-home-row .card-pile.horizontal {
