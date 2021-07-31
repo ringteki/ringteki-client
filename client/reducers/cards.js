@@ -24,6 +24,12 @@ function processDecks(decks, state) {
             }
         }
 
+        deck.stronghold = deck.stronghold.filter(card => !!card.card);
+        deck.role = deck.role.filter(card => !!card.card);
+        deck.provinceCards = deck.provinceCards.filter(card => !!card.card);
+        deck.conflictCards = deck.conflictCards.filter(card => !!card.card);
+        deck.dynastyCards = deck.dynastyCards.filter(card => !!card.card);
+
         deck.stronghold = _.map(deck.stronghold, card => {
             return { count: card.count, card: state.cards[card.card.id] };
         });
