@@ -15,9 +15,13 @@ class Community extends React.Component {
                     <p>Link: <a href='https://discord.gg/zPvBePb' target='_blank'>L5R Discord</a></p>
                     <p>Discord is a text and voice communicaton application. Created by members of the L5R subreddit, it's a robust community of LCG/CCG/RPG players.</p>
 
-                    <h3>FiveRingsDB</h3>
-                    <p>Link: <a href='https://fiveringsdb.com//' target='_blank'>FiveRingsDB</a></p>
-                    <p>Card database and deck builder. Contains card rulings as well. Deck list are able to be directly imported into the Deckbuilder here.</p>
+                    <h3>FiveRingsDB (discontinued)</h3>
+                    <p>Link: <a href='https://fiveringsdb.com/' target='_blank'>FiveRingsDB</a></p>
+                    <p>Card database and deck builder. Contains card rulings as well. Deck list are able to be directly imported into the Deckbuilder here. </p>
+
+                    <h3>Emerald DB</h3>
+                    <p>Link: <a href='https://www.emeralddb.org/' target='_blank'>Emerald DB</a></p>
+                    <p>Card database and deck builder. Contains card rulings as well. Deck list are able to be directly imported into the Deckbuilder here. Successor to FiveRingsDB.</p>
 
                     <h3>Troll5R</h3>
                     <p>Link: <a href='https://www.facebook.com/Troll5R/' target='_blank'>Troll5R</a></p>
