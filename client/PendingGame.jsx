@@ -271,7 +271,7 @@ class InnerPendingGame extends React.Component {
                     }
                 </div>
                 <div className='panel-title text-center'>
-                    Spectators({ this.props.currentGame.spectators.length })
+                    Spectators ({ this.props.currentGame.spectators.length })
                 </div>
                 <div className='spectators panel'>
                     { _.map(this.props.currentGame.spectators, spectator => {
