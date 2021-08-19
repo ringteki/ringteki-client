@@ -24,7 +24,7 @@ class Community extends React.Component {
                     <p>Winners of the podcast wars. A couple of L5R old-timers/playtesters who talk at length on just about anything.</p>
 
                     <h3>The Lotus Pavilion</h3>
-                    <p>Link: <a href='http://thelotuspavilion.com/' target='_blank'>The Lotus Pavilion</a></p>
+                    <p>Link: <a href='https://thelotuspavilion.com/' target='_blank'>The Lotus Pavilion</a></p>
                     <p>Browser-based tournament software that originated for AGOT 2.0. Has an excellent pedigree.</p>
 
                     <h3>The Ringteki Dev Discord</h3>
