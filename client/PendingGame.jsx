@@ -284,7 +284,7 @@ class InnerPendingGame extends React.Component {
                     <div className='message-list'>
                         <Messages messages={ this.props.currentGame.messages } onCardMouseOver={ this.onMouseOver } onCardMouseOut={ this.onMouseOut } />
                     </div>
-                    <form className='form form-hozitontal'>
+                    <form className='form form-horizontal'>
                         <div className='form-group'>
                             <input className='form-control' type='text' placeholder='Enter a message...' value={ this.state.message }
                                 onKeyPress={ this.onKeyPress } onChange={ this.onChange } />
