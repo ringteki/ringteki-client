@@ -111,6 +111,9 @@ class InnerGameList extends React.Component {
             if(game.gameMode === GameModes.Emerald) {
                 gameTitle += '[EMERALD] ';
             }
+            if(game.gameMode === GameModes.Obsidian) {
+                gameTitle += '[OBSIDIAN] ';
+            }
 
             if(game.gameType) {
                 gameTitle += '[' + game.gameType + '] ';
@@ -127,6 +130,9 @@ class InnerGameList extends React.Component {
             }
             if(game.gameMode === GameModes.Stronghold) {
                 gameModifier = ' imperial';
+            }
+            if(game.gameMode === GameModes.Obsidian) {
+                gameModifier = ' obsidian';
             }
 
             return (
