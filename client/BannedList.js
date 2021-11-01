@@ -128,19 +128,19 @@ const bannedList = {
             'force-of-the-river'
         ],
         'obsidian': [
-            'accursed-summoning', 
+            'accursed-summoning',
             'calling-the-storm',
             'daidoji-netsu',
             'duty',
             'enlightenment',
             'gateway-to-meido',
             'jurojin-s-curse',
-            'lost-papers', 
+            'lost-papers',
             'scouted-terrain',
-            "contested-countryside",
-            "oni-tyrant",
-            "slovenly-scavenger",
-            "way-of-the-warrior",
+            'contested-countryside',
+            'oni-tyrant',
+            'slovenly-scavenger',
+            'way-of-the-warrior'
         ]
     }
 };
@@ -156,7 +156,7 @@ class BannedList {
                 errors.push(`Contains a card on the Jade Edict banned list: ${cardsOnBannedList.map(card => card.name).join(', ')}`);
             } else if(gameMode === GameModes.Emerald) {
                 errors.push(`Contains a card on the Emerald Legacy banned list: ${cardsOnBannedList.map(card => card.name).join(', ')}`);
-            } else if (gameMode === GameModes.Obsidian) {
+            } else if(gameMode === GameModes.Obsidian) {
                 errors.push(`Contains cards on the Obsidian Heresy banned list: ${cardsOnBannedList.map(card => card.name).join(', ')}`);
             } else {
                 errors.push(`Contains a card on the FAQ v${bannedList.version} banned list: ${cardsOnBannedList.map(card => card.name).join(', ')}`);

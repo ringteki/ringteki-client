@@ -22,7 +22,7 @@ class Community extends React.Component {
                     <h3>Discord League</h3>
                     <p>Link: <a href='https://discord-league.herokuapp.com' target='_blank'>Discord League</a></p>
                     <p>
-                        A competitive league, with a friendly tournament running each month. Sign up with your discord account, and also 
+                        A competitive league, with a friendly tournament running each month. Sign up with your discord account, and also
                         <a href="https://discord.gg/mfpZTqxxah" target="_blank">join the discord server where the games are scheduled</a>.
                     </p>
 
