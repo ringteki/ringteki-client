@@ -21,6 +21,7 @@ import GameBoard from './GameBoard.jsx';
 import HowToPlay from './HowToPlay.jsx';
 import About from './About.jsx';
 import Community from './Community.jsx';
+import Formats from './Formats.jsx';
 import ForgotPassword from './ForgotPassword.jsx';
 import ResetPassword from './ResetPassword.jsx';
 import Profile from './Profile.jsx';
@@ -52,6 +53,7 @@ class App extends React.Component {
             '/how-to-play': () => <HowToPlay />,
             '/about': () => <About />,
             '/community': () => <Community />,
+            '/formats': () => <Formats />,
             '/forgot': () => <ForgotPassword />,
             '/reset-password': params => <ResetPassword id={ params.id } token={ params.token } />,
             '/profile': () => <Profile />,
@@ -244,7 +246,8 @@ class App extends React.Component {
                 name: 'Help', childItems: [
                     { name: 'How To Play', path: '/how-to-play' },
                     { name: 'About', path: '/about' },
-                    { name: 'Community', path: '/community' }
+                    { name: 'Community', path: '/community' },
+                    { name: 'Formats', path: '/formats' }
                 ]
             }
         ];

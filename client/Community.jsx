@@ -23,6 +23,13 @@ class Community extends React.Component {
                     <p>Link: <a href='https://www.emeralddb.org/' target='_blank'>Emerald DB</a></p>
                     <p>Card database and deck builder. Contains card rulings as well. Deck list are able to be directly imported into the Deckbuilder here. Successor to FiveRingsDB.</p>
 
+                    <h3>Discord League</h3>
+                    <p>Link: <a href='https://discord-league.herokuapp.com' target='_blank'>Discord League</a></p>
+                    <p>
+                        A competitive league, with a friendly tournament running each month. Sign up with your discord account, and also
+                        <a href="https://discord.gg/mfpZTqxxah" target="_blank">join the discord server where the games are scheduled</a>.
+                    </p>
+
                     <h3>Troll5R</h3>
                     <p>Link: <a href='https://www.facebook.com/Troll5R/' target='_blank'>Troll5R</a></p>
                     <p>Winners of the podcast wars. A couple of L5R old-timers/playtesters who talk at length on just about anything.</p>

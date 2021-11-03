@@ -44,7 +44,8 @@ module.exports.init = function(server) {
             { name: 'Emerald', value: 'emerald'},
             { name: 'Imperial', value: 'stronghold' },
             { name: 'Skirmish', value: 'skirmish' },
-            { name: 'Jade', value: 'jade-edict'}
+            { name: 'Jade', value: 'jade-edict'},
+            { name: 'Obsidian', value: 'obsidian'}
         ];
         res.send({ success: true, formats: formats });
     });
