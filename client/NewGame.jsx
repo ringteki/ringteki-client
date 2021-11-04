@@ -214,8 +214,8 @@ class InnerNewGame extends React.Component {
                                     Skirmish
                                 </label>
                                 <label className='radio-inline'>
-                                    <input type='radio' onChange={ this.onRulesRadioChange.bind(this, GameModes.JadeEdict) } checked={ this.isGameModeSelected(GameModes.JadeEdict) } />
-                                    Jade
+                                    <input type='radio' onChange={ this.onRulesRadioChange.bind(this, GameModes.Obsidian) } checked={ this.isGameModeSelected(GameModes.Obsidian) } />
+                                    Obsidian
                                 </label>
                             </div>
                         </div>

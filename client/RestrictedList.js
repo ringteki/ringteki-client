@@ -87,7 +87,8 @@ const restrictedList = {
             'secluded-shrine',
             'adorned-temple',
             'shadowed-village'
-        ]
+        ],
+        'obsidian': []
     }
 };
 
