@@ -2,6 +2,10 @@ const $ = require('jquery'); // eslint-disable-line no-unused-vars
 const _ = require('underscore');
 const axios = require('axios').default;
 const GameModes = require('./GameModes');
+const crypto = require('crypto');
+const NodeCache = require( "node-cache" );
+
+let validatorCache = new NodeCache();
 
 class DeckValidator {
     constructor(packs, gameMode) {
@@ -12,7 +16,6 @@ class DeckValidator {
     async validateDeck(deck) {
         let allCards = deck.provinceCards.concat(deck.dynastyCards).concat(deck.conflictCards).concat(deck.role).concat(deck.stronghold);
         let cardCountByName = {};
-
         _.each(allCards, cardQuantity => {
             cardCountByName[cardQuantity.card.id] = 0;
             cardCountByName[cardQuantity.card.id] += cardQuantity.count;
@@ -28,19 +31,27 @@ class DeckValidator {
             format: mode
         };
 
-        try {
-            const res = await axios.post('https://beta-emeralddb.herokuapp.com/api/decklists/validate', body);
-            // const res = await axios.post('https://www.emeralddb.org/api/decklists/validate', body);
-            return {
-                valid: res.data.valid,
-                extendedStatus: res.data.errors
-            };
-        } catch(e) {
-            return {
-                valid: undefined,
-                extendedStatus: ['Error Validating']
-            };
+        const jsonString = JSON.stringify(body);
+        const hash = crypto.createHash('md5').update(jsonString).digest('hex');
+        const cached = validatorCache.get(hash);
+        if (cached === undefined) {
+            try {
+                const res = await axios.post('https://beta-emeralddb.herokuapp.com/api/decklists/validate', body);
+                // const res = await axios.post('https://www.emeralddb.org/api/decklists/validate', body);
+                const resultObj = {
+                    valid: res.data.valid,
+                    extendedStatus: res.data.errors
+                };
+                validatorCache.set(hash, resultObj, 600);
+                return resultObj;
+            } catch(e) {
+                return {
+                    valid: undefined,
+                    extendedStatus: ['Error Validating']
+                };
+            }
         }
+        return cached;
     }
 }
 
