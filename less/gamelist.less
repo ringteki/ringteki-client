@@ -37,6 +37,10 @@
   &.imperial {
     background-color: fade(rgb(146, 62, 56), 40%);
   }
+
+  &.obsidian {
+    background-image: repeating-linear-gradient( 135deg, rgba(115, 140, 77, 0.3), rgba(115, 140, 77, 0.3) 10px, rgba(217, 154, 37, 0.3) 10px, rgba(217, 154, 37, 0.3) 20px);
+  }
 }
 
 .player-name {
@@ -87,7 +91,8 @@
 }
 
 .spectators {
-  height: 55px;
+  height: 95px;
+  overflow-y: auto;
   clear: both;
 }
 

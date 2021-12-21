@@ -15,16 +15,27 @@ class Community extends React.Component {
                     <p>Link: <a href='https://discord.gg/zPvBePb' target='_blank'>L5R Discord</a></p>
                     <p>Discord is a text and voice communicaton application. Created by members of the L5R subreddit, it's a robust community of LCG/CCG/RPG players.</p>
 
-                    <h3>FiveRingsDB</h3>
-                    <p>Link: <a href='https://fiveringsdb.com//' target='_blank'>FiveRingsDB</a></p>
-                    <p>Card database and deck builder. Contains card rulings as well. Deck list are able to be directly imported into the Deckbuilder here.</p>
+                    <h3>FiveRingsDB (discontinued)</h3>
+                    <p>Link: <a href='https://fiveringsdb.com/' target='_blank'>FiveRingsDB</a></p>
+                    <p>Card database and deck builder. Contains card rulings as well. Deck list are able to be directly imported into the Deckbuilder here. </p>
+
+                    <h3>Emerald DB</h3>
+                    <p>Link: <a href='https://www.emeralddb.org/' target='_blank'>Emerald DB</a></p>
+                    <p>Card database and deck builder. Contains card rulings as well. Deck list are able to be directly imported into the Deckbuilder here. Successor to FiveRingsDB.</p>
+
+                    <h3>Discord League</h3>
+                    <p>Link: <a href='https://discord-league.herokuapp.com' target='_blank'>Discord League</a></p>
+                    <p>
+                        A competitive league, with a friendly tournament running each month. Sign up with your discord account, and also
+                        <a href="https://discord.gg/mfpZTqxxah" target="_blank">join the discord server where the games are scheduled</a>.
+                    </p>
 
                     <h3>Troll5R</h3>
                     <p>Link: <a href='https://www.facebook.com/Troll5R/' target='_blank'>Troll5R</a></p>
                     <p>Winners of the podcast wars. A couple of L5R old-timers/playtesters who talk at length on just about anything.</p>
 
                     <h3>The Lotus Pavilion</h3>
-                    <p>Link: <a href='http://thelotuspavilion.com/' target='_blank'>The Lotus Pavilion</a></p>
+                    <p>Link: <a href='https://thelotuspavilion.com/' target='_blank'>The Lotus Pavilion</a></p>
                     <p>Browser-based tournament software that originated for AGOT 2.0. Has an excellent pedigree.</p>
 
                     <h3>The Ringteki Dev Discord</h3>
