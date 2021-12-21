@@ -466,7 +466,7 @@ class InnerDeckEditor extends React.Component {
             }
 
             if(deckFormat) {
-                if (deckFormat === 'standard') {
+                if(deckFormat === 'standard') {
                     deckFormat = 'stronghold';
                 }
                 deck.format = this.props.formats[deckFormat] || 'stronghold';
