@@ -24,6 +24,22 @@ function processDecks(decks, state) {
             }
         }
 
+        if(deck.stronghold) {
+            deck.stronghold = deck.stronghold.filter(card => !!card.card);
+        }
+        if(deck.role) {
+            deck.role = deck.role.filter(card => !!card.card);
+        }
+        if(deck.provinceCards) {
+            deck.provinceCards = deck.provinceCards.filter(card => !!card.card);
+        }
+        if(deck.conflictCards) {
+            deck.conflictCards = deck.conflictCards.filter(card => !!card.card);
+        }
+        if(deck.dynastyCards) {
+            deck.dynastyCards = deck.dynastyCards.filter(card => !!card.card);
+        }
+
         deck.stronghold = _.map(deck.stronghold, card => {
             return { count: card.count, card: state.cards[card.card.id] };
         });

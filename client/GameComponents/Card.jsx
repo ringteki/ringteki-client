@@ -379,7 +379,7 @@ class Card extends React.Component {
     getCard() {
         var cardClass = 'card';
         var imageClass = 'card-image';
-        var cardBack = 'cardback.jpg';
+        var cardBack = 'cardback.png';
 
         if(!this.props.card) {
             return <div />;
@@ -436,13 +436,13 @@ class Card extends React.Component {
         }
 
         if(this.props.card.isConflict || this.props.source === 'conflict deck') {
-            cardBack = 'conflictcardback.jpg';
+            cardBack = 'conflictcardback.png';
         } else if(this.props.card.isDynasty || this.props.source === 'dynasty deck') {
-            cardBack = 'dynastycardback.jpg';
+            cardBack = 'dynastycardback.png';
         } else if(this.props.card.isProvince || this.props.source === 'province deck') {
-            cardBack = 'provincecardback.jpg';
+            cardBack = 'provincecardback.png';
         } else {
-            cardBack = 'cardback.jpg';
+            cardBack = 'cardback.png';
         }
 
         const card = this.props.card;

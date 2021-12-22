@@ -24,7 +24,7 @@ xdescribe('the <Card /> component', function() {
         it('should show a facedown card with a card back rendered', function() {
             var cardImage = TestUtils.findRenderedDOMComponentWithTag(this.component, 'img');
 
-            expect(cardImage.src.indexOf('/img/cards/cardback.jpg')).not.toBe(-1);
+            expect(cardImage.src.indexOf('/img/cards/cardback.png')).not.toBe(-1);
         });
     });
 
@@ -98,7 +98,7 @@ xdescribe('the <Card /> component', function() {
                 var cardImage = TestUtils.findRenderedDOMComponentWithTag(this.component, 'img');
 
                 expect(cardImage.src.indexOf('/img/cards/00001.png')).toBe(-1);
-                expect(cardImage.src.indexOf('/img/cards/cardback.jpg')).not.toBe(-1);
+                expect(cardImage.src.indexOf('/img/cards/cardback.png')).not.toBe(-1);
             });
         });
 
