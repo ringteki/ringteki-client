@@ -46,19 +46,24 @@ Check out the [About page](https://jigoku.online/about)  of a Ringteki live depl
 * ZeroMQ Libraries
 * TypeScript
 
+Commands required to run the lobby server (lobby server will be located at http://127.0.0.1:4000/ if you run it locally)
+
 ```
 Clone the repository
-git submodule init
-git submodule update
 npm install # See https://github.com/JustinTulloss/zeromq.node/issues/283 for zmq errors on OS X
-tsc
 mkdir build/server/logs
 node server/scripts/fetchdata.js
+tsc
 node .
-node build/server/gamenode
 ```
 
-There are two exectuable components and you'll need to configure/run both to run a local server.  First is the lobby server and then there are game nodes. The default configurations assume you are running mongo locally on the default port. If you need to change any configurations, edit `config/default.json5` or create a `config/local.json5` configuration that overrides any desired settings.   
+node server/scripts/fetchdata.js needs to be run whenever there is new card data (either new cards or updated cards).  This will fetch card images for you.
+
+tsc is the typescript compiler, and needs to be run before you can run the lobby server.
+
+node . is what actually starts the lobby server.  You'll need to wait for webpack to run before you can access it.
+
+This will run the lobby server.  The default configurations assume you are running mongo locally on the default port. If you need to change any configurations, edit `config/default.json5` or create a `config/local.json5` configuration that overrides any desired settings.   
 
 For production:
 
