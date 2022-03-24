@@ -272,7 +272,7 @@ class InnerDeckEditor extends React.Component {
     importDeck() {
         $(findDOMNode(this.refs.modal)).modal('hide');
         let importUrl = document.getElementById('importUrl').value;
-        if(importUrl.includes('fiveringsdb.com')) {
+        if (importUrl.includes('fiveringsdb.com')) {
             this.importDeck5rdb();
             return;
         }
@@ -320,130 +320,9 @@ class InnerDeckEditor extends React.Component {
             }
 
             if(deckFormat) {
-                if(deckFormat === 'standard') {
+                if (deckFormat === 'standard') {
                     deckFormat = 'stronghold';
                 }
-                deck.format = this.props.formats[deckFormat] || 'emerald';
-            }
-
-            _.each(deckList, (count, id) => {
-                cardList += this.getCardListEntry(count, this.props.cards[id]);
-            });
-
-            //Duplicate onCardListChange to get this working correctly
-            let split = cardList.split('\n');
-            _.each(split, line => {
-                line = line.trim();
-                let index = 2;
-
-                if(!$.isNumeric(line[0])) {
-                    return;
-                }
-
-                let num = parseInt(line[0]);
-                if(line[1] === 'x') {
-                    index++;
-                }
-
-                let packOffset = line.indexOf('(');
-                let cardName = line.substr(index, packOffset === -1 ? line.length : packOffset - index - 1);
-                let packName = packOffset > -1 ? line.substr(packOffset + 1, line.length - packOffset - 2) : '';
-
-                let pack = _.find(this.props.packs, function(pack) {
-                    return pack.id.toLowerCase() === packName.toLowerCase() || pack.name.toLowerCase() === packName.toLowerCase();
-                });
-
-                let card = _.find(this.props.cards, function(card) {
-                    if(pack && card.versions.length) {
-                        return card.name.toLowerCase() === cardName.toLowerCase() && _.any(card.versions, data => data.pack_id === pack.id);
-                    }
-                    return card.name.toLowerCase() === cardName.toLowerCase();
-                });
-
-                if(card) {
-                    //Duplicate addCard as well
-                    let provinces = deck.provinceCards;
-                    let stronghold = deck.stronghold;
-                    let role = deck.role;
-                    let conflict = deck.conflictCards;
-                    let dynasty = deck.dynastyCards;
-
-                    let list;
-
-                    if(card.type === 'province') {
-                        list = provinces;
-                    } else if(card.side === 'dynasty') {
-                        list = dynasty;
-                    } else if(card.side === 'conflict') {
-                        list = conflict;
-                    } else if(card.type === 'stronghold') {
-                        list = stronghold;
-                    } else {
-                        list = role;
-                    }
-
-                    if(list[card.id]) {
-                        list[card.id].count += num;
-                    } else {
-                        list.push({ count: num, card: card });
-                    }
-                }
-            });
-
-
-            this.setState({cardList: cardList, deck: deck, showAlliance: deck.alliance });
-            this.props.updateDeck(deck);
-
-        }
-    }
-
-    importDeck5rdb() {
-        $(findDOMNode(this.refs.modal)).modal('hide');
-
-        let importUrl = document.getElementById('importUrl').value;
-        let emeraldUrl = importUrl.replace('/decks', '/api/decklists');
-        let deckResponse = {};
-
-        $.ajax({
-            type: 'GET',
-            url: emeraldUrl,
-            dataType: 'json',
-            async: false,
-            success: function(data) {
-                deckResponse = data;
-            }
-        });
-
-        let deckClan = '';
-        let deckAlliance = '';
-        let deckName = '';
-        let deckList = '';
-        let cardList = '';
-        let deckFormat = '';
-
-        if(deckResponse) {
-            deckClan = deckResponse.primary_clan;
-            deckAlliance = deckResponse.secondary_clan;
-            deckName = deckResponse.name;
-            deckList = deckResponse.cards;
-            deckFormat = deckResponse.format;
-
-            let deck = this.copyDeck(this.state.deck);
-
-            deck.name = deckName;
-            if(deckClan) {
-                deck.faction = this.props.factions[deckClan];
-            } else {
-                deck.faction = this.props.factions['crab'];
-            }
-
-            if(deckAlliance) {
-                deck.alliance = this.props.factions[deckAlliance];
-            } else {
-                deck.alliance = this.props.factions['crab'];
-            }
-
-            if(deckFormat) {
                 deck.format = this.props.formats[deckFormat] || 'emerald';
             }
 
@@ -692,7 +571,7 @@ class InnerDeckEditor extends React.Component {
             <div>
                 { popup }
                 <span className='btn btn-primary' data-toggle='modal' data-target='#decks-modal'>Import deck</span>
-                <h4>Either type the cards manually into the box below, add the cards one by one using the card box and autocomplete or for best results, copy the permalink url from <a href='http://fiveringsdb.com' target='_blank'>Five Rings DB</a> and paste it into the popup from clicking the "Import Deck" button.</h4>
+                <h4>Either type the cards manually into the box below, add the cards one by one using the card box and autocomplete or for best results, copy the permalink url from <a href='https://www.emeralddb.org' target='_blank'>Emerald DB</a> and paste it into the popup from clicking the "Import Deck" button.</h4>
                 <form className='form form-horizontal'>
                     <Input name='deckName' label='Deck Name' labelClass='col-sm-3' fieldClass='col-sm-9' placeholder='Deck Name'
                         type='text' onChange={ this.onChange.bind(this, 'name') } value={ this.state.deck.name } />

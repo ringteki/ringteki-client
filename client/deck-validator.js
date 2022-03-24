@@ -36,8 +36,7 @@ class DeckValidator {
         const cached = validatorCache.get(hash);
         if (cached === undefined) {
             try {
-                const res = await axios.post('https://beta-emeralddb.herokuapp.com/api/decklists/validate', body);
-                // const res = await axios.post('https://www.emeralddb.org/api/decklists/validate', body);
+                const res = await axios.post('https://www.emeralddb.org/api/decklists/validate', body);
                 const resultObj = {
                     valid: res.data.valid,
                     extendedStatus: res.data.errors
