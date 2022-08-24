@@ -2,10 +2,6 @@ const $ = require('jquery'); // eslint-disable-line no-unused-vars
 const _ = require('underscore');
 const axios = require('axios').default;
 const GameModes = require('./GameModes');
-const crypto = require('crypto');
-const NodeCache = require( "node-cache" );
-
-let validatorCache = new NodeCache();
 
 class DeckValidator {
     constructor(packs, gameMode) {
@@ -31,26 +27,20 @@ class DeckValidator {
             format: mode
         };
 
-        const jsonString = JSON.stringify(body);
-        const hash = crypto.createHash('md5').update(jsonString).digest('hex');
-        const cached = validatorCache.get(hash);
-        if (cached === undefined) {
-            try {
-                const res = await axios.post('https://www.emeralddb.org/api/decklists/validate', body);
-                const resultObj = {
-                    valid: res.data.valid,
-                    extendedStatus: res.data.errors
-                };
-                validatorCache.set(hash, resultObj, 600);
-                return resultObj;
-            } catch(e) {
-                return {
-                    valid: undefined,
-                    extendedStatus: ['Error Validating']
-                };
-            }
+        try {
+            const res = await axios.post('https://www.emeralddb.org/api/decklists/validate', body);
+            const resultObj = {
+                valid: res.data.valid,
+                extendedStatus: res.data.errors
+            };
+            // validatorCache.set(hash, resultObj, 600);
+            return resultObj;
+        } catch(e) {
+            return {
+                valid: undefined,
+                extendedStatus: ['Error Validating']
+            };
         }
-        return cached;
     }
 }
 
