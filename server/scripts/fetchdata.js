@@ -8,8 +8,8 @@ const path = require('path');
 const CardService = require('../services/CardService.js');
 
 function apiRequest(path) {
-    const apiUrl = 'https://beta-emeralddb.herokuapp.com/api/';
-    // const apiUrl = 'https://www.emeralddb.org/api/';
+    // const apiUrl = 'https://beta-emeralddb.herokuapp.com/api/';
+    const apiUrl = 'https://www.emeralddb.org/api/';
 
     return new Promise((resolve, reject) => {
         request.get(apiUrl + path, function(error, res, body) {
