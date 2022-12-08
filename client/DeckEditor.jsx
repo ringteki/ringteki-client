@@ -272,7 +272,7 @@ class InnerDeckEditor extends React.Component {
     importDeck() {
         $(findDOMNode(this.refs.modal)).modal('hide');
         let importUrl = document.getElementById('importUrl').value;
-        if (importUrl.includes('fiveringsdb.com')) {
+        if(importUrl.includes('fiveringsdb.com')) {
             this.importDeck5rdb();
             return;
         }
@@ -320,7 +320,7 @@ class InnerDeckEditor extends React.Component {
             }
 
             if(deckFormat) {
-                if (deckFormat === 'standard') {
+                if(deckFormat === 'standard') {
                     deckFormat = 'stronghold';
                 }
                 deck.format = this.props.formats[deckFormat] || 'emerald';
@@ -588,7 +588,7 @@ class InnerDeckEditor extends React.Component {
                         <Input name='numcards' type='text' label='Num' labelClass='col-sm-1' fieldClass='col-sm-2'
                             value={ this.state.numberToAdd.toString() } onChange={ this.onNumberToAddChange.bind(this) }>
                             <div className='col-sm-1'>
-                                <button className='btn btn-primary' onClick={ this.onAddCard.bind(this) }>Add</button>
+                                <button className='btn btn-primary add-card-button' onClick={ this.onAddCard.bind(this) }>Add</button>
                             </div>
                         </Input>
                     </Typeahead>
