@@ -133,6 +133,7 @@ class App extends React.Component {
 
         socket.on('handoff', server => {
             let url = 'https://' + server.address;
+            console.log('url is', url);
             if(server.port && server.port !== 80 && server.port !== 443) {
                 url += ':' + server.port;
             }
