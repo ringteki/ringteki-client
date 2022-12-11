@@ -126,7 +126,7 @@ class GameRouter extends EventEmitter {
             return;
         }
 
-        logger.info('sending message', message.command);
+        logger.info('received message', message.command, message.arg);
 
         switch(message.command) {
             case 'HELLO':
