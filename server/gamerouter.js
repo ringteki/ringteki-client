@@ -32,6 +32,7 @@ class GameRouter extends EventEmitter {
             logger.error('Could not find new node for game');
             return;
         }
+        logger.info('starting game on node', node.identity.toString());
 
         this.gameService.create(game.getSaveState());
 
@@ -94,6 +95,7 @@ class GameRouter extends EventEmitter {
     }
 
     notifyFailedConnect(game, username) {
+        logger.info('notify failed connect', game.node.identity.toString());
         if(!game.node) {
             return;
         }
@@ -123,6 +125,8 @@ class GameRouter extends EventEmitter {
             logger.info(err);
             return;
         }
+
+        logger.info('received message', message.command, message.arg);
 
         switch(message.command) {
             case 'HELLO':
@@ -179,6 +183,7 @@ class GameRouter extends EventEmitter {
 
     // Internal methods
     sendCommand(identity, command, arg) {
+        logger.info('sending command', command);
         router.send([identity, '', JSON.stringify({ command: command, arg: arg })]);
     }
 
