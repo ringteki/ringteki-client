@@ -11,7 +11,6 @@ import Avatar from './Avatar.jsx';
 import News from './SiteComponents/News.jsx';
 import AlertPanel from './SiteComponents/AlertPanel.jsx';
 import Link from './Link.jsx';
-import Typeahead from './FormComponents/Typeahead.jsx';
 
 class InnerLobby extends React.Component {
     constructor() {
@@ -150,8 +149,6 @@ class InnerLobby extends React.Component {
     }
 
     render() {
-        let messages = this.getMessages();
-
         let userList = _.map(this.props.users, user => {
             return (
                 <div className='user-row' key={ user.name }>
@@ -211,7 +208,7 @@ class InnerLobby extends React.Component {
                         <div className='discord-grid'>
                             <div className='discord-grid-cell'>
                                 <div className='discord-label'>
-                                    <img src="/img/community_discord_icon.gif" className='discord-server-icon'></img>
+                                    <img src='/img/community_discord_icon.gif' className='discord-server-icon'/>
                                     <h3>L5R Community Discord Server</h3>
                                 </div>
                                 <p><a href='https://discord.gg/zPvBePb' target='_blank'>Invite Link</a></p>
@@ -220,7 +217,7 @@ class InnerLobby extends React.Component {
                             </div>
                             <div className='discord-grid-cell'>
                                 <div className='discord-label'>
-                                    <img src="/img/event_discord_icon.webp" className='discord-server-icon'></img>
+                                    <img src='/img/event_discord_icon.webp' className='discord-server-icon'/>
                                     <h3>L5R Event Discord Server</h3>
                                 </div>
                                 <p><a href='https://discord.gg/mfpZTqxxah' target='_blank'>Invite Link</a></p>
@@ -230,11 +227,11 @@ class InnerLobby extends React.Component {
                         </div>
 
                         <div className='emerald-legacy-panel'>
-                            <img className='emerald-legacy-logo' src="/img/emerald-legacy-logo.png"></img>
+                            <img className='emerald-legacy-logo' src='/img/emerald-legacy-logo.png'/>
                             <h3><a href='https://emeraldlegacy.org/' target='_blank'>Emerald Legacy</a></h3>
                             <p>The Emerald Legacy project is a fan-run nonprofit volunteer collective. Its mission is to provide a living and thriving continuation of the LCG after the end of official support for the game.
                             Emerald Legacy is responsible for creating and releasing new cards, organizing tournaments, and maintaining the rules and balance of the game.</p>
-                            <br></br>
+                            <br />
                             <p>Emerald Legacy provides the <a href='https://www.emeralddb.org/' target='_blank'>EmeraldDB</a> service, which is an online collection of all cards and rules for the LCG.
                             EmeraldDB includes a deck builder for the LCG, as well as lists that have been made public by other players.  Deck lists that you create are able to be directly imported into the Deckbuilder here!</p>
                         </div>
