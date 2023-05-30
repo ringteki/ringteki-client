@@ -1,18 +1,31 @@
 /*eslint no-console:0 */
-const request = require('request');
-const monk = require('monk');
+const already = require('already');
+const download = require('download');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
+const monk = require('monk');
 const path = require('path');
+const request = require('request');
 
 const CardService = require('../services/CardService.js');
 
-function apiRequest(path) {
-    // const apiUrl = 'https://beta-emeralddb.herokuapp.com/api/';
-    const apiUrl = 'https://www.emeralddb.org/api/';
+const [, , env] = process.argv;
 
+if(env !== 'live' && env !== 'playtest') {
+    console.error(
+        'Must pass parameter with valid environment. The options are `live` or `playtest`'
+    );
+    process.exit(1);
+}
+
+const apiUrl =
+    env === 'playtest'
+        ? 'https://beta-emeralddb.herokuapp.com/api/'
+        : 'https://www.emeralddb.org/api/';
+
+function apiRequest(path) {
     return new Promise((resolve, reject) => {
-        request.get(apiUrl + path, function(error, res, body) {
+        request.get(apiUrl + path, function (error, res, body) {
             if(error) {
                 return reject(error);
             }
@@ -22,48 +35,52 @@ function apiRequest(path) {
     });
 }
 
-function fetchImage(url, id, imagePath, timeout) {
-    setTimeout(function() {
-        console.log('Downloading image for ' + id);
-        request(url).pipe(fs.createWriteStream(imagePath));
-    }, timeout);
-}
+const db = monk('mongodb://127.0.0.1:27017/ringteki');
+const cardService = new CardService(db);
 
-let db = monk('mongodb://127.0.0.1:27017/ringteki');
-let cardService = new CardService(db);
-
-let fetchCards = apiRequest('cards')
-    .then(cards => cardService.replaceCards(cards))
-    .then(cards => {
+const fetchCards = apiRequest('cards')
+    .then((cards) => cardService.replaceCards(cards))
+    .then((cards) => {
         console.info(cards.length + ' cards fetched');
 
-        let imageDir = path.join(__dirname, '..', '..', 'public', 'img', 'cards');
+        const imageDir = path.join(
+            __dirname,
+            '..',
+            '..',
+            'public',
+            'img',
+            'cards'
+        );
         mkdirp(imageDir);
 
-        var i = 0;
+        return already.map(cards, { concurrency: 10 }, (card) => {
+            const firstCardWithImageUrl = card.versions.find(
+                (card) => card.image_url
+            );
+            if(!firstCardWithImageUrl) {
+                return;
+            }
 
-        cards.forEach(function (card) {
-            if(card.versions.length > 0) {
-                var imagePath = path.join(imageDir, card.id + '.jpg');
-                let firstCardWithImageUrl = card.versions.find(card => card.image_url);
-                if(firstCardWithImageUrl) {
-                    let imageSrc = firstCardWithImageUrl.image_url;
-                    if(imageSrc && !fs.existsSync(imagePath)) {
-                        fetchImage(imageSrc, card.id, imagePath, i++ * 200);
-                    }
-                }
+            const imageSrc = firstCardWithImageUrl.image_url;
+            const ext = path.extname(imageSrc);
+            var imagePath = path.format({
+                dir: imageDir,
+                name: card.id,
+                ext: ext
+            });
+            var filename = path.format({ name: card.id, ext: ext });
+            if(imageSrc && !fs.existsSync(imagePath)) {
+                return download(imageSrc, imageDir, { filename: filename });
             }
         });
-
-        return cards;
     })
     .catch(() => {
         console.error('Unable to fetch cards');
     });
 
-let fetchPacks = apiRequest('packs')
-    .then(packs => cardService.replacePacks(packs))
-    .then(packs => {
+const fetchPacks = apiRequest('packs')
+    .then((packs) => cardService.replacePacks(packs))
+    .then((packs) => {
         console.info(packs.length + ' packs fetched');
     })
     .catch(() => {
@@ -73,4 +90,3 @@ let fetchPacks = apiRequest('packs')
 Promise.all([fetchCards, fetchPacks])
     .then(() => db.close())
     .catch(() => db.close());
-
