@@ -98,21 +98,16 @@ class InnerGameList extends React.Component {
 
             if(game.gameMode === GameModes.Skirmish) {
                 gameTitle += '[SKIRMISH] ';
-            }
-
-            if(game.gameMode === GameModes.JadeEdict) {
+            } else if(game.gameMode === GameModes.JadeEdict) {
                 gameTitle += '[JADE] ';
-            }
-
-            if(game.gameMode === GameModes.Stronghold) {
+            } else if(game.gameMode === GameModes.Stronghold) {
                 gameTitle += '[IMPERIAL] ';
-            }
-
-            if(game.gameMode === GameModes.Emerald) {
+            } else if(game.gameMode === GameModes.Emerald) {
                 gameTitle += '[EMERALD] ';
-            }
-            if(game.gameMode === GameModes.Obsidian) {
+            } else if(game.gameMode === GameModes.Obsidian) {
                 gameTitle += '[OBSIDIAN] ';
+            } else if(game.gameMode === GameModes.Sanctuary) {
+                gameTitle += '[SANCTUARY] ';
             }
 
             if(game.gameType) {
@@ -124,15 +119,14 @@ class InnerGameList extends React.Component {
             let gameModifier = '';
             if(game.gameMode === GameModes.Skirmish) {
                 gameModifier = ' skirmish';
-            }
-            if(game.gameMode === GameModes.JadeEdict) {
+            } else if(game.gameMode === GameModes.JadeEdict) {
                 gameModifier = ' jade';
-            }
-            if(game.gameMode === GameModes.Stronghold) {
+            } else if(game.gameMode === GameModes.Stronghold) {
                 gameModifier = ' imperial';
-            }
-            if(game.gameMode === GameModes.Obsidian) {
+            } else if(game.gameMode === GameModes.Obsidian) {
                 gameModifier = ' obsidian';
+            } else if(game.gameMode === GameModes.Sanctuary) {
+                gameModifier = ' sanctuary';
             }
 
             return (

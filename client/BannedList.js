@@ -127,6 +127,7 @@ const bannedList = {
             'calling-the-storm',
             'force-of-the-river'
         ],
+        'sanctuary': [],
         'obsidian': [
             'accursed-summoning',
             'calling-the-storm',

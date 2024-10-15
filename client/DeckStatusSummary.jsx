@@ -25,6 +25,11 @@ class DeckStatusSummary extends React.Component {
                 { title: 'Emerald Legacy restricted/ban list', value: faqRestrictedList },
                 { title: 'Only released cards', value: noUnreleasedCards }
             ];
+        } else if(gameMode === GameModes.Sanctuary) {
+            items = [
+                { title: 'Basic deckbuilding rules', value: basicRules },
+                { title: 'Only released cards', value: noUnreleasedCards }
+            ];
         } else if(gameMode === GameModes.Obsidian) {
             items = [
                 { title: 'Basic deckbuilding rules', value: basicRules },

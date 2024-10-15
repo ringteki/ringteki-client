@@ -206,6 +206,10 @@ class InnerNewGame extends React.Component {
                                     Emerald
                                 </label>
                                 <label className='radio-inline'>
+                                    <input name type='radio' onChange={ this.onRulesRadioChange.bind(this, GameModes.Sanctuary) } checked={ this.isGameModeSelected(GameModes.Sanctuary) } />
+                                    Sanctuary
+                                </label>
+                                <label className='radio-inline'>
                                     <input name type='radio' onChange={ this.onRulesRadioChange.bind(this, GameModes.Stronghold) } checked={ this.isGameModeSelected(GameModes.Stronghold) } />
                                     Imperial
                                 </label>
