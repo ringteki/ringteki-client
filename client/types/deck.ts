@@ -18,6 +18,7 @@ export interface Pack {
     name: string;
     code: string;
     id?: string;
+    cycle_id?: string;
 }
 
 export interface Format {
