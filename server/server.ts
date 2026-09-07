@@ -182,22 +182,39 @@ class Server {
 
         api.init(app);
 
-        // Card art is stored in whatever format the source used, so the URL carries no
-        // extension and this resolves it. Must be mounted before express.static, which
-        // would otherwise 404 the extensionless path.
-        const cardImageDir = path.join(projectRoot, "public", "img", "cards");
-        app.get("/img/cards/:stem", (req, res, next) => {
-            const stem = req.params.stem;
-            if(stem.includes(".") || stem.includes("/") || stem.includes("\\")) {
-                next();
-                return;
-            }
-            for(const extension of ["webp", "jpg", "png"]) {
-                const filePath = path.join(cardImageDir, `${stem}.${extension}`);
-                if(fs.existsSync(filePath)) {
-                    res.sendFile(filePath);
-                    return;
+        // Card art is stored in whatever format the source used, so its URL carries no
+        // extension. Read the directory once here rather than per request: fetchdata runs
+        // before the server boots, and cardImageVersion above is snapshotted the same way,
+        // so both go stale together and a restart refreshes both.
+        const cardImageFormats = ["webp", "jpg", "png"];
+        const cardImageFiles = new Map<string, string>();
+        try {
+            for(const file of fs.readdirSync(path.join(projectRoot, "public", "img", "cards"))) {
+                const parsed = /^(.+)\.(webp|jpg|png)$/.exec(file);
+                if(!parsed) {
+                    continue;
                 }
+                const [, stem, extension] = parsed;
+                const current = cardImageFiles.get(stem);
+                const currentRank = current
+                    ? cardImageFormats.indexOf(path.extname(current).slice(1))
+                    : cardImageFormats.length;
+                if(cardImageFormats.indexOf(extension) < currentRank) {
+                    cardImageFiles.set(stem, file);
+                }
+            }
+        } catch(_err) {
+            // No image directory -- extensionless requests fall through to a 404
+        }
+
+        // Rewrite to the real filename and let express.static serve it. The map is an
+        // allowlist of files that exist, so an unknown or crafted stem is simply not
+        // rewritten. Must run before express.static.
+        app.use((req, res, next) => {
+            const requested = /^\/img\/cards\/([^/.?]+)(\?.*)?$/.exec(req.url);
+            const filename = requested && cardImageFiles.get(requested[1]);
+            if(filename) {
+                req.url = `/img/cards/${filename}${requested[2] ?? ""}`;
             }
             next();
         });
