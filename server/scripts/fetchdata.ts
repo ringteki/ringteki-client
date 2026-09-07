@@ -1,37 +1,72 @@
 /*eslint no-console:0 */
 import fs from "node:fs";
+import path from "node:path";
 import { Readable } from "node:stream";
 import { pipeline } from "node:stream/promises";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import sharp from "sharp";
 
 import db from "../db.js";
-import CardService from "../services/CardService.js";
+import CardService, { type CardRecord } from "../services/CardService.js";
+import type { Pack } from "../../client/types/deck.js";
+
+/** One printing of a card, as served by the emeralddb API. */
+interface CardVersion {
+    pack_id: string;
+    image_url?: string;
+}
+
+/** Only the fields this script reads; the rest is stored verbatim. */
+interface ApiCard {
+    id: string;
+    name?: string;
+    versions?: CardVersion[];
+    [key: string]: unknown;
+}
+
+interface DownloadResult {
+    success: boolean;
+    /** True when the source format differed from the one we store. */
+    converted?: boolean;
+    /** Set when every attempt failed. */
+    error?: string;
+}
+
+interface DownloadOutcome {
+    card: ApiCard;
+    filename: string;
+    url: string;
+    result: DownloadResult;
+}
+
+/** Formats we store. A source in any other format is re-encoded to jpg. */
+type StoredFormat = "webp" | "jpg";
+
+const REQUEST_TIMEOUT_MS = 30000;
+const DOWNLOAD_CONCURRENCY = 10;
+const MAX_RETRIES = 3;
+const JPEG_QUALITY = 90;
+const MAX_FAILURES_LISTED = 20;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Project root: works for both source (server/scripts/) and compiled (build/server/scripts/)
 const projectRoot = path.resolve(__dirname, "..", "..", fs.existsSync(path.join(__dirname, "..", "..", "views")) ? "" : "..");
+const imageDir = path.join(projectRoot, "public", "img", "cards");
 
-const args = process.argv.slice(2);
-const env = args[0];
-const forceDownload = args.includes("--force") || args.includes("-f");
+function errorMessage(error: unknown): string {
+    return error instanceof Error ? error.message : String(error);
+}
 
-// Parse --cycle flag: only download images for packs in this cycle (e.g. emerald-legacy)
-const cycleIndex = args.indexOf("--cycle");
-const cycleFilter = cycleIndex !== -1 ? args[cycleIndex + 1] : null;
+interface Options {
+    env: "live" | "playtest";
+    force: boolean;
+    cycle: string | null;
+    packs: Set<string> | null;
+}
 
-// Parse --packs flag: comma-separated list of pack IDs to limit image downloads
-const packsIndex = args.indexOf("--packs");
-const packFilter = packsIndex !== -1 && args[packsIndex + 1]
-    ? new Set(args[packsIndex + 1].split(","))
-    : null;
-
-if(env !== "live" && env !== "playtest") {
-    console.error(
-        "Must pass parameter with valid environment. The options are `live` or `playtest`"
-    );
+function usage(): never {
+    console.error("Must pass parameter with valid environment. The options are `live` or `playtest`");
     console.error("Usage: node fetchdata.js <live|playtest> [--force] [--cycle cycle-id] [--packs pack1,pack2,...]");
     console.error("  --force, -f: Re-download existing images");
     console.error("  --cycle: Only download images for packs in this cycle (e.g. emerald-legacy)");
@@ -39,306 +74,305 @@ if(env !== "live" && env !== "playtest") {
     process.exit(1);
 }
 
-if(forceDownload) {
-    console.log("Force download enabled - will re-download existing images");
+function parseOptions(argv: string[]): Options {
+    const env = argv[0];
+    if(env !== "live" && env !== "playtest") {
+        usage();
+    }
+
+    const flagValue = (flag: string): string | null => {
+        const index = argv.indexOf(flag);
+        return index !== -1 && argv[index + 1] ? argv[index + 1] : null;
+    };
+
+    const packs = flagValue("--packs");
+    return {
+        env: env,
+        force: argv.includes("--force") || argv.includes("-f"),
+        cycle: flagValue("--cycle"),
+        packs: packs ? new Set(packs.split(",")) : null
+    };
 }
 
-const apiUrl =
-    env === "playtest"
+function apiUrlFor(env: Options["env"]): string {
+    return env === "playtest"
         ? "https://beta-emeralddb.herokuapp.com/api/"
         : "https://www.emeralddb.org/api/";
+}
 
-async function apiRequest(apiPath) {
-    const response = await fetch(apiUrl + apiPath);
+async function apiRequest<T>(baseUrl: string, apiPath: string): Promise<T> {
+    const response = await fetch(baseUrl + apiPath);
     if(!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
-    return response.json();
+    return await response.json() as T;
 }
 
-const dbPath = process.env.DB_PATH || "mongodb://127.0.0.1:27017/jigoku";
-let cardService;
-
-async function downloadFile(url, destPath, timeout = 30000) {
+async function downloadFile(url: string, destPath: string): Promise<void> {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
     try {
         const response = await fetch(url, { signal: controller.signal });
         if(!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
+        if(!response.body) {
+            throw new Error("Response had no body");
+        }
 
-        const fileStream = fs.createWriteStream(destPath);
-        // @ts-ignore - response.body is a Web ReadableStream
-        const nodeStream = Readable.fromWeb(response.body);
-        await pipeline(nodeStream, fileStream);
+        await pipeline(Readable.fromWeb(response.body), fs.createWriteStream(destPath));
     } finally {
         clearTimeout(timeoutId);
     }
 }
 
-async function downloadWithRetry(url, dest, filename, maxRetries = 3) {
-    const sourceMatch = url.toLowerCase().match(/\.(jpe?g|png|webp)(?:\?|$)/);
-    const sourceFormat = (sourceMatch ? sourceMatch[1] : "jpg").replace("jpeg", "jpg");
-    const targetFormat = path.extname(filename).slice(1);
-    const needsConversion = sourceFormat !== targetFormat;
-    const tempFilename = needsConversion
-        ? filename.replace(new RegExp(`\\.${targetFormat}$`), `.${sourceFormat}`)
-        : filename;
-    const tempPath = path.join(dest, tempFilename);
-    const finalPath = path.join(dest, filename);
+/**
+ * The stored format mirrors the source so nothing downstream has to predict it: webp and
+ * jpg are kept as-is, and anything else (png) is re-encoded to jpg.
+ */
+export function storedFormatFor(imageUrl: string): StoredFormat {
+    return /\.webp(?:\?|$)/i.test(imageUrl) ? "webp" : "jpg";
+}
 
-    for(let attempt = 1; attempt <= maxRetries; attempt++) {
+export function sourceFormatFor(imageUrl: string): string {
+    const matched = imageUrl.toLowerCase().match(/\.(jpe?g|png|webp)(?:\?|$)/);
+    return (matched ? matched[1] : "jpg").replace("jpeg", "jpg");
+}
+
+function removeIfPresent(filePath: string): void {
+    try {
+        fs.rmSync(filePath, { force: true });
+    } catch{ /* a file we cannot remove is not worth failing the run over */ }
+}
+
+async function downloadImage(url: string, filename: string): Promise<DownloadResult> {
+    const sourceFormat = sourceFormatFor(url);
+    const storedFormat = path.extname(filename).slice(1);
+    const needsConversion = sourceFormat !== storedFormat;
+
+    const finalPath = path.join(imageDir, filename);
+    const tempPath = needsConversion
+        ? path.join(imageDir, `${path.basename(filename, `.${storedFormat}`)}.${sourceFormat}`)
+        : finalPath;
+
+    for(let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
         try {
-            await downloadFile(url, tempPath, 30000);
+            await downloadFile(url, tempPath);
 
-            // Re-encode when the source format is not the one we store
             if(needsConversion) {
-                await sharp(tempPath)
-                    .toFormat(targetFormat === "webp" ? "webp" : "jpeg", { quality: 90 })
-                    .toFile(finalPath);
-
-                fs.unlinkSync(tempPath);
-
-                return { success: true, converted: true, sourceFormat: sourceFormat };
+                await sharp(tempPath).jpeg({ quality: JPEG_QUALITY }).toFile(finalPath);
+                removeIfPresent(tempPath);
             }
 
-            return { success: true, converted: false, sourceFormat: sourceFormat };
+            return { success: true, converted: needsConversion };
         } catch(error) {
-            // Clean up partial file on error
-            if(fs.existsSync(tempPath)) {
-                try {
-                    fs.unlinkSync(tempPath);
-                } catch{ /* ignore cleanup errors */ }
-            }
+            removeIfPresent(tempPath);
 
-            if(attempt === maxRetries) {
-                return { success: false, error: error.message };
+            if(attempt === MAX_RETRIES) {
+                return { success: false, error: errorMessage(error) };
             }
-            // Wait before retry
             await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
         }
     }
+
+    // Unreachable: the final attempt always returns.
+    return { success: false, error: "No download attempt was made" };
 }
 
-// Parallel download with concurrency limit
-async function downloadParallel(tasks, concurrency = 10) {
-    const results = [];
-    let index = 0;
+async function runWithConcurrency<T>(tasks: Array<() => Promise<T>>, concurrency: number): Promise<T[]> {
+    const results: T[] = [];
+    let next = 0;
 
-    async function worker() {
-        while(index < tasks.length) {
-            const currentIndex = index++;
-            const task = tasks[currentIndex];
-            const result = await task();
-            results[currentIndex] = result;
+    const worker = async (): Promise<void> => {
+        while(next < tasks.length) {
+            const index = next++;
+            results[index] = await tasks[index]();
         }
-    }
+    };
 
-    const workers = Array(Math.min(concurrency, tasks.length))
-        .fill(null)
-        .map(() => worker());
-
-    await Promise.all(workers);
+    await Promise.all(Array.from({ length: Math.min(concurrency, tasks.length) }, worker));
     return results;
 }
 
-async function resolvePackFilter() {
-    // Start with explicit --packs if provided
-    let filter = packFilter ? new Set(packFilter) : null;
+/** Packs whose images should be downloaded, or null for all of them. */
+function resolvePackFilter(options: Options, packs: Pack[]): Set<string> | null {
+    const filter = options.packs ? new Set(options.packs) : null;
 
-    // If --cycle is set, fetch packs from API and add matching pack IDs
-    if(cycleFilter) {
-        const packs = await apiRequest("packs");
-        const cyclePacks = packs.filter(p => p.cycle_id === cycleFilter);
-        if(cyclePacks.length === 0) {
-            console.warn(`Warning: no packs found for cycle "${cycleFilter}"`);
-        } else {
-            if(!filter) {
-                filter = new Set();
-            }
-            for(const pack of cyclePacks) {
-                filter.add(pack.id);
-            }
-            console.log(`Cycle "${cycleFilter}" resolved to ${cyclePacks.length} packs: ${cyclePacks.map(p => p.id).join(", ")}`);
+    if(!options.cycle) {
+        if(filter) {
+            console.log("Pack filter active - only downloading images for:", [...filter].join(", "));
+        }
+        return filter;
+    }
+
+    const cyclePacks = packs.filter(pack => pack.cycle_id === options.cycle);
+    if(cyclePacks.length === 0) {
+        console.warn(`Warning: no packs found for cycle "${options.cycle}"`);
+        if(filter) {
+            console.log("Pack filter active - only downloading images for:", [...filter].join(", "));
+        }
+        return filter;
+    }
+
+    const withCycle = filter ?? new Set<string>();
+    for(const pack of cyclePacks) {
+        if(pack.id) {
+            withCycle.add(pack.id);
         }
     }
-
-    if(filter) {
-        console.log("Pack filter active - only downloading images for:", [...filter].join(", "));
-    }
-
-    return filter;
+    console.log(`Cycle "${options.cycle}" resolved to ${cyclePacks.length} packs: ${cyclePacks.map(pack => pack.id).join(", ")}`);
+    console.log("Pack filter active - only downloading images for:", [...withCycle].join(", "));
+    return withCycle;
 }
 
-async function fetchCards(imagePackFilter) {
-    try {
-        const cards = await apiRequest("cards");
-        await cardService.replaceCards(cards);
-        console.info(cards.length + " cards fetched");
+interface PlannedDownload {
+    card: ApiCard;
+    url: string;
+    filename: string;
+}
 
-        const imageDir = path.join(
-            projectRoot,
-            "public",
-            "img",
-            "cards"
-        );
-        fs.mkdirSync(imageDir, { recursive: true });
+/** Every version we should fetch, plus a count of the ones we are not fetching. */
+function planDownloads(cards: ApiCard[], options: Options, packFilter: Set<string> | null) {
+    const planned: PlannedDownload[] = [];
+    let totalVersions = 0;
+    let skipped = 0;
 
-        let downloaded = 0;
-        let skipped = 0;
-        let failed = 0;
-        let converted = 0;
-        const failedCards = [];
-        const convertedCards = [];
+    for(const card of cards) {
+        for(const version of card.versions ?? []) {
+            totalVersions++;
 
-        console.log("Starting image downloads (10 parallel)...");
-
-        // Build list of download tasks for ALL versions of each card
-        const downloadTasks = [];
-        let skippedCount = 0;
-        let totalVersions = 0;
-
-        for(let i = 0; i < cards.length; i++) {
-            const card = cards[i];
-
-            if(!card.versions || card.versions.length === 0) {
-                skippedCount++;
+            const url = version.image_url;
+            if(!url || (packFilter && !packFilter.has(version.pack_id))) {
+                skipped++;
                 continue;
             }
 
-            // Download ALL versions of the card (or filtered versions if --packs is set)
-            for(let versionIndex = 0; versionIndex < card.versions.length; versionIndex++) {
-                const version = card.versions[versionIndex];
-                totalVersions++;
-
-                // Skip versions not in the pack filter
-                if(imagePackFilter && !imagePackFilter.has(version.pack_id)) {
-                    skippedCount++;
-                    continue;
-                }
-
-                if(!version.image_url) {
-                    skippedCount++;
-                    continue;
-                }
-
-                const imageSrc = version.image_url;
-
-                // Naming scheme: {card.id}-{pack_id}.{ext}, keeping the source format. jpg
-                // and webp are stored as-is; png is converted to jpg. The client requests
-                // the stem without an extension, so nothing has to predict the format.
-                const extension = /\.webp(?:\?|$)/i.test(imageSrc) ? "webp" : "jpg";
-                const filename = card.id + "-" + version.pack_id + "." + extension;
-
-                const imagePath = path.join(imageDir, filename);
-
-                if(!forceDownload && fs.existsSync(imagePath)) {
-                    skippedCount++;
-                    continue;
-                }
-
-                // Create a download task
-                downloadTasks.push(async () => {
-                    const result = await downloadWithRetry(imageSrc, imageDir, filename);
-                    if(result.success) {
-                        // Earlier runs stored every source format under a .jpg name; drop the
-                        // other-extension sibling so the client cannot pick up the stale one.
-                        const other = extension === "webp" ? ".jpg" : ".webp";
-                        const stalePath = path.join(imageDir, filename.replace(/\.[a-z]+$/, other));
-                        if(fs.existsSync(stalePath)) {
-                            fs.unlinkSync(stalePath);
-                        }
-                    }
-                    return { card, version, result, url: imageSrc, filename };
-                });
+            const filename = `${card.id}-${version.pack_id}.${storedFormatFor(url)}`;
+            if(!options.force && fs.existsSync(path.join(imageDir, filename))) {
+                skipped++;
+                continue;
             }
+
+            planned.push({ card: card, url: url, filename: filename });
         }
-
-        skipped = skippedCount;
-        console.log(`Skipping ${skipped} cards (already exist or no image)`);
-        console.log(`Downloading ${downloadTasks.length} images...`);
-
-        // Execute downloads in parallel
-        const results = await downloadParallel(downloadTasks, 10);
-
-        // Process results
-        for(const { card, result, url, filename } of results) {
-            if(result.success) {
-                downloaded++;
-                if(result.converted) {
-                    converted++;
-                    convertedCards.push({ id: card.id, name: card.name, filename: filename, url: url });
-                }
-                if(downloaded % 50 === 0) {
-                    console.log(`Downloaded ${downloaded}/${downloadTasks.length} images...`);
-                }
-            } else {
-                failed++;
-                failedCards.push({ id: card.id, name: card.name, filename: filename, url: url, error: result.error });
-            }
+        if(!card.versions || card.versions.length === 0) {
+            skipped++;
         }
+    }
 
-        console.log("\n=== Download Summary ===");
-        console.log(`Total cards: ${cards.length}`);
-        console.log(`Total versions: ${totalVersions}`);
-        console.log(`Downloaded: ${downloaded}`);
-        console.log(`Re-encoded to the stored format: ${converted}`);
-        console.log(`Skipped (already exist or no image): ${skipped}`);
-        console.log(`Failed: ${failed}`);
+    return { planned: planned, totalVersions: totalVersions, skipped: skipped };
+}
 
-        if(convertedCards.length > 0) {
-            console.log("\n=== Re-encoded ===");
-            convertedCards.forEach(c => {
-                console.log(`${c.filename} - ${c.name}`);
-            });
+function reportSummary(cards: ApiCard[], totalVersions: number, skipped: number, outcomes: DownloadOutcome[]): void {
+    const reEncoded: string[] = [];
+    const failures: string[] = [];
+    let downloaded = 0;
+
+    for(const { filename, card, result } of outcomes) {
+        if(!result.success) {
+            failures.push(`${filename} (${card.name}): ${result.error}`);
+            continue;
         }
-
-        if(failedCards.length > 0) {
-            console.log("\n=== Failed Downloads ===");
-            failedCards.slice(0, 20).forEach(c => {
-                console.log(`${c.filename} (${c.name}): ${c.error}`);
-            });
-            if(failedCards.length > 20) {
-                console.log(`... and ${failedCards.length - 20} more`);
-            }
+        downloaded++;
+        if(result.converted) {
+            reEncoded.push(`${filename} - ${card.name}`);
         }
+    }
 
-        // Write version file for cache busting
-        const versionPath = path.join(imageDir, "version.json");
-        const version = { timestamp: Date.now() };
-        fs.writeFileSync(versionPath, JSON.stringify(version));
-        console.log("Wrote image version file:", version.timestamp);
+    console.log("\n=== Download Summary ===");
+    console.log(`Total cards: ${cards.length}`);
+    console.log(`Total versions: ${totalVersions}`);
+    console.log(`Downloaded: ${downloaded}`);
+    console.log(`Re-encoded to jpg: ${reEncoded.length}`);
+    console.log(`Skipped (already exist or no image): ${skipped}`);
+    console.log(`Failed: ${failures.length}`);
 
-        return cards;
-    } catch(error) {
-        console.error("Unable to fetch cards:", error.message);
-        console.error(error.stack);
+    if(reEncoded.length > 0) {
+        console.log("\n=== Re-encoded ===");
+        reEncoded.forEach(line => console.log(line));
+    }
+
+    if(failures.length > 0) {
+        console.log("\n=== Failed Downloads ===");
+        failures.slice(0, MAX_FAILURES_LISTED).forEach(line => console.log(line));
+        if(failures.length > MAX_FAILURES_LISTED) {
+            console.log(`... and ${failures.length - MAX_FAILURES_LISTED} more`);
+        }
     }
 }
 
-async function fetchPacks() {
+async function downloadImages(cards: ApiCard[], options: Options, packFilter: Set<string> | null): Promise<void> {
+    fs.mkdirSync(imageDir, { recursive: true });
+
+    const { planned, totalVersions, skipped } = planDownloads(cards, options, packFilter);
+    console.log(`Skipping ${skipped} cards (already exist or no image)`);
+    console.log(`Downloading ${planned.length} images (${DOWNLOAD_CONCURRENCY} parallel)...`);
+
+    let completed = 0;
+    const tasks = planned.map(({ card, url, filename }) => async (): Promise<DownloadOutcome> => {
+        const result = await downloadImage(url, filename);
+        if(result.success) {
+            // Earlier runs stored every source format under a .jpg name; drop the
+            // other-extension sibling so the server cannot resolve the stale one.
+            const stem = filename.replace(/\.[a-z]+$/, "");
+            removeIfPresent(path.join(imageDir, `${stem}.${filename.endsWith(".webp") ? "jpg" : "webp"}`));
+
+            completed++;
+            if(completed % 50 === 0) {
+                console.log(`Downloaded ${completed}/${planned.length} images...`);
+            }
+        }
+        return { card: card, filename: filename, url: url, result: result };
+    });
+
+    const outcomes = await runWithConcurrency(tasks, DOWNLOAD_CONCURRENCY);
+    reportSummary(cards, totalVersions, skipped, outcomes);
+
+    // Cache-busting stamp, read by the lobby at startup
+    const version = { timestamp: Date.now() };
+    fs.writeFileSync(path.join(imageDir, "version.json"), JSON.stringify(version));
+    console.log("Wrote image version file:", version.timestamp);
+}
+
+async function main(): Promise<void> {
+    const options = parseOptions(process.argv.slice(2));
+    if(options.force) {
+        console.log("Force download enabled - will re-download existing images");
+    }
+
+    const baseUrl = apiUrlFor(options.env);
+    await db.connect(process.env.DB_PATH || "mongodb://127.0.0.1:27017/jigoku");
+    const cardService = new CardService(db.getDb());
+
+    // One packs request serves both the cycle filter and the stored pack list.
+    const packs = await apiRequest<Pack[]>(baseUrl, "packs");
+    const packFilter = resolvePackFilter(options, packs);
+
     try {
-        const packs = await apiRequest("packs");
+        const cards = await apiRequest<ApiCard[]>(baseUrl, "cards");
+        await cardService.replaceCards(cards as CardRecord[]);
+        console.info(cards.length + " cards fetched");
+        await downloadImages(cards, options, packFilter);
+    } catch(error) {
+        console.error("Unable to fetch cards:", errorMessage(error));
+    }
+
+    try {
         await cardService.replacePacks(packs);
         console.info(packs.length + " packs fetched");
     } catch(error) {
-        console.error("Unable to fetch packs:", error.message);
+        console.error("Unable to fetch packs:", errorMessage(error));
     }
-}
 
-async function main() {
-    await db.connect(dbPath);
-    cardService = new CardService(db.getDb());
-
-    const imagePackFilter = await resolvePackFilter();
-    await Promise.all([fetchCards(imagePackFilter), fetchPacks()]);
     await db.close();
 }
 
-main().catch(err => {
-    console.error("Fatal error:", err);
-    db.close();
-    process.exit(1);
-});
+// Only run when invoked as a script, so the helpers above can be imported by tests.
+if(process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+    main().catch(error => {
+        console.error("Fatal error:", error);
+        db.close();
+        process.exit(1);
+    });
+}
