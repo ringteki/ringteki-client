@@ -5,6 +5,7 @@ import { pipeline } from "node:stream/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
+import { cardImageExtension } from "../../shared/CardImageFormats.js";
 
 import db from "../db.js";
 import CardService from "../services/CardService.js";
@@ -79,8 +80,13 @@ async function downloadFile(url, destPath, timeout = 30000) {
 }
 
 async function downloadWithRetry(url, dest, filename, maxRetries = 3) {
-    const isPng = url.toLowerCase().endsWith(".png");
-    const tempFilename = isPng ? filename.replace(".jpg", ".png") : filename;
+    const sourceMatch = url.toLowerCase().match(/\.(jpe?g|png|webp)(?:\?|$)/);
+    const sourceFormat = (sourceMatch ? sourceMatch[1] : "jpg").replace("jpeg", "jpg");
+    const targetFormat = path.extname(filename).slice(1);
+    const needsConversion = sourceFormat !== targetFormat;
+    const tempFilename = needsConversion
+        ? filename.replace(new RegExp(`\\.${targetFormat}$`), `.${sourceFormat}`)
+        : filename;
     const tempPath = path.join(dest, tempFilename);
     const finalPath = path.join(dest, filename);
 
@@ -88,19 +94,18 @@ async function downloadWithRetry(url, dest, filename, maxRetries = 3) {
         try {
             await downloadFile(url, tempPath, 30000);
 
-            // Convert PNG to JPG if needed
-            if(isPng) {
+            // Re-encode when the source format is not the one we store
+            if(needsConversion) {
                 await sharp(tempPath)
-                    .jpeg({ quality: 90 })
+                    .toFormat(targetFormat === "webp" ? "webp" : "jpeg", { quality: 90 })
                     .toFile(finalPath);
 
-                // Remove the temporary PNG file
                 fs.unlinkSync(tempPath);
 
-                return { success: true, converted: true };
+                return { success: true, converted: true, sourceFormat: sourceFormat };
             }
 
-            return { success: true, converted: false };
+            return { success: true, converted: false, sourceFormat: sourceFormat };
         } catch(error) {
             // Clean up partial file on error
             if(fs.existsSync(tempPath)) {
@@ -222,8 +227,9 @@ async function fetchCards(imagePackFilter) {
 
                 const imageSrc = version.image_url;
 
-                // Naming scheme: always {card.id}-{pack_id}.jpg
-                const filename = card.id + "-" + version.pack_id + ".jpg";
+                // Naming scheme: {card.id}-{pack_id}.{ext}, ext per shared/CardImageFormats
+                const extension = cardImageExtension(card.id, version.pack_id);
+                const filename = card.id + "-" + version.pack_id + "." + extension;
 
                 const imagePath = path.join(imageDir, filename);
 
@@ -235,6 +241,15 @@ async function fetchCards(imagePackFilter) {
                 // Create a download task
                 downloadTasks.push(async () => {
                     const result = await downloadWithRetry(imageSrc, imageDir, filename);
+                    if(result.success) {
+                        // Earlier runs stored every source format under a .jpg name; drop the
+                        // other-extension sibling so the client cannot pick up the stale one.
+                        const other = extension === "webp" ? ".jpg" : ".webp";
+                        const stalePath = path.join(imageDir, filename.replace(/\.[a-z]+$/, other));
+                        if(fs.existsSync(stalePath)) {
+                            fs.unlinkSync(stalePath);
+                        }
+                    }
                     return { card, version, result, url: imageSrc, filename };
                 });
             }
@@ -268,12 +283,12 @@ async function fetchCards(imagePackFilter) {
         console.log(`Total cards: ${cards.length}`);
         console.log(`Total versions: ${totalVersions}`);
         console.log(`Downloaded: ${downloaded}`);
-        console.log(`Converted PNG to JPG: ${converted}`);
+        console.log(`Re-encoded to the stored format: ${converted}`);
         console.log(`Skipped (already exist or no image): ${skipped}`);
         console.log(`Failed: ${failed}`);
 
         if(convertedCards.length > 0) {
-            console.log("\n=== Converted from PNG ===");
+            console.log("\n=== Re-encoded ===");
             convertedCards.forEach(c => {
                 console.log(`${c.filename} - ${c.name}`);
             });
