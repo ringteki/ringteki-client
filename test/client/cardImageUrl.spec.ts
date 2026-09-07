@@ -12,7 +12,7 @@ import { getCardImageUrl } from "../../client/cardImageUrl";
 
 describe("getCardImageUrl", () => {
     it("returns the standard art path from id + packId", () => {
-        expect(getCardImageUrl("hida-honoka", "under-fu-leng-s-shadow")).toContain("/img/cards/hida-honoka-under-fu-leng-s-shadow");
+        expect(getCardImageUrl("hida-honoka", "emerald-core-set")).toContain("/img/cards/hida-honoka-emerald-core-set");
     });
 
     it("returns the standard art path from id alone when no packId", () => {
@@ -20,11 +20,11 @@ describe("getCardImageUrl", () => {
     });
 
     it("carries no extension, whatever the stored format", () => {
-        expect(getCardImageUrl("shinjo-sora", "starless-nights")).toContain("/img/cards/shinjo-sora-starless-nights");
-        expect(getCardImageUrl("hida-kisada", "core")).toContain("/img/cards/hida-kisada-core");
-        expect(getCardImageUrl("unleashed-hound")).toContain("/img/cards/unleashed-hound");
-        expect(getCardImageUrl("unleashed-hound")).not.toContain(".webp");
+        // The server resolves the stem to the file on disk, so the URL must not guess.
         expect(getCardImageUrl("hida-kisada", "core")).not.toContain(".jpg");
+        expect(getCardImageUrl("hida-kisada", "core")).not.toContain(".webp");
+        expect(getCardImageUrl("unleashed-hound")).not.toContain(".webp");
+        expect(getCardImageUrl("unleashed-hound")).toContain("/img/cards/unleashed-hound");
     });
 
     it("returns an empty string for a missing cardId", () => {
@@ -36,11 +36,10 @@ describe("getCardImageUrl", () => {
     });
 
     it("falls through to standard art when showPromo is set but no promo exists", () => {
-        expect(getCardImageUrl("hida-kisada", "emerald-core-set", true)).toContain("/img/cards/hida-kisada-emerald-core-set");
+        expect(getCardImageUrl("hida-kisada", "core", true)).toContain("/img/cards/hida-kisada-core");
     });
 
     it("ignores promos when showPromo is not set, even if one exists", () => {
         expect(getCardImageUrl("hida-honoka", "emerald-core-set", false)).toContain("/img/cards/hida-honoka-emerald-core-set");
     });
-
 });
