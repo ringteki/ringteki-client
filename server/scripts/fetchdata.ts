@@ -5,7 +5,6 @@ import { pipeline } from "node:stream/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
-import { cardImageExtension } from "../../shared/CardImageFormats.js";
 
 import db from "../db.js";
 import CardService from "../services/CardService.js";
@@ -227,8 +226,10 @@ async function fetchCards(imagePackFilter) {
 
                 const imageSrc = version.image_url;
 
-                // Naming scheme: {card.id}-{pack_id}.{ext}, ext per shared/CardImageFormats
-                const extension = cardImageExtension(card.id, version.pack_id);
+                // Naming scheme: {card.id}-{pack_id}.{ext}, keeping the source format. jpg
+                // and webp are stored as-is; png is converted to jpg. The client requests
+                // the stem without an extension, so nothing has to predict the format.
+                const extension = /\.webp(?:\?|$)/i.test(imageSrc) ? "webp" : "jpg";
                 const filename = card.id + "-" + version.pack_id + "." + extension;
 
                 const imagePath = path.join(imageDir, filename);

@@ -1,7 +1,6 @@
 import bootstrap from "./bootstrap";
 import { asset, promoArt } from "./assetUrl";
 import type { Card } from "./types/game";
-import { cardImageExtension } from "../shared/CardImageFormats";
 
 export interface CardVersion {
     pack_id?: string;
@@ -26,7 +25,7 @@ export function getCardImageUrl(cardId: string, packId?: string, showPromo?: boo
             return promo;
         }
     }
-    return `/img/cards/${stem}.${cardImageExtension(cardId, packId)}${versionSuffix}`;
+    return `/img/cards/${stem}${versionSuffix}`;
 }
 
 export function getCardBackUrl(filename: string): string {

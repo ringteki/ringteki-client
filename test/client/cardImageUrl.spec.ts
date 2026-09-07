@@ -12,25 +12,19 @@ import { getCardImageUrl } from "../../client/cardImageUrl";
 
 describe("getCardImageUrl", () => {
     it("returns the standard art path from id + packId", () => {
-        expect(getCardImageUrl("hida-honoka", "under-fu-leng-s-shadow")).toContain("/img/cards/hida-honoka-under-fu-leng-s-shadow.jpg");
+        expect(getCardImageUrl("hida-honoka", "under-fu-leng-s-shadow")).toContain("/img/cards/hida-honoka-under-fu-leng-s-shadow");
     });
 
     it("returns the standard art path from id alone when no packId", () => {
-        expect(getCardImageUrl("hida-honoka")).toContain("/img/cards/hida-honoka.jpg");
+        expect(getCardImageUrl("hida-honoka")).toContain("/img/cards/hida-honoka");
     });
 
-    it("returns webp for Emerald Legacy packs", () => {
-        expect(getCardImageUrl("shinjo-sora", "starless-nights")).toContain("/img/cards/shinjo-sora-starless-nights.webp");
-        expect(getCardImageUrl("hida-honoka", "emerald-core-set")).toContain("/img/cards/hida-honoka-emerald-core-set.webp");
-    });
-
-    it("returns webp for hand-committed token art, which has no pack", () => {
-        expect(getCardImageUrl("unleashed-hound")).toContain("/img/cards/unleashed-hound.webp");
-        expect(getCardImageUrl("soldier")).toContain("/img/cards/soldier.webp");
-    });
-
-    it("returns jpg for FFG packs", () => {
-        expect(getCardImageUrl("hida-kisada", "core")).toContain("/img/cards/hida-kisada-core.jpg");
+    it("carries no extension, whatever the stored format", () => {
+        expect(getCardImageUrl("shinjo-sora", "starless-nights")).toContain("/img/cards/shinjo-sora-starless-nights");
+        expect(getCardImageUrl("hida-kisada", "core")).toContain("/img/cards/hida-kisada-core");
+        expect(getCardImageUrl("unleashed-hound")).toContain("/img/cards/unleashed-hound");
+        expect(getCardImageUrl("unleashed-hound")).not.toContain(".webp");
+        expect(getCardImageUrl("hida-kisada", "core")).not.toContain(".jpg");
     });
 
     it("returns an empty string for a missing cardId", () => {
@@ -42,10 +36,11 @@ describe("getCardImageUrl", () => {
     });
 
     it("falls through to standard art when showPromo is set but no promo exists", () => {
-        expect(getCardImageUrl("hida-kisada", "emerald-core-set", true)).toContain("/img/cards/hida-kisada-emerald-core-set.webp");
+        expect(getCardImageUrl("hida-kisada", "emerald-core-set", true)).toContain("/img/cards/hida-kisada-emerald-core-set");
     });
 
     it("ignores promos when showPromo is not set, even if one exists", () => {
-        expect(getCardImageUrl("hida-honoka", "emerald-core-set", false)).toContain("/img/cards/hida-honoka-emerald-core-set.webp");
+        expect(getCardImageUrl("hida-honoka", "emerald-core-set", false)).toContain("/img/cards/hida-honoka-emerald-core-set");
     });
+
 });

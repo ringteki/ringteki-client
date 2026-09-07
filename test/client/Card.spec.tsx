@@ -340,7 +340,7 @@ describe("the <Card /> component", () => {
         it("should include packId in the image path", () => {
             render(<Card card={ { ...card, packId: "core" } } source="hand" />);
             const cardImage = document.querySelector(".card-image-src");
-            expect(cardImage.src).toContain("/img/cards/test-card-1-core.jpg");
+            expect(cardImage.src).toContain("/img/cards/test-card-1-core");
         });
     });
 
@@ -367,7 +367,7 @@ describe("the <Card /> component", () => {
             patronState.promoOwners = {};
             render(<Card card={ promoCard } source="play area" />);
             const cardImage = document.querySelector(".card-image-src");
-            expect(cardImage.src).toContain("/img/cards/promo-card-promo-pack.jpg");
+            expect(cardImage.src).toContain("/img/cards/promo-card-promo-pack");
         });
 
         it("falls back to the player prop for the owner when the card has no controller", () => {

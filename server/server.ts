@@ -182,6 +182,26 @@ class Server {
 
         api.init(app);
 
+        // Card art is stored in whatever format the source used, so the URL carries no
+        // extension and this resolves it. Must be mounted before express.static, which
+        // would otherwise 404 the extensionless path.
+        const cardImageDir = path.join(projectRoot, "public", "img", "cards");
+        app.get("/img/cards/:stem", (req, res, next) => {
+            const stem = req.params.stem;
+            if(stem.includes(".") || stem.includes("/") || stem.includes("\\")) {
+                next();
+                return;
+            }
+            for(const extension of ["webp", "jpg", "png"]) {
+                const filePath = path.join(cardImageDir, `${stem}.${extension}`);
+                if(fs.existsSync(filePath)) {
+                    res.sendFile(filePath);
+                    return;
+                }
+            }
+            next();
+        });
+
         app.use(express.static(path.join(projectRoot, "public"), {
             setHeaders: (res, filePath) => {
                 if(filePath.endsWith(".woff2")) {
