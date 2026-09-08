@@ -25,7 +25,7 @@ export function getCardImageUrl(cardId: string, packId?: string, showPromo?: boo
             return promo;
         }
     }
-    return `/img/cards/${stem}.jpg${versionSuffix}`;
+    return `/img/cards/${stem}${versionSuffix}`;
 }
 
 export function getCardBackUrl(filename: string): string {

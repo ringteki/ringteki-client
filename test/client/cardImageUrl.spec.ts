@@ -12,11 +12,19 @@ import { getCardImageUrl } from "../../client/cardImageUrl";
 
 describe("getCardImageUrl", () => {
     it("returns the standard art path from id + packId", () => {
-        expect(getCardImageUrl("hida-honoka", "emerald-core-set")).toContain("/img/cards/hida-honoka-emerald-core-set.jpg");
+        expect(getCardImageUrl("hida-honoka", "emerald-core-set")).toContain("/img/cards/hida-honoka-emerald-core-set");
     });
 
     it("returns the standard art path from id alone when no packId", () => {
-        expect(getCardImageUrl("hida-honoka")).toContain("/img/cards/hida-honoka.jpg");
+        expect(getCardImageUrl("hida-honoka")).toContain("/img/cards/hida-honoka");
+    });
+
+    it("carries no extension, whatever the stored format", () => {
+        // The server resolves the stem to the file on disk, so the URL must not guess.
+        expect(getCardImageUrl("hida-kisada", "core")).not.toContain(".jpg");
+        expect(getCardImageUrl("hida-kisada", "core")).not.toContain(".webp");
+        expect(getCardImageUrl("unleashed-hound")).not.toContain(".webp");
+        expect(getCardImageUrl("unleashed-hound")).toContain("/img/cards/unleashed-hound");
     });
 
     it("returns an empty string for a missing cardId", () => {
@@ -28,10 +36,10 @@ describe("getCardImageUrl", () => {
     });
 
     it("falls through to standard art when showPromo is set but no promo exists", () => {
-        expect(getCardImageUrl("hida-kisada", "emerald-core-set", true)).toContain("/img/cards/hida-kisada-emerald-core-set.jpg");
+        expect(getCardImageUrl("hida-kisada", "core", true)).toContain("/img/cards/hida-kisada-core");
     });
 
     it("ignores promos when showPromo is not set, even if one exists", () => {
-        expect(getCardImageUrl("hida-honoka", "emerald-core-set", false)).toContain("/img/cards/hida-honoka-emerald-core-set.jpg");
+        expect(getCardImageUrl("hida-honoka", "emerald-core-set", false)).toContain("/img/cards/hida-honoka-emerald-core-set");
     });
 });
