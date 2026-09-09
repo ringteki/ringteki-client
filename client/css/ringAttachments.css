@@ -1,22 +1,18 @@
-.ring-attachments__container {
+/* Ring attachments overlay the ring panel: the opponent's sit above it, mine below.
+   Claimed rings are hidden from the panel, so an attachment cannot be aligned with
+   its own ring -- .ring-attachments__ring-symbol names the element instead.
+   Only the center bar's panel needs to be the containing block; the sidebar
+   shares .ring-panel for the claimed-ring pools. */
+.center-bar .ring-panel {
     position: relative;
-    margin-left: 10px;
 }
 
-.ring-attachments__container-inner {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: fit-content;
+.ring-attachments__container {
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+    inset: 0;
+    pointer-events: none;
 
-    & .card.vertical {
-        height: calc(var(--card-height) * 0.8);
-        width: calc(var(--card-width) * 0.8);
-    }
-
+    & .card.vertical,
     & .card-image.vertical {
         height: calc(var(--card-height) * 0.8);
         width: calc(var(--card-width) * 0.8);
@@ -24,24 +20,22 @@
 }
 
 .ring-attachments {
+    position: absolute;
+    left: 0;
+    right: 0;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 4px;
 }
 
 .ring-attachments--opponent {
-    align-self: flex-start;
-    box-sizing: border-box;
-    margin-bottom: 4px;
-    position: relative;
-    min-height: calc(var(--card-height) * 0.8);
+    bottom: calc(100% + 4px);
+    align-items: flex-end;
 }
 
 .ring-attachments--me {
-    margin-top: 4px;
-    align-self: flex-end;
-    box-sizing: border-box;
-    position: relative;
-    min-height: calc(var(--card-height) * 0.8);
+    top: calc(100% + 4px);
+    align-items: flex-start;
 }
 
 .ring-attachments--element {

@@ -3,7 +3,7 @@ import Ring from "./Ring";
 import type { Ring as RingType, MenuItem, GameState } from "../types/game";
 import type { AnimationEvent } from "../types/redux";
 
-export default function RingRow({ rings, owner, cardSize, showRingEffects, gameMode, onClick, onMenuItemClick, removed, className, ringSet, pendingAnimations, onClaimAnimationEnd }: {
+export default function RingRow({ rings, owner, cardSize, showRingEffects, gameMode, onClick, onMenuItemClick, removed, className, ringSet, pendingAnimations, onClaimAnimationEnd, children }: {
     rings: GameState["rings"];
     owner: string | null;
     cardSize: string;
@@ -16,6 +16,7 @@ export default function RingRow({ rings, owner, cardSize, showRingEffects, gameM
     ringSet?: string;
     pendingAnimations?: AnimationEvent[];
     onClaimAnimationEnd?: (element: string, playerName: string) => void;
+    children?: React.ReactNode;
 }) {
     const elements: Array<keyof GameState["rings"]> = ["air", "earth", "fire", "void", "water"];
     return (
@@ -42,6 +43,7 @@ export default function RingRow({ rings, owner, cardSize, showRingEffects, gameM
                     />
                 );
             }) }
+            { children }
         </div>
     );
 }

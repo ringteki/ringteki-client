@@ -436,12 +436,17 @@
 .card-name {
     font-size: 10px;
     line-height: 14px;
+    /* The card image covers this, but a long name would otherwise spill past the card */
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .custom-card:hover .card-name {
     background: rgba(0, 0, 0, 0.8);
     position: absolute;
     z-index: var(--layer-card-menu);
+    overflow: visible;
 }
 
 .card-large {
