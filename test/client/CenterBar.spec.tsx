@@ -158,6 +158,14 @@ describe("the <CenterBar /> component", () => {
             expect(oppSide.textContent).not.toContain("Ember");
         });
 
+        it("overlays the ring panel so attachments line up with the rings", () => {
+            rings.fire.attachments = [{ uuid: "a1", name: "Ember", controller: { name: "Me" } }];
+            const { container } = render(<CenterBar { ...baseProps } />);
+            const overlay = container.querySelector(".ring-panel > .ring-attachments__container");
+            expect(overlay).not.toBeNull();
+            expect(overlay?.querySelector(".ring-attachments--me")?.textContent).toContain("Ember");
+        });
+
         it("ignores attachments whose controller matches no player", () => {
             rings.fire.attachments = [
                 { uuid: "a3", name: "Drift", controller: { name: "Ghost" } }

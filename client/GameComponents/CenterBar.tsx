@@ -59,14 +59,8 @@ export default function CenterBar(props: CenterBarProps) {
                     </div>
                 )
             ) : null }
-            <RingRow rings={ rings } owner={ null } cardSize={ cardSize } showRingEffects={ showRingEffects } gameMode={ gameMode } onClick={ props.onRingClick } onMenuItemClick={ props.onRingMenuItemClick } removed={ false } className="ring-panel" ringSet={ ringSet } />
-            { anyRemoved
-                ? <RingRow rings={ rings } owner={ null } cardSize={ cardSize } showRingEffects={ showRingEffects } gameMode={ gameMode } onClick={ props.onRingClick } onMenuItemClick={ props.onRingMenuItemClick } removed className="ring-panel removed-rings" ringSet={ ringSet } />
-                : null }
-            <ConflictPanel conflict={ conflict } otherPlayer={ otherPlayer } />
-            <CardsPlayedTracker conflict={ conflict } thisPlayer={ thisPlayer } otherPlayer={ otherPlayer } />
-            <div className="ring-attachments__container">
-                <div className="ring-attachments__container-inner">
+            <RingRow rings={ rings } owner={ null } cardSize={ cardSize } showRingEffects={ showRingEffects } gameMode={ gameMode } onClick={ props.onRingClick } onMenuItemClick={ props.onRingMenuItemClick } removed={ false } className="ring-panel" ringSet={ ringSet }>
+                <div className="ring-attachments__container">
                     <div className="ring-attachments ring-attachments--opponent">
                         { Object.keys(opponentRingAttachments).map((key: string) => (
                             <RingAttachmentRow
@@ -102,7 +96,12 @@ export default function CenterBar(props: CenterBarProps) {
                         )) }
                     </div>
                 </div>
-            </div>
+            </RingRow>
+            { anyRemoved
+                ? <RingRow rings={ rings } owner={ null } cardSize={ cardSize } showRingEffects={ showRingEffects } gameMode={ gameMode } onClick={ props.onRingClick } onMenuItemClick={ props.onRingMenuItemClick } removed className="ring-panel removed-rings" ringSet={ ringSet } />
+                : null }
+            <ConflictPanel conflict={ conflict } otherPlayer={ otherPlayer } />
+            <CardsPlayedTracker conflict={ conflict } thisPlayer={ thisPlayer } otherPlayer={ otherPlayer } />
         </div>
     );
 }
