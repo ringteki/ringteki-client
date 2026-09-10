@@ -183,33 +183,45 @@ class Server {
         api.init(app);
 
         // Card art is stored in whatever format the source used, so its URL carries no
-        // extension. Read the directory once here rather than per request: fetchdata runs
-        // before the server boots, and cardImageVersion above is snapshotted the same way,
-        // so both go stale together and a restart refreshes both.
+        // extension and this index resolves it. fetchdata can change the files under a
+        // running server -- a webp re-download deletes the old .jpg -- which would leave
+        // the index pointing at a file that no longer exists, so rescan periodically
+        // rather than looking at the disk on every request.
+        const cardImageDir = path.join(projectRoot, "public", "img", "cards");
         const cardImageFormats = ["webp", "jpg", "png"];
-        const cardImageFiles = new Map<string, string>();
-        try {
-            for(const file of fs.readdirSync(path.join(projectRoot, "public", "img", "cards"))) {
-                const parsed = /^(.+)\.(webp|jpg|png)$/.exec(file);
-                if(!parsed) {
-                    continue;
-                }
-                const [, stem, extension] = parsed;
-                const current = cardImageFiles.get(stem);
-                const currentRank = current
-                    ? cardImageFormats.indexOf(path.extname(current).slice(1))
-                    : cardImageFormats.length;
-                if(cardImageFormats.indexOf(extension) < currentRank) {
-                    cardImageFiles.set(stem, file);
-                }
-            }
-        } catch(_err) {
-            // No image directory -- extensionless requests fall through to a 404
-        }
+        const cardImageRescanIntervalMs = 30000;
+        let cardImageFiles = new Map<string, string>();
 
-        // Rewrite to the real filename and let express.static serve it. The map is an
-        // allowlist of files that exist, so an unknown or crafted stem is simply not
-        // rewritten. Must run before express.static.
+        const scanCardImages = () => {
+            const found = new Map<string, string>();
+            try {
+                for(const file of fs.readdirSync(cardImageDir)) {
+                    const parsed = /^(.+)\.(webp|jpg|png)$/.exec(file);
+                    if(!parsed) {
+                        continue;
+                    }
+                    const [, stem, extension] = parsed;
+                    const current = found.get(stem);
+                    const currentRank = current
+                        ? cardImageFormats.indexOf(path.extname(current).slice(1))
+                        : cardImageFormats.length;
+                    if(cardImageFormats.indexOf(extension) < currentRank) {
+                        found.set(stem, file);
+                    }
+                }
+            } catch(_err) {
+                // No image directory -- extensionless requests fall through to a 404
+            }
+            cardImageFiles = found;
+        };
+
+        scanCardImages();
+        logger.info(`Card image index: ${cardImageFiles.size} images`);
+        setInterval(scanCardImages, cardImageRescanIntervalMs).unref();
+
+        // Rewrite to the real filename and let express.static serve it. The index is an
+        // allowlist of files that exist, so an unknown or crafted stem is never rewritten.
+        // Must run before express.static.
         app.use((req, res, next) => {
             const requested = /^\/img\/cards\/([^/.?]+)(\?.*)?$/.exec(req.url);
             const filename = requested && cardImageFiles.get(requested[1]);
